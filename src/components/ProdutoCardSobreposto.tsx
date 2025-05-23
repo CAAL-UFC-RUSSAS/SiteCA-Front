@@ -10,7 +10,6 @@ interface ProdutoCardSobrepostoProps {
 }
 
 export default function ProdutoCardSobreposto({ produto, grande, quadrado }: ProdutoCardSobrepostoProps) {
-    const [isHovered, setIsHovered] = useState(false);
 
     const formatarPreco = (preco: string) => {
         const precoNum = Number(preco);
@@ -24,8 +23,6 @@ export default function ProdutoCardSobreposto({ produto, grande, quadrado }: Pro
         <Link 
             href={`/loja/${produto.id}`}
             className="relative group"
-            onMouseEnter={() => setIsHovered(true)}
-            onMouseLeave={() => setIsHovered(false)}
         >
             <div className={`relative w-full ${grande ? 'h-[400px]' : quadrado ? 'h-[200px]' : 'h-[300px]'} bg-white rounded-xl shadow-lg overflow-hidden`}>
                 {produto.imagem ? (

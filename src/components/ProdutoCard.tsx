@@ -33,7 +33,7 @@ export function ProdutoCard({ produto, onEdit, onDelete }: ProdutoCardProps) {
         </div>
         <div className="flex justify-between items-center mb-4">
           <span className="text-indigo-600 font-bold">
-            R$ {(produto.preco / 100).toFixed(2)}
+            R$ {(Number(produto.preco) / 100).toFixed(2)}
           </span>
           <span className="text-gray-500">
             Quantidade: {produto.quantidade}

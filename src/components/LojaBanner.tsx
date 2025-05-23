@@ -1,4 +1,5 @@
-import ProdutoCardSobreposto, { Produto } from "./ProdutoCardSobreposto";
+import { Produto } from "@/types/produto";
+import ProdutoCardSobreposto from "./ProdutoCardSobreposto";
 
 export default function LojaBanner({ produtos }: { produtos: Produto[] }) {
     // Filtra apenas produtos disponíveis (quantidade > 0)

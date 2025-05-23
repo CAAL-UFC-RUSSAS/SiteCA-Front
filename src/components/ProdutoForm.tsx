@@ -1,4 +1,5 @@
 import { Produto } from '@/types/produto';
+import Image from "next/image";
 
 type ProdutoFormProps = {
   produto?: Produto;
@@ -92,9 +93,11 @@ export function ProdutoForm({ produto, onSubmit, onCancel, selectedImage, onImag
             <label className="block text-sm font-medium text-gray-700">Imagem</label>
             {(produto?.imagem || selectedImage) && (
               <div className="mb-2">
-                <img
-                  src={selectedImage || produto.imagem}
+                <Image
+                  src={selectedImage || produto!.imagem!}
                   alt={produto?.nome || 'Preview'}
+                  width={128}
+                  height={128}
                   className="w-32 h-32 object-cover rounded"
                 />
               </div>
