@@ -11,21 +11,6 @@ export default function LoginPage() {
   const [password, setPassword] = useState('');
   const [message, setMessage] = useState('');
   const [loading, setLoading] = useState(false);
-  const [shouldRedirect, setShouldRedirect] = useState(false);
-
-  // Efeito para redirecionar quando autenticado
-  useEffect(() => {
-    if (shouldRedirect && isAuthenticated) {
-      console.log('Login - Redirecionando para dashboard...');
-      try {
-        router.replace('/dashboard');
-      } catch (error) {
-        console.error('Erro ao redirecionar:', error);
-        // Tenta uma rota alternativa se o dashboard falhar
-        router.replace('/');
-      }
-    }
-  }, [shouldRedirect, isAuthenticated, router]);
 
   // Efeito para verificar se já está autenticado
   useEffect(() => {

@@ -52,12 +52,6 @@ export default function CarrinhoPage() {
             return total + (Number(item.preco) * item.quantidade);
         }, 0);
     };
-    
-    const calcularTotalSelecionados = () => {
-        return cartItems.filter(item => item.selected).reduce((total, item) => {
-            return total + (Number(item.preco) * item.quantidade);
-        }, 0);
-    };
 
     const getSelectedCount = () => {
         return cartItems.filter(item => item.selected).length;
@@ -66,7 +60,7 @@ export default function CarrinhoPage() {
     const removeItem = (id: string) => {
         const updatedCart = cartItems.filter(item => item.id !== id);
         setCartItems(updatedCart);
-        localStorage.setItem('cart', JSON.stringify(updatedCart.map(({ selected, ...item }) => item)));
+        localStorage.setItem('cart', JSON.stringify(updatedCart.map(item => ({ id: item.id, nome: item.nome, preco: item.preco, imagem: item.imagem, quantidade: item.quantidade }))));
         
         // Disparar evento para atualizar o contador na navbar
         window.dispatchEvent(new CustomEvent('cartUpdated'));
@@ -75,7 +69,7 @@ export default function CarrinhoPage() {
     const removeSelectedItems = () => {
         const updatedCart = cartItems.filter(item => !item.selected);
         setCartItems(updatedCart);
-        localStorage.setItem('cart', JSON.stringify(updatedCart.map(({ selected, ...item }) => item)));
+        localStorage.setItem('cart', JSON.stringify(updatedCart.map(item => ({ id: item.id, nome: item.nome, preco: item.preco, imagem: item.imagem, quantidade: item.quantidade }))));
         setAllSelected(false);
         
         // Disparar evento para atualizar o contador na navbar
@@ -85,7 +79,7 @@ export default function CarrinhoPage() {
     const removeInactiveItems = () => {
         const updatedCart = cartItems.filter(item => item.quantidade > 0);
         setCartItems(updatedCart);
-        localStorage.setItem('cart', JSON.stringify(updatedCart.map(({ selected, ...item }) => item)));
+        localStorage.setItem('cart', JSON.stringify(updatedCart.map(item => ({ id: item.id, nome: item.nome, preco: item.preco, imagem: item.imagem, quantidade: item.quantidade }))));
         
         // Disparar evento para atualizar o contador na navbar
         window.dispatchEvent(new CustomEvent('cartUpdated'));
@@ -99,7 +93,7 @@ export default function CarrinhoPage() {
         );
         
         setCartItems(updatedCart);
-        localStorage.setItem('cart', JSON.stringify(updatedCart.map(({ selected, ...item }) => item)));
+        localStorage.setItem('cart', JSON.stringify(updatedCart.map(item => ({ id: item.id, nome: item.nome, preco: item.preco, imagem: item.imagem, quantidade: item.quantidade }))));
     };
     
     const toggleSelectItem = (id: string) => {

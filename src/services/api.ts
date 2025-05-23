@@ -5,7 +5,8 @@ const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3333';
 // Função para verificar se o token está expirado
 export function isTokenExpired(token: string): boolean {
   try {
-    const base64Url = token.split('.')[1];
+    const payload = token.split('.')[1];
+    const base64Url = payload;
     const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
     const jsonPayload = decodeURIComponent(
       atob(base64)
@@ -17,7 +18,7 @@ export function isTokenExpired(token: string): boolean {
     const { exp } = JSON.parse(jsonPayload);
     const expired = Date.now() >= exp * 1000;
     return expired;
-  } catch (error) {
+  } catch {
     // Se não conseguir decodificar, considera expirado por segurança
     return true;
   }
@@ -49,7 +50,7 @@ export function getAuthHeaders(): HeadersInit {
 }
 
 // Função para formatar um produto da API para o formato do frontend
-export function formatProduto(produto: any): Produto {
+export function formatProduto(produto: Record<string, unknown>): Produto {
   return {
     ...produto,
     imagem: produto.imagem_nome 
@@ -59,7 +60,7 @@ export function formatProduto(produto: any): Produto {
     tags: Array.isArray(produto.tags) ? produto.tags : [],
     disponivel: Boolean(produto.disponivel),
     quantidade: Number(produto.quantidade)
-  };
+  } as Produto;
 }
 
 // Função para buscar todos os produtos

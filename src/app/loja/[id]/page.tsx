@@ -41,8 +41,8 @@ export default function ProdutoPage({ params }: { params: Promise<{ id: string }
     useEffect(() => {
         if (produto) {
             try {
-                const cart = JSON.parse(localStorage.getItem('cart') || '[]');
-                const isInCart = cart.some((item: any) => item.id === produto.id);
+                const cart: Array<{id: number; nome: string; preco: string; imagem?: string; quantidade: number}> = JSON.parse(localStorage.getItem('cart') || '[]');
+                const isInCart = cart.some((item) => item.id === produto.id);
                 setAddedToCart(isInCart);
             } catch (error) {
                 console.error('Erro ao verificar carrinho:', error);
@@ -55,10 +55,10 @@ export default function ProdutoPage({ params }: { params: Promise<{ id: string }
 
         try {
             // Obter carrinho atual
-            const currentCart = JSON.parse(localStorage.getItem('cart') || '[]');
+            const currentCart: Array<{id: number; nome: string; preco: string; imagem?: string; quantidade: number}> = JSON.parse(localStorage.getItem('cart') || '[]');
             
             // Verificar se o produto já está no carrinho
-            const existingItemIndex = currentCart.findIndex((item: any) => item.id === produto.id);
+            const existingItemIndex = currentCart.findIndex((item) => item.id === produto.id);
             
             if (existingItemIndex >= 0) {
                 // Atualizar quantidade se já existe

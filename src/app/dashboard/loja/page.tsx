@@ -7,8 +7,6 @@ import { ProdutoForm } from '@/components/ProdutoForm';
 import { Modal } from '@/components/Modal';
 import { Produto } from '@/types/produto';
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3333';
-
 export default function LojaPage() {
     const [produtos, setProdutos] = useState<Produto[]>([]);
     const [loading, setLoading] = useState(true);

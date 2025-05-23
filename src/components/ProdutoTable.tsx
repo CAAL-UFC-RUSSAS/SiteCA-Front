@@ -1,4 +1,5 @@
 import { Produto } from '@/types/produto';
+import Image from 'next/image';
 
 type ProdutoTableProps = {
     produtos: Produto[];
@@ -27,9 +28,11 @@ export function ProdutoTable({ produtos, onEdit, onDelete }: ProdutoTableProps) 
                             <td className="px-6 py-4 whitespace-nowrap">
                                 {produto.imagem ? (
                                     <div className="relative">
-                                        <img
+                                        <Image
                                             src={produto.imagem}
                                             alt={produto.nome}
+                                            width={80}
+                                            height={80}
                                             className="h-20 w-20 object-cover rounded"
                                             onError={(e) => {
                                                 e.currentTarget.style.display = 'none';

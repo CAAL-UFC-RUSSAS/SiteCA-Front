@@ -33,23 +33,30 @@ export default function ProdutoListagem({ produtos }: ProdutoListagemProps) {
     // Extrair todas as tags únicas
     const todasTags = useMemo(() => {
         const tags = new Set<string>();
-        produtos.forEach(p => p.tags.forEach(t => tags.add(t)));
+        produtos.forEach(p => {
+            const produtoTags = Array.isArray(p.tags) ? p.tags : (typeof p.tags === 'string' ? JSON.parse(p.tags) : []);
+            produtoTags.forEach((t: string) => tags.add(t));
+        });
         return Array.from(tags);
     }, [produtos]);
 
     // Cores realmente presentes nos produtos
     const coresDisponiveis = useMemo(() => {
-        return todasCores.filter(cor => produtos.some(p => p.tags.includes(cor)));
+        return todasCores.filter(cor => produtos.some(p => {
+            const produtoTags = Array.isArray(p.tags) ? p.tags : (typeof p.tags === 'string' ? JSON.parse(p.tags) : []);
+            return produtoTags.includes(cor);
+        }));
     }, [produtos]);
 
     // Filtro e ordenação
     const produtosFiltrados = useMemo(() => {
-        let filtrados = produtos.filter(p =>
-            (!busca || p.nome.toLowerCase().includes(busca.toLowerCase())) &&
-            (!cor || p.tags.includes(cor)) &&
-            (!tag || p.tags.includes(tag)) &&
-            (!disponivel || p.disponivel)
-        );
+        let filtrados = produtos.filter(p => {
+            const produtoTags = Array.isArray(p.tags) ? p.tags : (typeof p.tags === 'string' ? JSON.parse(p.tags) : []);
+            return (!busca || p.nome.toLowerCase().includes(busca.toLowerCase())) &&
+                (!cor || produtoTags.includes(cor)) &&
+                (!tag || produtoTags.includes(tag)) &&
+                (!disponivel || p.disponivel);
+        });
         if (ordem === "maior") {
             filtrados = filtrados.slice().sort((a, b) => {
                 const precoA = parseFloat(a.preco.replace(/[^\d,]/g, '').replace(',', '.'));

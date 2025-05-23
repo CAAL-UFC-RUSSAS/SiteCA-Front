@@ -1,4 +1,5 @@
 import { Produto } from '@/types/produto';
+import Image from 'next/image';
 
 type ProdutoCardProps = {
   produto: Produto;
@@ -11,9 +12,11 @@ export function ProdutoCard({ produto, onEdit, onDelete }: ProdutoCardProps) {
     <div className="bg-white rounded-lg shadow-md overflow-hidden">
       {produto.imagem && (
         <div className="h-48 overflow-hidden">
-          <img
+          <Image
             src={produto.imagem}
             alt={produto.nome}
+            width={300}
+            height={200}
             className="w-full h-full object-cover"
           />
         </div>

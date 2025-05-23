@@ -4,9 +4,9 @@ import { HomeBanner } from "@/components/HomeBanner";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Separator } from "@/components/ui/separator";
 import Link from "next/link";
-import { CalendarDays, BookOpen, Users, FileText, Bell, Store, School } from "lucide-react";
+import Image from "next/image";
+import { CalendarDays, Store, School } from "lucide-react";
 import AvisoPopUp from "@/components/AvisoPopUp";
 
 const avisos = [
@@ -39,7 +39,7 @@ export default function Home() {
             </p>
             <p className="text-gray-700">
             Mais do que representar, queremos inspirar, conectar e transformar. Então se você tem uma ideia, um problema, ou só quer trocar uma ideia, chega junto! Nosso CA está sempre de portas abertas.
-            <br/><strong> Juntos, fazemos mais do que código: fazemos história.</strong>
+            <br/><strong> Juntos, fazemos mais do que código: fazemos história.</strong>
             </p>
             <div className="flex gap-4 mt-4">
               <a href="/pdf/EstatutoCA.pdf" target="_blank" rel="noopener noreferrer" className="px-4 py-2 rounded bg-blue-600 text-white font-semibold shadow hover:bg-blue-700 transition-colors">ESTATUTO CAOC</a>
@@ -47,7 +47,7 @@ export default function Home() {
             </div>
           </div>
           <div className="flex-1 flex justify-center">
-            <img src="/imgs/banner.png" alt="Centro Acadêmico" className="rounded-lg max-w-xs shadow" />
+            <Image src="/imgs/banner.png" alt="Centro Acadêmico" width={300} height={200} className="rounded-lg max-w-xs shadow" />
           </div>
         </section>
 
