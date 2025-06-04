@@ -28,14 +28,7 @@ type Meta = {
   concluida?: boolean;
 };
 
-type Relatorio = {
-  transacoes: Transacao[];
-  resumo: {
-    saldoTotal: number;
-    totalEntradas: number;
-    totalSaidas: number;
-  };
-};
+
 
 // Hook simples para executar código apenas uma vez
 function useEffectOnce(callback: () => void) {

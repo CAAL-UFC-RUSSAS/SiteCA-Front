@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useCallback, useRef } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 import axios from 'axios';
@@ -28,14 +28,6 @@ type Meta = {
   concluida?: boolean;
 };
 
-type Relatorio = {
-  transacoes: Transacao[];
-  resumo: {
-    saldoTotal: number;
-    totalEntradas: number;
-    totalSaidas: number;
-  };
-};
 
 // Hook simples para executar código apenas uma vez
 function useEffectOnce(callback: () => void) {
@@ -67,8 +59,7 @@ export default function FinanceiroDescansoPage() {
   const [carregandoMetas, setCarregandoMetas] = useState(true);
   const [editandoMeta, setEditandoMeta] = useState<number | null>(null);
   
-  // Referência para rastrear a primeira renderização
-  const primeiraRenderizacao = useRef(true);
+
   
   const { toast } = useToast();
 
