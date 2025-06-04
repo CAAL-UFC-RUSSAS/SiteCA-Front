@@ -1,7 +1,7 @@
 import { Produto } from '@/types/produto';
 
 // Forçar o uso da API local para desenvolvimento
-const API_URL = 'http://localhost:3333';
+const API_URL = process.env.NEXT_PUBLIC_API_URL;
 
 // Função para verificar se o token está expirado
 export function isTokenExpired(token: string): boolean {
