@@ -1,9 +1,9 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
-import ClientNavbar from '@/components/ClientNavbar';
-import Footer from '@/components/Footer';
+import ClientLayout from '@/components/ClientLayout';
 import { AuthProvider } from '@/contexts/AuthContext';
+import { ToastContainer } from '@/components/ui/toast';
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -32,9 +32,10 @@ export default function RootLayout({
         suppressHydrationWarning
       >
         <AuthProvider>
-          <ClientNavbar />
-          {children}
-          <Footer />
+          <ClientLayout>
+            {children}
+            <ToastContainer />
+          </ClientLayout>
         </AuthProvider>
       </body>
     </html>

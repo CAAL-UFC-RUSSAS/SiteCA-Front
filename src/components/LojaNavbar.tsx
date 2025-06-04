@@ -57,7 +57,7 @@ export default function LojaNavbar() {
             <div className="max-w-7xl mx-auto w-full flex items-center justify-between">
                 {/* Logo */}
                 <div className="flex items-center">
-                    <Link href="/" className="text-2xl font-bold text-indigo-700">
+                    <Link href="/" className="text-2xl font-bold text-black flex items-center">
                         <Image
                             src="/logoCAAL.svg"
                             alt="Logo"
@@ -65,6 +65,9 @@ export default function LojaNavbar() {
                             height={50}
                             className="lg:hidden"
                         />
+                    </Link>
+                    
+                    <Link href="/loja" className="text-2xl font-bold text-black flex items-center">
                         <Image
                             src="/logoCAAL.svg"
                             alt="Logo"
@@ -72,10 +75,14 @@ export default function LojaNavbar() {
                             height={70}
                             className="hidden lg:block"
                         />
-                    </Link>
-                    {isCartPage && (
+                        {isCartPage && (
                         <span className="ml-2 text-xl font-semibold">| Carrinho de compras</span>
                     )}
+                                        {!isCartPage && (
+                        <span className="ml-2 text2xl font-bold lg:hidden">Lojinha do CA</span>
+                    )}
+                    </Link>
+
                 </div>
 
                 {/* Título e Buscador Desktop */}
@@ -210,8 +217,17 @@ export default function LojaNavbar() {
 
             {/* Campo de busca expandido (Mobile) */}
             {isSearchExpanded && (
-                <div className="lg:hidden absolute top-full left-0 right-0 bg-white shadow-md py-4 px-4 z-50">
-                    <form onSubmit={handleSearch} className="flex items-center gap-2">
+                <div className="lg:hidden absolute top-0 left-0 h-full w-full bg-white shadow-md py-2 px-4 z-50 flex items-center">
+                    <button
+                        onClick={toggleSearch}
+                        className="mr-2"
+                        aria-label="Fechar"
+                    >
+                        <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                        </svg>
+                    </button>
+                    <form onSubmit={handleSearch} className="flex-1 flex items-center gap-2">
                         <input
                             type="text"
                             placeholder="Buscar produtos..."

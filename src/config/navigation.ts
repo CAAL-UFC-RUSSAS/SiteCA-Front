@@ -8,24 +8,17 @@ export const navItems: NavItem[] = [
       { label: 'O Centro Acadêmico', href: '/sobre' },
       { label: 'Gestão Atual', href: '/sobre/gestao' },
       { label: 'Documentos', href: '/sobre/documentos' },
-      { label: 'Contato', href: '/sobre/contato' },
+      { label: 'Contato', href: '/contato' },
     ],
   },
   {
     label: 'Serviços',
-    submenu: [
-      { label: 'Serviços Estudantis', href: '/servicos' },
-      { label: 'Banco de Provas', href: '/servicos/provas' },
-      { label: 'Monitorias', href: '/servicos/monitorias' },
-      { label: 'Empréstimos', href: '/servicos/emprestimos' },
-      { label: 'Armários', href: '/servicos/armarios' },
-    ],
+    href: '/servicos',
   },
   {
     label: 'Eventos',
     submenu: [
-      { label: 'Calendário UFC', href: '/eventos/calendario' },
-      { label: 'Eventos do CA', href: '/eventos' },
+      { label: 'Calendário UFC', href: '/eventos' },
       { label: 'Galeria', href: '/eventos/galeria' },
     ],
   },
@@ -37,6 +30,8 @@ export const navItems: NavItem[] = [
       { label: 'Oportunidades', href: '/projetos/oportunidades' },
     ],
   },
+  
+  /* Comentado temporariamente
   {
     label: 'Calouros',
     href: '/calouros',
@@ -47,12 +42,17 @@ export const navItems: NavItem[] = [
       { label: 'Mapa do Campus', href: '/calouros/mapa' },
     ],
   },
+  */
+  
   {
     label: 'Financeiro',
     submenu: [
       { label: 'Prestação de Contas', href: '/financeiro' },
       { label: 'Transparência', href: '/financeiro/transparencia' },
-      { label: 'Loja do CA', href: '/loja' },
     ],
+  },
+  {
+    label: 'Loja do CA',
+    href: '/loja',
   },
 ]; 

@@ -1,0 +1,8 @@
+Este arquivo deve ser uma imagem real (JPG) que servirá como fallback para eventos sem imagem específica.
+
+Para completar a implementação, o usuário deve:
+1. Criar a pasta CA-front/public/imgs/ se ainda não existir
+2. Adicionar uma imagem chamada 'evento-default.jpg' nesta pasta
+3. Opcionalmente, adicionar mais imagens em CA-front/public/imgs/eventos/ numeradas de 1 a 5 (ex: 1.jpg, 2.jpg, etc.)
+
+A implementação atual irá alternar entre as imagens numeradas com base no ID do evento e usará a imagem default caso ocorra algum erro. 

@@ -1,6 +1,7 @@
 import { Produto } from '@/types/produto';
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3333';
+// Forçar o uso da API local para desenvolvimento
+const API_URL = 'http://localhost:3333';
 
 // Função para verificar se o token está expirado
 export function isTokenExpired(token: string): boolean {
@@ -205,4 +206,346 @@ export async function deleteProduto(id: number): Promise<void> {
     const error = await response.json().catch(() => ({}));
     throw new Error(error.message || 'Erro ao deletar produto');
   }
+}
+
+// Banner types
+export interface Banner {
+  id: number;
+  titulo: string;
+  descricao?: string;
+  link?: string;
+  tipo: string;
+  imagem?: string;
+  imagem_nome?: string;
+  imagem_mime?: string;
+  imagem_url?: string;
+  posicao: number;
+  ativo: boolean;
+  created_at?: string;
+  updated_at?: string;
+}
+
+// Banner services
+export const getBanners = async (): Promise<Banner[]> => {
+  try {
+    console.log('Enviando requisição para buscar banners:', `${API_URL}/banners`);
+    console.log('Headers:', getAuthHeaders());
+    
+    const response = await fetch(`${API_URL}/banners`, {
+      headers: getAuthHeaders()
+    });
+    
+    console.log('Resposta recebida:', {
+      status: response.status,
+      statusText: response.statusText,
+      ok: response.ok
+    });
+    
+    if (!response.ok) {
+      const errorData = await response.json().catch(() => ({ message: 'Erro desconhecido' }));
+      console.error('Erro detalhado:', errorData);
+      throw new Error(errorData.message || `Erro ao buscar banners: ${response.status} ${response.statusText}`);
+    }
+    
+    const data = await response.json();
+    console.log('Dados recebidos:', data);
+    
+    // Garantir que retornamos um array
+    if (!Array.isArray(data)) {
+      console.warn('Resposta não é um array:', data);
+      return [];
+    }
+    
+    return data;
+  } catch (error) {
+    console.error('Erro ao buscar banners:', error);
+    throw error;
+  }
+};
+
+export const getBannersAtivos = async (): Promise<Banner[]> => {
+  try {
+    const response = await fetch(`${API_URL}/banners/ativos`, {
+      headers: getAuthHeaders()
+    });
+    if (!response.ok) {
+      throw new Error('Erro ao buscar banners ativos');
+    }
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    console.error('Erro ao buscar banners ativos:', error);
+    throw error;
+  }
+};
+
+export const getBanner = async (id: number): Promise<Banner> => {
+  try {
+    const response = await fetch(`${API_URL}/banners/${id}`, {
+      headers: getAuthHeaders()
+    });
+    if (!response.ok) {
+      throw new Error('Erro ao buscar banner');
+    }
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    console.error(`Erro ao buscar banner ${id}:`, error);
+    throw error;
+  }
+};
+
+export const createBanner = async (banner: Omit<Banner, 'id'>): Promise<Banner> => {
+  try {
+    const response = await fetch(`${API_URL}/banners`, {
+      method: 'POST',
+      headers: getAuthHeaders(),
+      body: JSON.stringify(banner),
+    });
+    if (!response.ok) {
+      const error = await response.json().catch(() => ({}));
+      throw new Error(error.message || 'Erro ao criar banner');
+    }
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    console.error('Erro ao criar banner:', error);
+    throw error;
+  }
+};
+
+export const updateBanner = async (id: number, banner: Partial<Banner>): Promise<Banner> => {
+  try {
+    const response = await fetch(`${API_URL}/banners/${id}`, {
+      method: 'PUT',
+      headers: getAuthHeaders(),
+      body: JSON.stringify(banner),
+    });
+    if (!response.ok) {
+      const error = await response.json().catch(() => ({}));
+      throw new Error(error.message || 'Erro ao atualizar banner');
+    }
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    console.error(`Erro ao atualizar banner ${id}:`, error);
+    throw error;
+  }
+};
+
+export const deleteBanner = async (id: number): Promise<void> => {
+  try {
+    const response = await fetch(`${API_URL}/banners/${id}`, {
+      method: 'DELETE',
+      headers: getAuthHeaders()
+    });
+    if (!response.ok) {
+      const error = await response.json().catch(() => ({}));
+      throw new Error(error.message || 'Erro ao excluir banner');
+    }
+  } catch (error) {
+    console.error(`Erro ao excluir banner ${id}:`, error);
+    throw error;
+  }
+};
+
+export const reordenarBanners = async (bannerIds: number[]): Promise<void> => {
+  try {
+    const response = await fetch(`${API_URL}/banners/reordenar`, {
+      method: 'POST',
+      headers: getAuthHeaders(),
+      body: JSON.stringify({ bannerIds }),
+    });
+    if (!response.ok) {
+      const error = await response.json().catch(() => ({}));
+      throw new Error(error.message || 'Erro ao reordenar banners');
+    }
+  } catch (error) {
+    console.error('Erro ao reordenar banners:', error);
+    throw error;
+  }
+};
+
+// Aviso types
+export interface Aviso {
+  id: number;
+  titulo: string;
+  descricao?: string;
+  link?: string;
+  data_inicio: string;
+  data_fim?: string;
+  created_at?: string;
+  updated_at?: string;
+}
+
+// Calendário acadêmico da UFC
+export interface EventoCalendario {
+  id: string;
+  titulo: string;
+  data: string;
+  dataObj: Date;
+  tipo: 'ufc';
+}
+
+// Aviso services
+export const getAvisos = async (): Promise<Aviso[]> => {
+  try {
+    const response = await fetch(`${API_URL}/avisos`, {
+      headers: getAuthHeaders()
+    });
+    
+    if (!response.ok) {
+      const errorData = await response.json().catch(() => ({ message: 'Erro desconhecido' }));
+      throw new Error(errorData.message || `Erro ao buscar avisos: ${response.status} ${response.statusText}`);
+    }
+    
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    console.error('Erro ao buscar avisos:', error);
+    throw error;
+  }
+};
+
+export const getAvisosAtivos = async (): Promise<Aviso[]> => {
+  try {
+    const response = await fetch(`${API_URL}/avisos/ativos`, {
+      headers: getAuthHeaders()
+    });
+    
+    if (!response.ok) {
+      const errorData = await response.json().catch(() => ({ message: 'Erro desconhecido' }));
+      throw new Error(errorData.message || `Erro ao buscar avisos ativos: ${response.status} ${response.statusText}`);
+    }
+    
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    console.error('Erro ao buscar avisos ativos:', error);
+    throw error;
+  }
+};
+
+export const getAviso = async (id: number): Promise<Aviso> => {
+  try {
+    const response = await fetch(`${API_URL}/avisos/${id}`, {
+      headers: getAuthHeaders()
+    });
+    
+    if (!response.ok) {
+      const errorData = await response.json().catch(() => ({ message: 'Erro desconhecido' }));
+      throw new Error(errorData.message || `Erro ao buscar aviso: ${response.status} ${response.statusText}`);
+    }
+    
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    console.error('Erro ao buscar aviso:', error);
+    throw error;
+  }
+};
+
+export const createAviso = async (aviso: Omit<Aviso, 'id'>): Promise<Aviso> => {
+  try {
+    const response = await fetch(`${API_URL}/avisos`, {
+      method: 'POST',
+      headers: getAuthHeaders(),
+      body: JSON.stringify(aviso)
+    });
+    
+    if (!response.ok) {
+      const errorData = await response.json().catch(() => ({ message: 'Erro desconhecido' }));
+      throw new Error(errorData.message || `Erro ao criar aviso: ${response.status} ${response.statusText}`);
+    }
+    
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    console.error('Erro ao criar aviso:', error);
+    throw error;
+  }
+};
+
+export const updateAviso = async (id: number, aviso: Partial<Aviso>): Promise<Aviso> => {
+  try {
+    const response = await fetch(`${API_URL}/avisos/${id}`, {
+      method: 'PUT',
+      headers: getAuthHeaders(),
+      body: JSON.stringify(aviso)
+    });
+    
+    if (!response.ok) {
+      const errorData = await response.json().catch(() => ({ message: 'Erro desconhecido' }));
+      throw new Error(errorData.message || `Erro ao atualizar aviso: ${response.status} ${response.statusText}`);
+    }
+    
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    console.error('Erro ao atualizar aviso:', error);
+    throw error;
+  }
+};
+
+export const deleteAviso = async (id: number): Promise<void> => {
+  try {
+    const response = await fetch(`${API_URL}/avisos/${id}`, {
+      method: 'DELETE',
+      headers: getAuthHeaders()
+    });
+    
+    if (!response.ok) {
+      const errorData = await response.json().catch(() => ({ message: 'Erro desconhecido' }));
+      throw new Error(errorData.message || `Erro ao deletar aviso: ${response.status} ${response.statusText}`);
+    }
+  } catch (error) {
+    console.error('Erro ao deletar aviso:', error);
+    throw error;
+  }
+};
+
+// Função para buscar o calendário acadêmico da UFC
+export const getCalendarioUFC = async (): Promise<EventoCalendario[]> => {
+  try {
+    // Agora vamos usar a rota do backend que implementa o scraping
+    const response = await fetch(`${API_URL}/calendario/ufc`, {
+      headers: getAuthHeaders()
+    });
+    
+    if (!response.ok) {
+      const errorData = await response.json().catch(() => ({ message: 'Erro desconhecido' }));
+      throw new Error(errorData.message || `Erro ao buscar calendário da UFC: ${response.status} ${response.statusText}`);
+    }
+    
+    const data = await response.json();
+    
+    // Converte objetos de data de string para Date
+    return data.map((evento: any) => ({
+      ...evento,
+      dataObj: new Date(evento.dataObj)
+    }));
+  } catch (error) {
+    console.error('Erro ao buscar calendário da UFC:', error);
+    return getCalendarioUFCFallback();
+  }
+};
+
+// Função helper para extrair eventos do HTML (Não usada mais, pois agora é feito no backend)
+function extrairEventosDoHTML(html: string): EventoCalendario[] {
+  // Esta função não é mais necessária pois o backend lida com a extração
+  // Mantemos para fallback temporário
+  return getCalendarioUFCFallback();
+}
+
+// Dados de fallback para o calendário da UFC caso o scraping falhe
+function getCalendarioUFCFallback(): EventoCalendario[] {
+  return [
+    { 
+      id: 'cal-1', 
+      titulo: 'ERRO', 
+      data: '12/02/2024', 
+      dataObj: new Date('2024-02-12'),
+      tipo: 'ufc'
+    }
+  ];
 }

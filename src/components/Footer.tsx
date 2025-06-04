@@ -40,7 +40,7 @@ export default function Footer() {
           <h3 className="font-bold text-lg mt-4">Mais Informações</h3>
           <ul className="space-y-1">
             <li>
-              <Link href="/sobre/contato" className="hover:underline text-blue-700">Fale Conosco</Link>
+              <Link href="/contato" className="hover:underline text-blue-700">Fale Conosco</Link>
             </li>
             <li>
               <Link href="/calouros/guia" className="hover:underline text-blue-700">Guia do Calouro</Link>
