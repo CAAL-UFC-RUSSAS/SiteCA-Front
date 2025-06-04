@@ -6,7 +6,7 @@ import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import Link from "next/link";
 import Image from "next/image";
-import { CalendarDays, Store, School } from "lucide-react";
+import { Store, School } from "lucide-react";
 import EventosSidebar from "@/components/EventosSidebar";
 
 export default function Home() {

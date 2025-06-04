@@ -520,7 +520,7 @@ export const getCalendarioUFC = async (): Promise<EventoCalendario[]> => {
     const data = await response.json();
     
     // Converte objetos de data de string para Date
-    return data.map((evento: any) => ({
+    return data.map((evento: EventoCalendario) => ({
       ...evento,
       dataObj: new Date(evento.dataObj)
     }));
@@ -529,13 +529,6 @@ export const getCalendarioUFC = async (): Promise<EventoCalendario[]> => {
     return getCalendarioUFCFallback();
   }
 };
-
-// Função helper para extrair eventos do HTML (Não usada mais, pois agora é feito no backend)
-function extrairEventosDoHTML(html: string): EventoCalendario[] {
-  // Esta função não é mais necessária pois o backend lida com a extração
-  // Mantemos para fallback temporário
-  return getCalendarioUFCFallback();
-}
 
 // Dados de fallback para o calendário da UFC caso o scraping falhe
 function getCalendarioUFCFallback(): EventoCalendario[] {

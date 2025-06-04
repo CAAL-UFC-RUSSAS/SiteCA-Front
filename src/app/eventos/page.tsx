@@ -2,13 +2,13 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { Calendar, ChevronRight, ExternalLink, Info } from 'lucide-react';
-import { Aviso, getAvisos, getCalendarioUFC, EventoCalendario } from '@/services/api';
+import {  ChevronRight, ExternalLink, Info } from 'lucide-react';
+import {  getAvisos, getCalendarioUFC } from '@/services/api';
 import { Badge } from '@/components/ui/badge';
 import EventosSidebar from '@/components/EventosSidebar';
 
 interface EventoFormatado {
-  id: number;
+  id: number | string;
   titulo: string;
   descricao?: string;
   data: string;
@@ -16,13 +16,12 @@ interface EventoFormatado {
   status: 'passado' | 'ativo' | 'futuro';
   link?: string;
   passado?: boolean;
+  tipo: 'ca' | 'ufc';
 }
 
 export default function EventosPage() {
-  const [eventos, setEventos] = useState<EventoFormatado[]>([]);
-  const [eventosCombinados, setEventosCombinados] = useState<any[]>([]);
+  const [eventosCombinados, setEventosCombinados] = useState<EventoFormatado[]>([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(false);
   const [filtroTipo, setFiltroTipo] = useState<'todos' | 'ca' | 'ufc'>('todos');
   const [filtroTempo, setFiltroTempo] = useState<'todos' | 'atual'>('atual');
 
@@ -74,25 +73,27 @@ export default function EventosPage() {
               status,
               passado,
               link: aviso.link,
-              tipo: 'ca'
+              tipo: 'ca' as const
             };
           });
-        
-        setEventos(eventosFormatados);
         
         // Combinar eventos do CA com o calendário da UFC
         const todosCombinados = [
           ...eventosFormatados, 
           ...calendarioUFC.map(evento => ({
-            ...evento,
-            passado: evento.dataObj < hoje
+            id: evento.id,
+            titulo: evento.titulo,
+            data: evento.data,
+            dataObj: evento.dataObj,
+            status: evento.dataObj < hoje ? 'passado' as const : 'futuro' as const,
+            passado: evento.dataObj < hoje,
+            tipo: 'ufc' as const
           }))
         ].sort((a, b) => a.dataObj.getTime() - b.dataObj.getTime());
           
         setEventosCombinados(todosCombinados);
       } catch (err) {
         console.error('Erro ao buscar eventos:', err);
-        setError(true);
         // Tenta ainda buscar só o calendário da UFC em caso de erro
         try {
           const hoje = new Date();
@@ -101,8 +102,13 @@ export default function EventosPage() {
           setEventosCombinados(
             calendarioUFC
               .map(evento => ({
-                ...evento,
-                passado: evento.dataObj < hoje
+                id: evento.id,
+                titulo: evento.titulo,
+                data: evento.data,
+                dataObj: evento.dataObj,
+                status: evento.dataObj < hoje ? 'passado' as const : 'futuro' as const,
+                passado: evento.dataObj < hoje,
+                tipo: 'ufc' as const
               }))
               .sort((a, b) => a.dataObj.getTime() - b.dataObj.getTime())
           );
@@ -133,27 +139,14 @@ export default function EventosPage() {
   });
 
   // Agrupar eventos por mês
-  const eventosAgrupados = eventosFiltrados.reduce((grupos, evento) => {
+  const eventosAgrupados = eventosFiltrados.reduce<Record<string, EventoFormatado[]>>((grupos, evento) => {
     const mes = evento.dataObj.toLocaleDateString('pt-BR', { month: 'long', year: 'numeric' });
     if (!grupos[mes]) {
       grupos[mes] = [];
     }
     grupos[mes].push(evento);
     return grupos;
-  }, {} as Record<string, any[]>);
-
-  // Define a interface para os eventos agrupados
-  interface EventoAgrupado {
-    id: number | string;
-    titulo: string;
-    descricao?: string;
-    data: string;
-    dataObj: Date;
-    status: 'passado' | 'ativo' | 'futuro';
-    passado?: boolean;
-    link?: string;
-    tipo: 'ca' | 'ufc';
-  }
+  }, {});
 
   return (
     <>
@@ -247,7 +240,7 @@ export default function EventosPage() {
                   {mes}
                 </div>
                 <ul className="divide-y divide-gray-200">
-                  {eventosAgrupados[mes].map((evento: EventoAgrupado) => (
+                  {eventosAgrupados[mes].map((evento: EventoFormatado) => (
                     <li 
                       key={`${evento.tipo}-${evento.id}`} 
                       className={`p-4 hover:bg-gray-50 ${evento.passado ? 'opacity-70' : ''}`}

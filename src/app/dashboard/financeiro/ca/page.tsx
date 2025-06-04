@@ -1,7 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
-import { useRouter } from 'next/navigation';
+import { useState, useEffect, useCallback } from 'react';
 import { format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 import axios from 'axios';
@@ -57,12 +56,11 @@ export default function FinanceiroCAPage() {
   const [carregandoMetas, setCarregandoMetas] = useState(true);
   const [editandoMeta, setEditandoMeta] = useState<number | null>(null);
   
-  const router = useRouter();
   const { toast } = useToast();
 
   const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
 
-  const carregarTransacoes = async () => {
+  const carregarTransacoes = useCallback(async () => {
     setCarregando(true);
     try {
       const token = localStorage.getItem('authToken');
@@ -82,9 +80,9 @@ export default function FinanceiroCAPage() {
     } finally {
       setCarregando(false);
     }
-  };
+  }, [API_URL, toast]);
   
-  const carregarMetas = async () => {
+  const carregarMetas = useCallback(async () => {
     setCarregandoMetas(true);
     try {
       const token = localStorage.getItem('authToken');
@@ -105,7 +103,7 @@ export default function FinanceiroCAPage() {
     } finally {
       setCarregandoMetas(false);
     }
-  };
+  }, [API_URL, toast]);
   
   const atualizarProgressoMetas = async () => {
     try {
@@ -134,7 +132,7 @@ export default function FinanceiroCAPage() {
   useEffect(() => {
     carregarTransacoes();
     carregarMetas();
-  }, []);
+  }, [carregarTransacoes, carregarMetas]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();

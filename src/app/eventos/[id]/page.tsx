@@ -1,23 +1,30 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, use } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { Calendar, Clock, ArrowLeft, Share2, FileText, ExternalLink } from 'lucide-react';
-import { getAviso } from '@/services/api';
+import { Calendar, ArrowLeft, Share2, FileText, ExternalLink } from 'lucide-react';
+import { getAviso, Aviso } from '@/services/api';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import EventosSidebar from '@/components/EventosSidebar';
 
 interface EventoDetalhesProps {
-  params: {
+  params: Promise<{
     id: string;
-  };
+  }>;
+}
+
+interface EventoDetalhado extends Aviso {
+  dataFormatada: string;
+  status: 'passado' | 'ativo' | 'futuro';
+  dataFimFormatada: string | null;
 }
 
 export default function EventoDetalhesPage({ params }: EventoDetalhesProps) {
+  const resolvedParams = use(params);
   const router = useRouter();
-  const [evento, setEvento] = useState<any>(null);
+  const [evento, setEvento] = useState<EventoDetalhado | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -25,7 +32,7 @@ export default function EventoDetalhesPage({ params }: EventoDetalhesProps) {
     const fetchEvento = async () => {
       try {
         setLoading(true);
-        const id = parseInt(params.id);
+        const id = parseInt(resolvedParams.id);
         if (isNaN(id)) {
           throw new Error('ID inválido');
         }
@@ -76,7 +83,7 @@ export default function EventoDetalhesPage({ params }: EventoDetalhesProps) {
     };
     
     fetchEvento();
-  }, [params.id]);
+  }, [resolvedParams.id]);
 
   const compartilharEvento = () => {
     if (navigator.share) {

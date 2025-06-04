@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { CalendarDays, ExternalLink } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
-import { Aviso, getAvisosAtivos, EventoCalendario, getCalendarioUFC } from '@/services/api';
+import { getAvisosAtivos, getCalendarioUFC } from '@/services/api';
 
 interface EventoFormatado {
   id: number | string;
@@ -20,7 +20,6 @@ export default function EventosSidebar() {
   const [minimizado, setMinimizado] = useState(false);
   const [eventos, setEventos] = useState<EventoFormatado[]>([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(false);
   const [mostrarUFC, setMostrarUFC] = useState(true);
 
   useEffect(() => {
@@ -77,10 +76,8 @@ export default function EventosSidebar() {
           .slice(0, 5);
         
         setEventos(todosCombinados);
-        setError(false);
       } catch (err) {
         console.error('Erro ao buscar eventos:', err);
-        setError(true);
         // Usar dados de fallback em caso de erro
         const hoje = new Date();
         try {
@@ -101,7 +98,7 @@ export default function EventosSidebar() {
               passado: evento.dataObj < hoje
             }))
           ]);
-        } catch (fallbackError) {
+        } catch {
           // Se mesmo o fallback falhar, usa dados mínimos
           setEventos([
             {

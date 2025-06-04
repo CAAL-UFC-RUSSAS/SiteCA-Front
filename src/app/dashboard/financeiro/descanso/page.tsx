@@ -1,7 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
-import { useRouter } from 'next/navigation';
+import { useState, useEffect, useCallback } from 'react';
 import { format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 import axios from 'axios';
@@ -57,12 +56,11 @@ export default function FinanceiroDescansoPage() {
   const [carregandoMetas, setCarregandoMetas] = useState(true);
   const [editandoMeta, setEditandoMeta] = useState<number | null>(null);
   
-  const router = useRouter();
   const { toast } = useToast();
   
   const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
 
-  const carregarTransacoes = async () => {
+  const carregarTransacoes = useCallback(async () => {
     setCarregando(true);
     try {
       const token = localStorage.getItem('authToken');
@@ -82,9 +80,9 @@ export default function FinanceiroDescansoPage() {
     } finally {
       setCarregando(false);
     }
-  };
+  }, [API_URL, toast]);
 
-  const carregarMetas = async () => {
+  const carregarMetas = useCallback(async () => {
     setCarregandoMetas(true);
     try {
       const token = localStorage.getItem('authToken');
@@ -92,7 +90,7 @@ export default function FinanceiroDescansoPage() {
         headers: { Authorization: `Bearer ${token}` },
       });
       
-      // Filtrar apenas metas da sala de descanso
+      // Filtrar apenas metas do espaço de descanso
       const metasDescanso = response.data.filter(meta => meta.tipo === 'descanso');
       setMetas(metasDescanso);
     } catch (error) {
@@ -105,7 +103,7 @@ export default function FinanceiroDescansoPage() {
     } finally {
       setCarregandoMetas(false);
     }
-  };
+  }, [API_URL, toast]);
 
   const atualizarProgressoMetas = async () => {
     try {
@@ -134,7 +132,7 @@ export default function FinanceiroDescansoPage() {
   useEffect(() => {
     carregarTransacoes();
     carregarMetas();
-  }, []);
+  }, [carregarTransacoes, carregarMetas]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -369,37 +367,6 @@ export default function FinanceiroDescansoPage() {
     }
   };
 
-  const handleDesmarcarMeta = async (id: number, meta: Meta) => {
-    try {
-      const token = localStorage.getItem('authToken');
-      // Como não temos um campo concluida, vamos atualizar o valorArrecadado para ser menor que valorNecessario
-      await axios.put(
-        `${API_URL}/financeiro/metas/${id}`,
-        {
-          ...meta,
-          valorArrecadado: parseFloat(String(meta.valorNecessario)) * 0.9, // 90% do valor necessário
-          tipo: 'descanso'
-        },
-        { headers: { Authorization: `Bearer ${token}` } }
-      );
-      
-      // Recarregar metas
-      carregarMetas();
-      
-      toast({
-        title: 'Sucesso',
-        description: 'Meta desmarcada como concluída',
-      });
-    } catch (error) {
-      console.error('Erro ao desmarcar meta:', error);
-      toast({
-        title: 'Erro',
-        description: 'Não foi possível desmarcar a meta como concluída',
-        variant: 'destructive',
-      });
-    }
-  };
-
   // Adicionar a função auxiliar para verificar se a meta está concluída
   const isConcluida = (meta: Meta): boolean => {
     if (meta.concluida !== undefined) return meta.concluida;
@@ -588,81 +555,63 @@ export default function FinanceiroDescansoPage() {
               </div>
             ) : (
               <div className="grid grid-cols-1 gap-1.5 max-h-[350px] overflow-y-auto pr-1">
-                {metas
-                  .sort((a, b) => {
-                    // Primeiro, ordenar por status (não concluídas primeiro)
-                    const aCompleted = isConcluida(a);
-                    const bCompleted = isConcluida(b);
-                    if (aCompleted !== bCompleted) {
-                      return aCompleted ? 1 : -1;
-                    }
-                    // Depois, ordenar por data limite
-                    return new Date(a.dataLimite).getTime() - new Date(b.dataLimite).getTime();
-                  })
-                  .map((meta) => (
-                    <div 
-                      key={meta.id} 
-                      className={`border rounded p-1.5 ${isConcluida(meta) ? 'bg-green-50 border-green-200' : ''}`}
-                    >
-                      <div className="flex justify-between items-start">
-                        <div className="flex-1">
-                          <div className="flex items-center">
-                            <h3 className="font-medium text-xs">{meta.descricao}</h3>
-                            {isConcluida(meta) && (
-                              <span className="ml-1 px-1 py-0 bg-green-100 text-green-800 text-xs font-medium rounded-full">
-                                Concluída
-                              </span>
-                            )}
+                {metas.map((meta) => (
+                  <div 
+                    key={meta.id} 
+                    className={`border rounded p-1.5 ${isConcluida(meta) ? 'bg-green-50 border-green-200' : ''}`}
+                  >
+                    <div className="flex justify-between items-start">
+                      <div className="flex-1">
+                        <div className="flex items-center">
+                          <h3 className="font-medium text-xs">{meta.descricao}</h3>
+                          {isConcluida(meta) && (
+                            <span className="ml-1 px-1 py-0 bg-green-100 text-green-800 text-xs font-medium rounded-full">
+                              Concluída
+                            </span>
+                          )}
+                        </div>
+                        <div className="mt-0.5 flex flex-wrap text-xs text-gray-600 gap-1">
+                          <span>Meta: R$ {parseFloat(String(meta.valorNecessario)).toFixed(2)}</span>
+                          <span>•</span>
+                          <span>Atual: R$ {parseFloat(String(meta.valorArrecadado)).toFixed(2)}</span>
+                        </div>
+                        <div className="mt-1">
+                          <div className="w-full bg-gray-200 rounded-full h-1">
+                            <div 
+                              className={`h-1 rounded-full ${isConcluida(meta) ? 'bg-green-500' : 'bg-blue-600'}`} 
+                              style={{ width: `${Math.min(100, (parseFloat(String(meta.valorArrecadado)) / parseFloat(String(meta.valorNecessario))) * 100)}%` }}
+                            ></div>
                           </div>
-                          <div className="mt-0.5 flex flex-wrap text-xs text-gray-600 gap-1">
-                            <span>Meta: R$ {parseFloat(String(meta.valorNecessario)).toFixed(2)}</span>
-                            <span>•</span>
-                            <span>Atual: R$ {parseFloat(String(meta.valorArrecadado)).toFixed(2)}</span>
-                          </div>
-                          <div className="mt-1">
-                            <div className="w-full bg-gray-200 rounded-full h-1">
-                              <div 
-                                className={`h-1 rounded-full ${isConcluida(meta) ? 'bg-green-500' : 'bg-blue-600'}`} 
-                                style={{ width: `${Math.min(100, (parseFloat(String(meta.valorArrecadado)) / parseFloat(String(meta.valorNecessario))) * 100)}%` }}
-                              ></div>
-                            </div>
-                            <div className="flex justify-between mt-0.5 text-xs items-center">
-                              <span className="text-[10px]">{Math.round((parseFloat(String(meta.valorArrecadado)) / parseFloat(String(meta.valorNecessario))) * 100)}%</span>
-                              <div className="flex space-x-1">
-                                {!isConcluida(meta) ? (
-                                  <button
-                                    onClick={() => handleConcluirMeta(meta.id)}
-                                    className="text-indigo-600 hover:text-indigo-800 text-[10px]"
-                                  >
-                                    Concluir
-                                  </button>
-                                ) : (
-                                  <button
-                                    onClick={() => handleDesmarcarMeta(meta.id, meta)}
-                                    className="text-amber-600 hover:text-amber-800 text-[10px]"
-                                  >
-                                    Desmarcar
-                                  </button>
-                                )}
+                          <div className="flex justify-between mt-0.5 text-xs items-center">
+                            <span className="text-[10px]">{Math.round((parseFloat(String(meta.valorArrecadado)) / parseFloat(String(meta.valorNecessario))) * 100)}%</span>
+                            <div className="flex space-x-1">
+                              {!isConcluida(meta) && (
                                 <button
-                                  onClick={() => handleEditarMeta(meta)}
-                                  className="text-blue-600 hover:text-blue-800 text-[10px]"
+                                  onClick={() => handleConcluirMeta(meta.id)}
+                                  className="text-indigo-600 hover:text-indigo-800 text-[10px]"
                                 >
-                                  Editar
+                                  Concluir
                                 </button>
-                                <button
-                                  onClick={() => meta.id && handleExcluirMeta(meta.id)}
-                                  className="text-red-600 hover:text-red-800 text-[10px]"
-                                >
-                                  Excluir
-                                </button>
-                              </div>
+                              )}
+                              <button
+                                onClick={() => handleEditarMeta(meta)}
+                                className="text-blue-600 hover:text-blue-800 text-[10px]"
+                              >
+                                Editar
+                              </button>
+                              <button
+                                onClick={() => meta.id && handleExcluirMeta(meta.id)}
+                                className="text-red-600 hover:text-red-800 text-[10px]"
+                              >
+                                Excluir
+                              </button>
                             </div>
                           </div>
                         </div>
                       </div>
                     </div>
-                  ))}
+                  </div>
+                ))}
               </div>
             )}
           </div>

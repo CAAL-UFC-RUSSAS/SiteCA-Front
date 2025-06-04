@@ -2,7 +2,7 @@
 
 import { Banner } from '@/services/api';
 import { useState } from 'react';
-import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
+import { DragDropContext, Droppable, Draggable, DropResult } from 'react-beautiful-dnd';
 
 interface BannerTableProps {
   banners: Banner[];
@@ -18,7 +18,7 @@ export function BannerTable({ banners, onEdit, onDelete, onReorder }: BannerTabl
     setExpandedBanner(expandedBanner === id ? null : id);
   };
   
-  const handleDragEnd = (result: any) => {
+  const handleDragEnd = (result: DropResult) => {
     if (!result.destination || !onReorder) return;
     
     const items = Array.from(banners);

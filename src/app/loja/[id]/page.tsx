@@ -43,26 +43,6 @@ export default function ProdutoPage({ params }: { params: Promise<{ id: string }
         return tags.filter(tag => typeRegex.test(tag));
     };
 
-    // Busca produtos relacionados com base nas tags do produto atual
-    const encontrarProdutosRelacionados = (produtoAtual: Produto, todosProdutos: Produto[]) => {
-        if (!produtoAtual || !Array.isArray(produtoAtual.tags) || !Array.isArray(todosProdutos)) {
-            return [];
-        }
-
-        // Filtra produtos que compartilham pelo menos uma tag com o produto atual
-        // e exclui o próprio produto atual
-        const relacionados = todosProdutos.filter(p => 
-            p.id !== produtoAtual.id && 
-            Array.isArray(p.tags) && 
-            p.tags.some(tag => produtoAtual.tags.includes(tag))
-        );
-
-        // Embaralha os resultados e limita a 4-8 produtos
-        return relacionados
-            .sort(() => 0.5 - Math.random())
-            .slice(0, Math.min(8, relacionados.length));
-    };
-
     useEffect(() => {
         const fetchProduto = async () => {
             try {

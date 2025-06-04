@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 import axios from 'axios';
@@ -63,7 +63,7 @@ export default function TransparenciaFinanceiraPage() {
   
   const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
 
-  const carregarDados = async () => {
+  const carregarDados = useCallback(async () => {
     setCarregando(true);
     try {
       const response = await axios.get<DadosTransparencia>(
@@ -75,11 +75,11 @@ export default function TransparenciaFinanceiraPage() {
     } finally {
       setCarregando(false);
     }
-  };
+  }, [API_URL]);
 
   useEffect(() => {
     carregarDados();
-  }, []);
+  }, [carregarDados]);
 
   const gerarRelatorioMensal = async () => {
     setGerandoPDF(true);

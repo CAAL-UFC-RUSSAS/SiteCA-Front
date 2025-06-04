@@ -1,5 +1,3 @@
-import { useState } from 'react';
-
 type ToastVariant = 'default' | 'success' | 'destructive';
 
 type ToastProps = {

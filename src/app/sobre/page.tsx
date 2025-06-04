@@ -262,7 +262,7 @@ export default function SobrePage() {
   );
 }
 
-const Clock = ({ className }) => {
+const Clock = ({ className }: { className?: string }) => {
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"

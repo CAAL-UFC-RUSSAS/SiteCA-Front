@@ -3,7 +3,6 @@
 import React from 'react';
 import { Printer, Book, Coffee, Box, Users, Calendar, HelpCircle, ChevronDown, Clock } from 'lucide-react';
 import Link from 'next/link';
-import Image from 'next/image';
 
 export default function ServicosPage() {
   const [servicoAberto, setServicoAberto] = React.useState<string | null>('impressao');
