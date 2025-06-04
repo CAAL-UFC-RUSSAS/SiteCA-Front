@@ -1,10 +1,13 @@
 'use client';
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect } from 'react';
 import { format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 import axios from 'axios';
 import { useToast } from '@/hooks/useToast';
+
+// Constantes definidas fora do componente para evitar recriação
+const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
 
 type Transacao = {
   id: number;
@@ -34,6 +37,14 @@ type Relatorio = {
   };
 };
 
+// Hook simples para executar código apenas uma vez
+function useEffectOnce(callback: () => void) {
+  useEffect(() => {
+    callback();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+}
+
 export default function FinanceiroCAPage() {
   const [transacoes, setTransacoes] = useState<Transacao[]>([]);
   const [resumo, setResumo] = useState({ saldoTotal: 0, totalEntradas: 0, totalSaidas: 0 });
@@ -58,81 +69,96 @@ export default function FinanceiroCAPage() {
   
   const { toast } = useToast();
 
-  const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
-
-  const carregarTransacoes = useCallback(async () => {
+  // Funções sem useCallback para evitar dependências circulares
+  function carregarTransacoes() {
     setCarregando(true);
+    
     try {
+      console.log('Carregando transações do CA...');
       const token = localStorage.getItem('authToken');
-      const response = await axios.get<Relatorio>(`${API_URL}/financeiro/ca/relatorio`, {
+      axios.get(`${API_URL}/financeiro/ca/relatorio`, {
         headers: { Authorization: `Bearer ${token}` },
+      }).then(response => {
+        console.log('Transações carregadas:', response.data.transacoes.length);
+        setTransacoes(response.data.transacoes);
+        setResumo(response.data.resumo);
+        setCarregando(false);
+      }).catch(error => {
+        console.error('Erro ao carregar transações:', error);
+        toast({
+          title: 'Erro',
+          description: 'Não foi possível carregar as transações',
+          variant: 'destructive',
+        });
+        setCarregando(false);
       });
-      
-      setTransacoes(response.data.transacoes);
-      setResumo(response.data.resumo);
     } catch (error) {
-      console.error('Erro ao carregar transações:', error);
-      toast({
-        title: 'Erro',
-        description: 'Não foi possível carregar as transações',
-        variant: 'destructive',
-      });
-    } finally {
+      console.error('Erro ao iniciar carregamento:', error);
       setCarregando(false);
     }
-  }, [API_URL, toast]);
+  }
   
-  const carregarMetas = useCallback(async () => {
+  function carregarMetas() {
     setCarregandoMetas(true);
+    
     try {
+      console.log('Carregando metas do CA...');
       const token = localStorage.getItem('authToken');
-      const response = await axios.get<Meta[]>(`${API_URL}/financeiro/metas`, {
+      axios.get(`${API_URL}/financeiro/metas`, {
         headers: { Authorization: `Bearer ${token}` },
+      }).then(response => {
+        // Filtrar apenas metas do CA
+        const metasCA = response.data.filter((meta: { tipo: string }) => meta.tipo === 'ca');
+        console.log('Metas carregadas:', metasCA.length);
+        setMetas(metasCA);
+        setCarregandoMetas(false);
+      }).catch(error => {
+        console.error('Erro ao carregar metas:', error);
+        toast({
+          title: 'Erro',
+          description: 'Não foi possível carregar as metas',
+          variant: 'destructive',
+        });
+        setCarregandoMetas(false);
       });
-      
-      // Filtrar apenas metas do CA
-      const metasCA = response.data.filter(meta => meta.tipo === 'ca');
-      setMetas(metasCA);
     } catch (error) {
-      console.error('Erro ao carregar metas:', error);
-      toast({
-        title: 'Erro',
-        description: 'Não foi possível carregar as metas',
-        variant: 'destructive',
-      });
-    } finally {
+      console.error('Erro ao iniciar carregamento de metas:', error);
       setCarregandoMetas(false);
     }
-  }, [API_URL, toast]);
+  }
   
-  const atualizarProgressoMetas = async () => {
-    try {
-      const token = localStorage.getItem('authToken');
-      await axios.get(`${API_URL}/financeiro/metas/progresso/ca`, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-      
-      // Recarregar metas após atualização
-      carregarMetas();
-      
-      toast({
-        title: 'Sucesso',
-        description: 'Progresso das metas atualizado com o saldo disponível',
-      });
-    } catch (error) {
-      console.error('Erro ao atualizar progresso das metas:', error);
-      toast({
-        title: 'Erro',
-        description: 'Não foi possível atualizar o progresso das metas',
-        variant: 'destructive',
-      });
-    }
-  };
-
-  useEffect(() => {
+  // Executar uma única vez na montagem do componente
+  useEffectOnce(() => {
+    console.log('Carregando dados iniciais do CA...');
     carregarTransacoes();
     carregarMetas();
-  }, [carregarTransacoes, carregarMetas]);
+  });
+
+  const atualizarProgressoMetas = () => {
+    try {
+      const token = localStorage.getItem('authToken');
+      axios.get(`${API_URL}/financeiro/metas/progresso/ca`, {
+        headers: { Authorization: `Bearer ${token}` },
+      }).then(() => {
+        // Recarregar metas após atualização
+        carregarMetas();
+        
+        toast({
+          title: 'Sucesso',
+          description: 'Progresso das metas atualizado com o saldo disponível',
+        });
+      }).catch(error => {
+        console.error('Erro ao atualizar progresso das metas:', error);
+        toast({
+          title: 'Erro',
+          description: 'Não foi possível atualizar o progresso das metas',
+          variant: 'destructive',
+        });
+      });
+    } catch (error) {
+      console.error('Erro ao iniciar atualização:', error);
+    }
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
