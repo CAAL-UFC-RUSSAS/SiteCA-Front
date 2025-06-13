@@ -132,20 +132,20 @@ export function ProdutoForm({
 
         console.log('Dados finais do produto:', produtoData);
         console.log('==================');
-        onSubmit(produtoData);
-    };
+    onSubmit(produtoData);
+  };
 
   return (
         <form onSubmit={handleSubmit} className="space-y-4 bg-transparent p-4 md:p-6 rounded-lg shadow-lg max-w-4xl mx-auto">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div>
-              <label className="block text-sm font-medium text-gray-700">Nome</label>
-              <input
-                type="text"
+          <div>
+            <label className="block text-sm font-medium text-gray-700">Nome</label>
+            <input
+              type="text"
                 value={nome}
                 onChange={(e) => setNome(e.target.value)}
                 className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
-                required
+              required
               />
             </div>
 
@@ -156,9 +156,9 @@ export function ProdutoForm({
                 step="0.01"
                 value={preco}
                 onChange={(e) => setPreco(e.target.value)}
-                className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
+              className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
                 required
-              />
+            />
             </div>
           </div>
 
@@ -174,26 +174,26 @@ export function ProdutoForm({
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div>
-              <label className="block text-sm font-medium text-gray-700">Quantidade</label>
-              <input
-                type="number"
+          <div>
+            <label className="block text-sm font-medium text-gray-700">Quantidade</label>
+            <input
+              type="number"
                 value={quantidade}
                 onChange={(e) => setQuantidade(e.target.value)}
                 className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
-                required
-              />
-            </div>
+              required
+            />
+          </div>
 
-            <div>
+          <div>
               <label className="block text-sm font-medium text-gray-700">Tags (separadas por vírgula)</label>
-              <input
-                type="text"
+            <input
+              type="text"
                 value={tags}
                 onChange={(e) => setTags(e.target.value)}
-                className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
+              className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
                 placeholder="Ex: masculino, feminino, P, M, G"
-              />
+            />
             </div>
           </div>
 
@@ -252,9 +252,9 @@ export function ProdutoForm({
                         onChange={(e) => handleCampoPersonalizadoChange(index, 'opcoes', e.target.value)}
                         placeholder="Opções (separadas por vírgula)"
                         className="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
-                      />
-                    </div>
-                  )}
+                />
+              </div>
+            )}
                   <div className="mt-2">
                     {campo.tipo === 'opcao' ? (
                       <select

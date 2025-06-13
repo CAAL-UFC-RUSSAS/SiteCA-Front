@@ -109,23 +109,61 @@ export default function AvisoTable() {
           Nenhum aviso cadastrado.
         </div>
       ) : (
-        <table className="min-w-full bg-white border border-gray-200">
-          <thead className="bg-gray-100">
-            <tr>
-              <th className="py-2 px-4 border-b text-left">Título</th>
-              <th className="py-2 px-4 border-b text-left">Data Início</th>
-              <th className="py-2 px-4 border-b text-left">Data Fim</th>
-              <th className="py-2 px-4 border-b text-left">Status</th>
-              <th className="py-2 px-4 border-b text-center">Ações</th>
-            </tr>
-          </thead>
-          <tbody>
+        <>
+          {/* Versão Desktop */}
+          <div className="hidden md:block overflow-x-auto">
+            <table className="min-w-full bg-white border border-gray-200">
+              <thead className="bg-gray-100">
+                <tr>
+                  <th className="py-2 px-4 border-b text-left">Título</th>
+                  <th className="py-2 px-4 border-b text-left">Data Início</th>
+                  <th className="py-2 px-4 border-b text-left">Data Fim</th>
+                  <th className="py-2 px-4 border-b text-left">Status</th>
+                  <th className="py-2 px-4 border-b text-center">Ações</th>
+                </tr>
+              </thead>
+              <tbody>
+                {avisos.map(aviso => (
+                  <tr key={aviso.id} className="hover:bg-gray-50">
+                    <td className="py-2 px-4 border-b">{aviso.titulo}</td>
+                    <td className="py-2 px-4 border-b">{formatDate(aviso.data_inicio)}</td>
+                    <td className="py-2 px-4 border-b">{formatDate(aviso.data_fim)}</td>
+                    <td className="py-2 px-4 border-b">
+                      <span className={`px-2 py-1 rounded text-xs ${
+                        isAvisoAtivo(aviso) 
+                          ? 'bg-green-100 text-green-800' 
+                          : 'bg-gray-100 text-gray-800'
+                      }`}>
+                        {isAvisoAtivo(aviso) ? 'Ativo' : 'Inativo'}
+                      </span>
+                    </td>
+                    <td className="py-2 px-4 border-b text-center">
+                      <div className="flex justify-center space-x-2">
+                        <Link href={`/dashboard/avisos/editar/${aviso.id}`}
+                          className="text-blue-600 hover:text-blue-800"
+                        >
+                          Editar
+                        </Link>
+                        <button 
+                          onClick={() => handleDelete(aviso.id)}
+                          className="text-red-600 hover:text-red-800"
+                        >
+                          Excluir
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+
+          {/* Versão Mobile */}
+          <div className="md:hidden space-y-4">
             {avisos.map(aviso => (
-              <tr key={aviso.id} className="hover:bg-gray-50">
-                <td className="py-2 px-4 border-b">{aviso.titulo}</td>
-                <td className="py-2 px-4 border-b">{formatDate(aviso.data_inicio)}</td>
-                <td className="py-2 px-4 border-b">{formatDate(aviso.data_fim)}</td>
-                <td className="py-2 px-4 border-b">
+              <div key={aviso.id} className="bg-white rounded-lg shadow p-4 space-y-3">
+                <div className="flex justify-between items-start">
+                  <h3 className="font-medium text-gray-900">{aviso.titulo}</h3>
                   <span className={`px-2 py-1 rounded text-xs ${
                     isAvisoAtivo(aviso) 
                       ? 'bg-green-100 text-green-800' 
@@ -133,26 +171,36 @@ export default function AvisoTable() {
                   }`}>
                     {isAvisoAtivo(aviso) ? 'Ativo' : 'Inativo'}
                   </span>
-                </td>
-                <td className="py-2 px-4 border-b text-center">
-                  <div className="flex justify-center space-x-2">
-                    <Link href={`/dashboard/avisos/editar/${aviso.id}`}
-                      className="text-blue-600 hover:text-blue-800"
-                    >
-                      Editar
-                    </Link>
-                    <button 
-                      onClick={() => handleDelete(aviso.id)}
-                      className="text-red-600 hover:text-red-800"
-                    >
-                      Excluir
-                    </button>
+                </div>
+                
+                <div className="space-y-1 text-sm text-gray-600">
+                  <div className="flex justify-between">
+                    <span>Data Início:</span>
+                    <span>{formatDate(aviso.data_inicio)}</span>
                   </div>
-                </td>
-              </tr>
+                  <div className="flex justify-between">
+                    <span>Data Fim:</span>
+                    <span>{formatDate(aviso.data_fim)}</span>
+                  </div>
+                </div>
+
+                <div className="flex justify-end space-x-3 pt-2">
+                  <Link href={`/dashboard/avisos/editar/${aviso.id}`}
+                    className="bg-blue-50 text-blue-600 px-3 py-1.5 rounded-md text-sm font-medium hover:bg-blue-100"
+                  >
+                    Editar
+                  </Link>
+                  <button 
+                    onClick={() => handleDelete(aviso.id)}
+                    className="bg-red-50 text-red-600 px-3 py-1.5 rounded-md text-sm font-medium hover:bg-red-100"
+                  >
+                    Excluir
+                  </button>
+                </div>
+              </div>
             ))}
-          </tbody>
-        </table>
+          </div>
+        </>
       )}
     </div>
   );

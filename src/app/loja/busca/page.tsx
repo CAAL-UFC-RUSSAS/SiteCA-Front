@@ -22,10 +22,25 @@ function BuscaContent() {
                 
                 if (query) {
                     const termoBusca = query.toLowerCase();
-                    const produtosFiltrados = todosProdutos.filter(produto => 
-                        produto.nome.toLowerCase().includes(termoBusca) ||
-                        produto.descricao.toLowerCase().includes(termoBusca)
-                    );
+                    const produtosFiltrados = todosProdutos.filter(produto => {
+                        // Busca no nome e descrição
+                        const matchNomeDescricao = 
+                            produto.nome.toLowerCase().includes(termoBusca) ||
+                            produto.descricao.toLowerCase().includes(termoBusca);
+                        
+                        // Busca nas tags
+                        const produtoTags = Array.isArray(produto.tags) 
+                            ? produto.tags 
+                            : typeof produto.tags === 'string' 
+                                ? JSON.parse(produto.tags) 
+                                : [];
+                        
+                        const matchTags = produtoTags.some((tag: string) => 
+                            tag.toLowerCase().includes(termoBusca)
+                        );
+
+                        return matchNomeDescricao || matchTags;
+                    });
                     setProdutos(produtosFiltrados);
                 } else {
                     setProdutos(todosProdutos);

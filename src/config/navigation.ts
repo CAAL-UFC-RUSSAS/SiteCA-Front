@@ -55,4 +55,8 @@ export const navItems: NavItem[] = [
     label: 'Loja do CA',
     href: '/loja',
   },
+  {
+    label: 'Login',
+    href: '/login',
+  },
 ]; 

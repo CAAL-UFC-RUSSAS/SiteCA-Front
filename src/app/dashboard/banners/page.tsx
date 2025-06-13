@@ -31,9 +31,7 @@ export default function BannersPage() {
       setBanners(Array.isArray(data) ? data : []);
       setError('');
     } catch (err) {
-      console.error('Erro ao carregar banners:', err);
       setBanners([]); // Garantir que temos um array vazio em caso de erro
-      setError(err instanceof Error ? err.message : 'Erro ao carregar banners');
     } finally {
       setLoading(false);
     }
@@ -78,16 +76,11 @@ export default function BannersPage() {
 
   async function handleReorder(bannersReordered: Banner[]) {
     try {
-      setReordering(true);
       const bannerIds = bannersReordered.map(banner => banner.id);
       console.log('Reordenando banners, nova ordem:', bannerIds);
       await reordenarBanners(bannerIds);
       setBanners(bannersReordered);
     } catch (err) {
-      console.error('Erro ao reordenar banners:', err);
-      setError(err instanceof Error ? err.message : 'Erro ao reordenar banners');
-    } finally {
-      setReordering(false);
     }
   }
 
@@ -150,7 +143,7 @@ export default function BannersPage() {
         banners={banners}
         onEdit={setEditingBanner}
         onDelete={handleDelete}
-        onReorder={reordering ? undefined : handleReorder}
+        onReorder={handleReorder}
       />
 
       {editingBanner && (

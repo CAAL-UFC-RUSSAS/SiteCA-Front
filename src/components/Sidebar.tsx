@@ -3,10 +3,12 @@
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useAuth } from '@/contexts/AuthContext';
+import { useState } from 'react';
 
 export default function Sidebar() {
   const pathname = usePathname();
   const { logout } = useAuth();
+  const [isOpen, setIsOpen] = useState(true);
 
   const handleLogout = () => {
     logout();
@@ -63,22 +65,63 @@ export default function Sidebar() {
   ];
 
   return (
-    <div className="w-64 bg-white h-screen shadow-lg flex flex-col justify-between">
+    <>
+      {/* Botão de toggle para mobile */}
+      <button
+        onClick={() => setIsOpen(!isOpen)}
+        className="fixed top-10 left-0 z-50 md:hidden bg-white/50 p-2 rounded-lg shadow-lg"
+      >
+        <svg
+          className={`w-6 h-6 transition-transform ${isOpen ? 'rotate-180' : ''}`}
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+        >
+          <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            strokeWidth={2}
+            d="M9 5l7 7-7 7"
+          />
+        </svg>
+      </button>
+
+      {/* Overlay para mobile */}
+      {isOpen && (
+        <div
+          className="fixed inset-0 bg-black/30 z-30 md:hidden"
+          onClick={() => setIsOpen(false)}
+        />
+      )}
+
+      {/* Sidebar */}
+      <aside className={`
+        fixed md:static
+        top-0 left-0
+        h-full
+        bg-white
+        shadow-lg
+        z-40
+        transition-transform duration-300 ease-in-out
+        ${isOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0'}
+        w-64
+      `}>
       <div className="p-4">
-        <h2 className="text-xl font-bold text-indigo-800 mb-6">Menu</h2>
+          <h1 className="text-2xl font-bold text-indigo-600 mb-8">Dashboard</h1>
         <nav>
           <ul className="space-y-2">
             {menuItems.map((item) => (
               <li key={item.path}>
                 <Link
                   href={item.path}
-                  className={`flex items-center space-x-3 px-4 py-3 rounded-lg transition-colors ${
+                  onClick={() => setIsOpen(false)}
+                  className={`flex items-center space-x-3 px-4 py-2 rounded-lg transition-colors ${
                     pathname === item.path
-                      ? 'bg-indigo-100 text-indigo-700'
-                      : 'text-gray-600 hover:bg-gray-100'
+                        ? 'bg-indigo-50 text-indigo-600'
+                        : 'text-gray-600 hover:bg-gray-50'
                   }`}
                 >
-                  {item.icon}
+                    <span className="text-xl">{item.icon}</span>
                   <span>{item.name}</span>
                 </Link>
               </li>
@@ -97,6 +140,7 @@ export default function Sidebar() {
           <span>Sair</span>
         </button>
       </div>
-    </div>
+      </aside>
+    </>
   );
 } 

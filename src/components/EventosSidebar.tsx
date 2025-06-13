@@ -17,7 +17,7 @@ interface EventoFormatado {
 }
 
 export default function EventosSidebar() {
-  const [minimizado, setMinimizado] = useState(false);
+  const [minimizado, setMinimizado] = useState(true);
   const [eventos, setEventos] = useState<EventoFormatado[]>([]);
   const [loading, setLoading] = useState(true);
   const [mostrarUFC, setMostrarUFC] = useState(true);
@@ -139,7 +139,7 @@ export default function EventosSidebar() {
       {/* Botão para minimizar/expandir */}
       <button
         onClick={toggleMinimizado}
-        className="absolute top-0 lg:left-10 left-2 z-50 p-2 -translate-x-full bg-blue-600 text-white rounded-l-md"
+        className="absolute top-2 lg:left-10 left-2 z-50 p-2 -translate-x-full bg-blue-600 text-white rounded-l-md"
         aria-label={minimizado ? 'Expandir eventos' : 'Minimizar eventos'}
       >
         <svg 
@@ -152,7 +152,7 @@ export default function EventosSidebar() {
           strokeWidth="2" 
           strokeLinecap="round" 
           strokeLinejoin="round"
-          className={`transition-transform ${minimizado ? 'rotate-180' : ''}`}
+          className={`transition-transform ${minimizado ? 'rotate-360' : 'rotate-180'}`}
         >
           <polyline points="15 18 9 12 15 6"></polyline>
         </svg>
@@ -204,8 +204,6 @@ export default function EventosSidebar() {
                     className={`flex items-start gap-3 hover:bg-gray-50 rounded p-1 -mx-1 ${
                       evento.passado ? 'opacity-60' : ''
                     }`}
-                    target="_blank"
-                    rel="noopener noreferrer"
                   >
                     <div className="min-w-10 text-center">
                       <div className={`font-bold text-lg ${evento.passado ? 'text-gray-500' : ''}`}>
@@ -245,8 +243,6 @@ export default function EventosSidebar() {
             <Link 
               href="/eventos" 
               className="text-xs text-blue-600 hover:text-blue-800 font-medium flex items-center gap-1"
-              target="_blank"
-              rel="noopener noreferrer"
             >
               Ver calendário completo →
             </Link>

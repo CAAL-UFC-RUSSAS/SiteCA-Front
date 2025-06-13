@@ -1,8 +1,6 @@
 import { useState, useMemo } from 'react';
 import ProdutoCardSobreposto from './ProdutoCardSobreposto';
 import { Produto } from '@/types/produto';
-import Image from 'next/image';
-import Link from 'next/link';
 
 const todasCores = [
     "vermelho",
@@ -36,11 +34,7 @@ export default function ProdutoListagem({ produtos }: ProdutoListagemProps) {
     const todasTags = useMemo(() => {
         const tags = new Set<string>();
         produtos.forEach(p => {
-            const produtoTags = typeof p.tags === 'string' 
-                ? JSON.parse(p.tags) 
-                : Array.isArray(p.tags) 
-                    ? p.tags 
-                    : [];
+            const produtoTags = Array.isArray(p.tags) ? p.tags : (typeof p.tags === 'string' ? JSON.parse(p.tags) : []);
             produtoTags.forEach((t: string) => tags.add(t));
         });
         return Array.from(tags);
@@ -49,11 +43,7 @@ export default function ProdutoListagem({ produtos }: ProdutoListagemProps) {
     // Cores realmente presentes nos produtos
     const coresDisponiveis = useMemo(() => {
         return todasCores.filter(cor => produtos.some(p => {
-            const produtoTags = typeof p.tags === 'string' 
-                ? JSON.parse(p.tags) 
-                : Array.isArray(p.tags) 
-                    ? p.tags 
-                    : [];
+            const produtoTags = Array.isArray(p.tags) ? p.tags : (typeof p.tags === 'string' ? JSON.parse(p.tags) : []);
             return produtoTags.includes(cor);
         }));
     }, [produtos]);
@@ -61,11 +51,7 @@ export default function ProdutoListagem({ produtos }: ProdutoListagemProps) {
     // Filtro e ordenação
     const produtosFiltrados = useMemo(() => {
         let filtrados = produtos.filter(p => {
-            const produtoTags = typeof p.tags === 'string' 
-                ? JSON.parse(p.tags) 
-                : Array.isArray(p.tags) 
-                    ? p.tags 
-                    : [];
+            const produtoTags = Array.isArray(p.tags) ? p.tags : (typeof p.tags === 'string' ? JSON.parse(p.tags) : []);
             return (!busca || p.nome.toLowerCase().includes(busca.toLowerCase())) &&
                 (!cor || produtoTags.includes(cor)) &&
                 (!tag || produtoTags.includes(tag)) &&
@@ -87,68 +73,54 @@ export default function ProdutoListagem({ produtos }: ProdutoListagemProps) {
         return filtrados;
     }, [produtos, busca, cor, tag, disponivel, ordem]);
 
-    const formatarPreco = (preco: string) => {
-        const precoNum = Number(preco);
-        return (precoNum / 10000).toLocaleString('pt-BR', {
-            style: 'currency',
-            currency: 'BRL'
-        });
-    };
-
-    const getImagemPrincipal = (produto: Produto) => {
-        if (produto.imagens && produto.imagens.length > 0) {
-            const primeiraImagem = produto.imagens[0];
-            if (typeof primeiraImagem === 'string') {
-                return primeiraImagem;
-            }
-            return primeiraImagem.url;
-        }
-        return null;
-    };
-
     return (
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-            {produtos.map((produto) => {
-                const imagemPrincipal = getImagemPrincipal(produto);
-                
-                return (
-                    <Link 
-                        href={`/loja/${produto.id}`} 
-                        key={produto.id}
-                        className="group"
-                    >
-                        <div className="bg-white rounded-lg shadow-sm overflow-hidden transition-transform duration-300 hover:shadow-md hover:-translate-y-1">
-                            <div className="aspect-square relative">
-                                {imagemPrincipal ? (
-                                    <Image
-                                        src={imagemPrincipal}
-                                        alt={produto.nome}
-                                        fill
-                                        className="object-cover"
-                                    />
-                                ) : (
-                                    <div className="w-full h-full bg-gray-200 flex items-center justify-center">
-                                        <span className="text-gray-400">Sem imagem</span>
-                                    </div>
-                                )}
-                            </div>
-                            <div className="p-4">
-                                <h3 className="text-lg font-semibold text-gray-900 group-hover:text-orange-600 transition-colors">
-                                    {produto.nome}
-                                </h3>
-                                <p className="mt-1 text-2xl font-bold text-[#ee4d2d]">
-                                    {formatarPreco(produto.preco)}
-                                </p>
-                                {!produto.disponivel && (
-                                    <span className="inline-block mt-2 px-2 py-1 text-sm text-red-600 bg-red-100 rounded-full">
-                                        Indisponível
-                                    </span>
-                                )}
-                            </div>
-                        </div>
-                    </Link>
-                );
-            })}
+        <div className="flex flex-col lg:flex-row gap-8">
+            {/* Filtros */}
+            <aside className="lg:w-1/4 w-full bg-white rounded-xl shadow p-4 mb-4 lg:mb-0">
+                <h2 className="font-bold text-lg mb-4">Filtrar produtos</h2>
+                <input
+                    type="text"
+                    placeholder="Buscar por nome..."
+                    className="w-full mb-3 px-3 py-2 border rounded"
+                    value={busca}
+                    onChange={e => setBusca(e.target.value)}
+                />
+                <div className="mb-3">
+                    <label className="block font-semibold mb-1">Tipo</label>
+                    <select className="w-full px-2 py-1 border rounded" value={tag} onChange={e => setTag(e.target.value)}>
+                        <option value="">Todos</option>
+                        {todasTags.filter(t => !todasCores.includes(t)).map(t => (
+                            <option key={t} value={t}>{t.charAt(0).toUpperCase() + t.slice(1)}</option>
+                        ))}
+                    </select>
+                </div>
+                <div className="mb-3">
+                    <label className="block font-semibold mb-1">Cor</label>
+                    <select className="w-full px-2 py-1 border rounded" value={cor} onChange={e => setCor(e.target.value)}>
+                        <option value="">Todas</option>
+                        {coresDisponiveis.map(c => <option key={c} value={c}>{c.charAt(0).toUpperCase() + c.slice(1)}</option>)}
+                    </select>
+                </div>
+                <div className="mb-3 flex items-center gap-2">
+                    <input type="checkbox" id="disponivel" checked={disponivel} onChange={e => setDisponivel(e.target.checked)} />
+                    <label htmlFor="disponivel" className="font-semibold">Apenas disponíveis</label>
+                </div>
+                <div className="mb-3">
+                    <label className="block font-semibold mb-1">Ordenar por</label>
+                    <select className="w-full px-2 py-1 border rounded" value={ordem} onChange={e => setOrdem(e.target.value)}>
+                        <option value="">Padrão</option>
+                        <option value="maior">Maior preço</option>
+                        <option value="menor">Menor preço</option>
+                    </select>
+                </div>
+            </aside>
+            {/* Lista de produtos */}
+            <section className="flex-1 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 gap-4">
+                {produtosFiltrados.length === 0 && <div className="col-span-full text-center text-gray-500">Nenhum produto encontrado.</div>}
+                {produtosFiltrados.map(produto => (
+                    <ProdutoCardSobreposto produto={produto} key={produto.id} />
+                ))}
+            </section>
         </div>
     );
 } 
