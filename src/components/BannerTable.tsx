@@ -2,6 +2,7 @@
 
 import { Banner } from '@/services/api';
 import { useState, useRef } from 'react';
+import Image from 'next/image';
 
 interface BannerTableProps {
   banners: Banner[];
@@ -167,7 +168,7 @@ export function BannerTable({ banners, onEdit, onDelete, onReorder }: BannerTabl
                         )}
                         <td className="px-6 py-4 whitespace-nowrap">
                           {banner.imagem_url ? (
-                            <img
+                            <Image
                               src={banner.imagem_url}
                               alt={banner.titulo}
                               className="h-16 w-24 object-cover rounded"
@@ -279,13 +280,15 @@ export function BannerTable({ banners, onEdit, onDelete, onReorder }: BannerTabl
                     </svg>
                   </div>
                 )}
-                <img
-                  src={banner.imagem_url}
-                  alt={banner.titulo}
-                  className={`w-full h-40 object-cover rounded-lg transition-all duration-200 ${
-                    draggedItem === index ? 'opacity-50 scale-105 shadow-lg' : ''
-                  }`}
-                />
+                {banner.imagem_url && (
+                  <Image
+                    src={banner.imagem_url}
+                    alt={banner.titulo}
+                    className={`w-full h-40 object-cover rounded-lg transition-all duration-200 ${
+                      draggedItem === index ? 'opacity-50 scale-105 shadow-lg' : ''
+                    }`}
+                  />
+                )}
               </div>
               <div className="space-y-2">
                 <h3 className="text-lg font-medium text-gray-900">{banner.titulo}</h3>

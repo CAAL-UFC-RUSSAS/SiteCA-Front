@@ -53,6 +53,9 @@ export function getAuthHeaders(): HeadersInit {
 // Função para formatar um produto da API para o formato do frontend
 export function formatProduto(produto: Record<string, unknown>): Produto {
   return {
+    id: Number(produto.id),
+    nome: String(produto.nome),
+    descricao: String(produto.descricao || ''),
     ...produto,
     imagem: produto.imagem_nome 
       ? `${API_URL}/uploads/${produto.imagem_nome}`
@@ -60,7 +63,8 @@ export function formatProduto(produto: Record<string, unknown>): Produto {
     preco: String(produto.preco),
     tags: Array.isArray(produto.tags) ? produto.tags : [],
     disponivel: Boolean(produto.disponivel),
-    quantidade: Number(produto.quantidade)
+    quantidade: Number(produto.quantidade),
+    imagens: Array.isArray(produto.imagens) ? produto.imagens : []
   } as Produto;
 }
 

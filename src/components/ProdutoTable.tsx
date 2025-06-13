@@ -1,4 +1,5 @@
 import { Produto } from '@/types/produto';
+import Image from 'next/image';
 
 interface ProdutoTableProps {
     produtos: Produto[];
@@ -8,16 +9,6 @@ interface ProdutoTableProps {
 
 export function ProdutoTable({ produtos, onEdit, onDelete }: ProdutoTableProps) {
     console.log('ProdutoTable - Produtos recebidos:', produtos);
-
-    const getImagemPrincipal = (produto: Produto) => {
-        console.log('ProdutoTable - Obtendo imagem principal para produto:', produto.id);
-        const imagem = produto.imagens?.[0];
-        console.log('ProdutoTable - Imagem principal:', imagem);
-        if (imagem && typeof imagem === 'object' && imagem.url) {
-            return imagem.url;
-        }
-        return '/placeholder.png';
-    };
 
     return (
         <div className="bg-white rounded-lg shadow overflow-hidden">
@@ -40,7 +31,7 @@ export function ProdutoTable({ produtos, onEdit, onDelete }: ProdutoTableProps) 
                                     <div className="flex items-center">
                                         <div className="flex-shrink-0 h-10 w-10">
                                             {produto.imagens && produto.imagens.length > 0 && (
-                                                <img
+                                                <Image
                                                     className="h-10 w-10 rounded object-cover"
                                                     src={typeof produto.imagens[0] === 'string' ? produto.imagens[0] : produto.imagens[0].url}
                                                     alt={produto.nome}
@@ -93,7 +84,7 @@ export function ProdutoTable({ produtos, onEdit, onDelete }: ProdutoTableProps) 
                         <div className="flex items-start space-x-4">
                             <div className="flex-shrink-0">
                                 {produto.imagens && produto.imagens.length > 0 && (
-                                    <img
+                                    <Image
                                         className="h-16 w-16 rounded-lg object-cover"
                                         src={typeof produto.imagens[0] === 'string' ? produto.imagens[0] : produto.imagens[0].url}
                                         alt={produto.nome}

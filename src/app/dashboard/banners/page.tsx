@@ -13,7 +13,6 @@ export default function BannersPage() {
   const [editingBanner, setEditingBanner] = useState<Banner | null>(null);
   const [showForm, setShowForm] = useState(false);
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
-  const [reordering, setReordering] = useState(false);
 
   useEffect(() => {
     loadBanners();
@@ -31,6 +30,7 @@ export default function BannersPage() {
       setBanners(Array.isArray(data) ? data : []);
       setError('');
     } catch (err) {
+      console.error('Erro ao carregar banners:', err);
       setBanners([]); // Garantir que temos um array vazio em caso de erro
     } finally {
       setLoading(false);
@@ -81,6 +81,7 @@ export default function BannersPage() {
       await reordenarBanners(bannerIds);
       setBanners(bannersReordered);
     } catch (err) {
+      console.error('Erro ao reordenar banners:', err);
     }
   }
 

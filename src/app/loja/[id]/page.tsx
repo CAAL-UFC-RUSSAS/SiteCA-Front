@@ -16,9 +16,9 @@ export default function ProdutoPage({ params }: { params: Promise<{ id: string }
     const [error, setError] = useState<string | null>(null);
     const [addedToCart, setAddedToCart] = useState(false);
     const [selectedSize, setSelectedSize] = useState<string | null>(null);
-    const [availableSizes, setAvailableSizes] = useState<string[]>([]);
+    const [availableSizes] = useState<string[]>([]);
     const [selectedType, setSelectedType] = useState<string | null>(null);
-    const [availableTypes, setAvailableTypes] = useState<string[]>([]);
+    const [availableTypes] = useState<string[]>([]);
     const [productInCartWithDifferentOptions, setProductInCartWithDifferentOptions] = useState(false);
     const [quantidade, setQuantidade] = useState(1);
     const [produtosRelacionados, setProdutosRelacionados] = useState<Produto[]>([]);
@@ -34,17 +34,6 @@ export default function ProdutoPage({ params }: { params: Promise<{ id: string }
         });
     };
 
-    // Detecta tags de tamanho
-    const detectSizeTags = (tags: string[]) => {
-        const sizeRegex = /^(PP|P|M|G|GG|XG|XGG|XL|XXL)$/i;
-        return tags.filter(tag => sizeRegex.test(tag));
-    };
-
-    // Detecta tags de tipo de vestimenta
-    const detectTypeTags = (tags: string[]) => {
-        const typeRegex = /^(masculino|feminino|unissex|baby[\s-]?look)$/i;
-        return tags.filter(tag => typeRegex.test(tag));
-    };
 
     useEffect(() => {
         const fetchProduto = async () => {
@@ -392,10 +381,6 @@ export default function ProdutoPage({ params }: { params: Promise<{ id: string }
         return text.charAt(0).toUpperCase() + text.slice(1).toLowerCase();
     };
 
-    const setSelectedSizeAndUpdateCart = (size: string) => {
-        setSelectedSize(size);
-    };
-    
     const setSelectedTypeAndUpdateCart = (type: string) => {
         setSelectedType(type);
     };
@@ -488,14 +473,6 @@ export default function ProdutoPage({ params }: { params: Promise<{ id: string }
         return null;
     };
 
-    const handleQuantidadeChange = (value: number) => {
-        setQuantidade(value);
-        // Se o produto já está no carrinho, mostrar opção de atualizar
-        if (addedToCart) {
-            setAddedToCart(false);
-            setProductInCartWithDifferentOptions(true);
-        }
-    };
 
     if (loading) {
         return (

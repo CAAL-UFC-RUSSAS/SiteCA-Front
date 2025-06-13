@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import Image from 'next/image';
 import { Banner } from '@/services/api';
 
 interface BannerFormProps {
@@ -183,8 +184,8 @@ export function BannerForm({
         {(selectedImage || banner?.imagem_url) && (
           <div className="mt-2">
             <p className="text-sm text-gray-500">Visualização:</p>
-            <img
-              src={selectedImage || banner?.imagem_url}
+            <Image
+              src={selectedImage || banner?.imagem_url || ''}
               alt="Visualização do banner"
               className="mt-2 max-w-full h-auto border rounded-md"
               style={{ maxHeight: '200px' }}

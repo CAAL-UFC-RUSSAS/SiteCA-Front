@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import Image from 'next/image';
 import { Produto, ProdutoImagem, ProdutoCampoPersonalizado } from '@/types/produto';
 
 interface ProdutoFormProps {
@@ -76,7 +77,11 @@ export function ProdutoForm({
         setCamposPersonalizados(camposPersonalizados.filter((_, i) => i !== index));
     };
 
-    const handleCampoPersonalizadoChange = (index: number, field: keyof ProdutoCampoPersonalizado, value: any) => {
+    const handleCampoPersonalizadoChange = (
+        index: number, 
+        field: keyof ProdutoCampoPersonalizado, 
+        value: string | string[] | number
+    ) => {
         console.log('Alterando campo:', { index, field, value });
         const novosCampos = [...camposPersonalizados];
         novosCampos[index] = {
@@ -293,7 +298,7 @@ export function ProdutoForm({
                 <div className="mt-1 grid grid-cols-4 gap-2">
                     {selectedImages.map((image, index) => (
                         <div key={image.id} className="relative aspect-square">
-                            <img
+                            <Image
                                 src={image.url}
                                 alt={`Preview ${index + 1}`}
                                 className="w-full h-full object-cover rounded-lg"
