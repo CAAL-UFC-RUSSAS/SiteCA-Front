@@ -22,10 +22,11 @@ export default function ProdutoPage({ params }: { params: Promise<{ id: string }
     const [productInCartWithDifferentOptions, setProductInCartWithDifferentOptions] = useState(false);
     const [quantidade, setQuantidade] = useState(1);
     const [produtosRelacionados, setProdutosRelacionados] = useState<Produto[]>([]);
+    const [selectedImageIndex, setSelectedImageIndex] = useState(0);
 
     const formatarPreco = (preco: string) => {
         const precoNum = Number(preco);
-        return (precoNum / 100).toLocaleString('pt-BR', {
+        return (precoNum / 10000).toLocaleString('pt-BR', {
             style: 'currency',
             currency: 'BRL'
         });
@@ -365,6 +366,16 @@ export default function ProdutoPage({ params }: { params: Promise<{ id: string }
         }
     };
 
+    const getImagemPrincipal = (produto: Produto) => {
+        if (produto.imagens && produto.imagens.length > 0 && produto.imagens[0]) {
+            return produto.imagens[0];
+        }
+        if (produto.imagem) {
+            return produto.imagem;
+        }
+        return null;
+    };
+
     if (loading) {
         return (
             <>
@@ -421,18 +432,43 @@ export default function ProdutoPage({ params }: { params: Promise<{ id: string }
             </main>
             <main className="container mx-auto px-4 py-0 pt-2 max-w-7xl">
                 <div className="flex flex-col md:flex-row gap-0 bg-white shadow p-6">
-                    <div className="w-full md:w-1/2 flex justify-center items-center">
-                        {produto.imagem ? (
-                            <Image 
-                                src={produto.imagem} 
-                                alt={produto.nome} 
-                                width={500} 
-                                height={500} 
-                                className=" object-contain"
-                            />
-                        ) : (
-                            <div className="w-full h-[500px] bg-gray-200 rounded-lg flex items-center justify-center">
-                                <span className="text-gray-400 text-xl">Sem imagem</span>
+                    <div className="w-full md:w-1/2 flex flex-col gap-4">
+                        <div className="relative aspect-square">
+                            {getImagemPrincipal(produto) ? (
+                                <Image 
+                                    src={getImagemPrincipal(produto)!} 
+                                    alt={produto.nome} 
+                                    fill
+                                    className="object-contain"
+                                />
+                            ) : (
+                                <div className="w-full h-full bg-gray-200 rounded-lg flex items-center justify-center">
+                                    <span className="text-gray-400 text-xl">Sem imagem</span>
+                                </div>
+                            )}
+                        </div>
+                        
+                        {/* Miniaturas das imagens */}
+                        {produto.imagens && produto.imagens.length > 1 && (
+                            <div className="grid grid-cols-8 gap-2">
+                                {produto.imagens.filter(img => img).map((imagem, index) => (
+                                    <button
+                                        key={index}
+                                        onClick={() => setSelectedImageIndex(index)}
+                                        className={`relative aspect-square rounded-lg overflow-hidden border-2 ${
+                                            selectedImageIndex === index 
+                                                ? 'border-orange-500' 
+                                                : 'border-transparent hover:border-orange-300'
+                                        }`}
+                                    >
+                                        <Image
+                                            src={imagem}
+                                            alt={`${produto.nome} - Imagem ${index + 1}`}
+                                            fill
+                                            className="object-cover"
+                                        />
+                                    </button>
+                                ))}
                             </div>
                         )}
                     </div>

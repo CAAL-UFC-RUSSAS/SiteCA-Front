@@ -152,6 +152,7 @@ export async function login(email: string, password: string) {
 }
 
 export async function createProduto(produto: Omit<Produto, 'id'>): Promise<Produto> {
+  console.log('Enviando requisição para criar produto:', produto);
   const response = await fetch(`${API_URL}/produtos`, {
     method: 'POST',
     headers: getAuthHeaders(),
@@ -159,42 +160,29 @@ export async function createProduto(produto: Omit<Produto, 'id'>): Promise<Produ
   });
   if (!response.ok) {
     const error = await response.json().catch(() => ({}));
+    console.error('Erro na resposta da API:', error);
     throw new Error(error.message || 'Erro ao criar produto');
   }
   const data = await response.json();
+  console.log('Resposta da API:', data);
   return formatProduto(data);
 }
 
 export async function updateProduto(id: number, produto: Partial<Produto>): Promise<Produto> {
-  try {
-    console.log('Enviando dados para atualização:', {
-      id,
-      produto,
-      headers: getAuthHeaders()
-    });
-
-    const response = await fetch(`${API_URL}/produtos/${id}`, {
-      method: 'PUT',
-      headers: getAuthHeaders(),
-      body: JSON.stringify(produto),
-    });
-
-    if (!response.ok) {
-      const errorData = await response.json().catch(() => ({}));
-      console.error('Erro na resposta:', {
-        status: response.status,
-        statusText: response.statusText,
-        error: errorData
-      });
-      throw new Error(errorData.message || 'Erro ao atualizar produto');
-    }
-
-    const data = await response.json();
-    return formatProduto(data);
-  } catch (error) {
-    console.error('Erro ao atualizar produto:', error);
-    throw error;
+  console.log('Enviando requisição para atualizar produto:', { id, produto });
+  const response = await fetch(`${API_URL}/produtos/${id}`, {
+    method: 'PUT',
+    headers: getAuthHeaders(),
+    body: JSON.stringify(produto),
+  });
+  if (!response.ok) {
+    const error = await response.json().catch(() => ({}));
+    console.error('Erro na resposta da API:', error);
+    throw new Error(error.message || 'Erro ao atualizar produto');
   }
+  const data = await response.json();
+  console.log('Resposta da API:', data);
+  return formatProduto(data);
 }
 
 export async function deleteProduto(id: number): Promise<void> {

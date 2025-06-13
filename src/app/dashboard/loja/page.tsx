@@ -13,7 +13,7 @@ export default function LojaPage() {
     const [error, setError] = useState('');
     const [editingProduto, setEditingProduto] = useState<Produto | null>(null);
     const [showForm, setShowForm] = useState(false);
-    const [selectedImage, setSelectedImage] = useState<string | null>(null);
+    const [selectedImages, setSelectedImages] = useState<{ id: number; url: string; ordem: number }[]>([]);
 
     useEffect(() => {
         loadProdutos();
@@ -23,6 +23,7 @@ export default function LojaPage() {
         try {
             setLoading(true);
             const data = await getProdutos();
+            console.log('Produtos carregados:', data);
             setProdutos(data);
             setError('');
         } catch (err) {
@@ -33,54 +34,54 @@ export default function LojaPage() {
         }
     }
 
-    async function handleCreate(produto: Partial<Produto>) {
+    const handleSubmit = async (produto: Partial<Produto>) => {
         try {
-            const produtoFormatado = {
-                ...produto,
-                preco: String(Number(produto.preco || 0) * 100),
-                tags: Array.isArray(produto.tags) ? produto.tags : String(produto.tags).split(',').map(tag => tag.trim())
-            };
-            await createProduto(produtoFormatado as Omit<Produto, 'id'>);
-            await loadProdutos();
-            setShowForm(false);
-            setSelectedImage(null);
-        } catch (err) {
-            console.error('Erro ao criar produto:', err);
-            setError(err instanceof Error ? err.message : 'Erro ao criar produto');
-        }
-    }
-
-    async function handleUpdate(id: number, produto: Partial<Produto>) {
-        try {
-            console.log('Iniciando atualização do produto:', { id, produto });
+            if (!produto.nome || !produto.descricao || !produto.preco || !produto.quantidade) {
+                alert('Por favor, preencha todos os campos obrigatórios.');
+                return;
+            }
 
             const tagsArray = Array.isArray(produto.tags) 
                 ? produto.tags 
                 : String(produto.tags).split(',').map(tag => tag.trim());
 
             const produtoFormatado = {
-                ...produto,
-                preco: produto.preco ? String(Number(produto.preco || 0) * 100) : undefined,
+                nome: produto.nome,
+                descricao: produto.descricao,
+                preco: String(Number(produto.preco) * 100),
+                quantidade: produto.quantidade,
                 tags: JSON.stringify(tagsArray),
-                imagem_nome: produto.imagem_nome,
-                imagem_mime: produto.imagem_mime
+                disponivel: produto.disponivel ?? true,
+                imagens: selectedImages.map(img => img.url),
+                campos_personalizados: produto.campos_personalizados || []
             };
 
-            if (selectedImage) {
-                produtoFormatado.imagem = selectedImage.split(',')[1];
+            console.log('Enviando produto formatado:', produtoFormatado);
+
+            if (editingProduto) {
+                await updateProduto(editingProduto.id, produtoFormatado);
+            } else {
+                await createProduto(produtoFormatado);
             }
-
-            console.log('Dados formatados para atualização:', produtoFormatado);
-
-            await updateProduto(id, produtoFormatado);
-            await loadProdutos();
+            setShowForm(false);
             setEditingProduto(null);
-            setSelectedImage(null);
-        } catch (err) {
-            console.error('Erro ao atualizar produto:', err);
-            setError(err instanceof Error ? err.message : 'Erro ao atualizar produto');
+            setSelectedImages([]);
+            loadProdutos();
+        } catch (error) {
+            console.error('Erro ao salvar produto:', error);
+            alert('Erro ao salvar produto. Por favor, tente novamente.');
         }
-    }
+    };
+
+    const handleEdit = (produto: Produto) => {
+        console.log('Editando produto:', produto);
+        setEditingProduto(produto);
+        setSelectedImages(produto.imagens?.map((img, index) => ({
+            id: img.id,
+            url: img.url,
+            ordem: img.ordem
+        })) || []);
+    };
 
     async function handleDelete(id: number) {
         if (!confirm('Tem certeza que deseja excluir este produto?')) return;
@@ -94,41 +95,50 @@ export default function LojaPage() {
         }
     }
 
-    const compressImage = (base64: string, maxWidth = 800): Promise<string> => {
-        return new Promise((resolve) => {
-            const img = new Image();
-            img.src = base64;
-            img.onload = () => {
-                const canvas = document.createElement('canvas');
-                let width = img.width;
-                let height = img.height;
-                
-                if (width > maxWidth) {
-                    height = (maxWidth * height) / width;
-                    width = maxWidth;
-                }
-                
-                canvas.width = width;
-                canvas.height = height;
-                const ctx = canvas.getContext('2d');
-                ctx?.drawImage(img, 0, 0, width, height);
-                
-                resolve(canvas.toDataURL('image/jpeg', 0.7));
-            };
-        });
-    };
-
     const handleImageSelect = async (e: React.ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0];
         if (file) {
+            console.log('Arquivo de imagem selecionado:', file.name, `(${(file.size / 1024 / 1024).toFixed(2)}MB)`);
             const reader = new FileReader();
             reader.onloadend = async () => {
                 const base64 = reader.result as string;
-                const compressedBase64 = await compressImage(base64);
-                setSelectedImage(compressedBase64);
+                // Compressão básica de imagem
+                const img = new Image();
+                img.src = base64;
+                img.onload = () => {
+                    const canvas = document.createElement('canvas');
+                    const MAX_WIDTH = 1200;
+                    const scale = MAX_WIDTH / img.width;
+                    canvas.width = MAX_WIDTH;
+                    canvas.height = img.height * scale;
+                    
+                    const ctx = canvas.getContext('2d');
+                    ctx?.drawImage(img, 0, 0, canvas.width, canvas.height);
+                    
+                    const compressedBase64 = canvas.toDataURL('image/jpeg', 0.7);
+                    console.log('Imagem comprimida com sucesso');
+                    setSelectedImages(prev => [...prev, {
+                        id: Date.now(), // ID temporário para o frontend
+                        url: compressedBase64,
+                        ordem: prev.length
+                    }]);
+                };
             };
             reader.readAsDataURL(file);
         }
+    };
+
+    const handleRemoveImage = (index: number) => {
+        console.log('Removendo imagem no índice:', index);
+        console.log('Imagens antes da remoção:', selectedImages);
+        const newImages = [...selectedImages];
+        newImages.splice(index, 1);
+        // Atualiza a ordem das imagens restantes
+        newImages.forEach((img, idx) => {
+            img.ordem = idx;
+        });
+        console.log('Imagens após remoção:', newImages);
+        setSelectedImages(newImages);
     };
 
     if (loading) {
@@ -159,7 +169,7 @@ export default function LojaPage() {
 
             <ProdutoTable
                 produtos={produtos}
-                onEdit={setEditingProduto}
+                onEdit={handleEdit}
                 onDelete={handleDelete}
             />
 
@@ -168,18 +178,19 @@ export default function LojaPage() {
                     title="Editar Produto"
                     onClose={() => {
                         setEditingProduto(null);
-                        setSelectedImage(null);
+                        setSelectedImages([]);
                     }}
                 >
                     <ProdutoForm
                         produto={editingProduto}
-                        onSubmit={(produto) => handleUpdate(editingProduto.id, produto)}
+                        onSubmit={handleSubmit}
                         onCancel={() => {
                             setEditingProduto(null);
-                            setSelectedImage(null);
+                            setSelectedImages([]);
                         }}
-                        selectedImage={selectedImage}
+                        selectedImages={selectedImages}
                         onImageSelect={handleImageSelect}
+                        onRemoveImage={handleRemoveImage}
                     />
                 </Modal>
             )}
@@ -189,16 +200,16 @@ export default function LojaPage() {
                     title="Novo Produto"
                     onClose={() => {
                         setShowForm(false);
-                        setSelectedImage(null);
+                        setSelectedImages([]);
                     }}
                 >
                     <ProdutoForm
-                        onSubmit={handleCreate}
+                        onSubmit={handleSubmit}
                         onCancel={() => {
                             setShowForm(false);
-                            setSelectedImage(null);
+                            setSelectedImages([]);
                         }}
-                        selectedImage={selectedImage}
+                        selectedImages={selectedImages}
                         onImageSelect={handleImageSelect}
                     />
                 </Modal>

@@ -1,14 +1,27 @@
-export type Produto = {
+export interface ProdutoImagem {
+    id: number;
+    produto_id: number;
+    url: string;
+    ordem: number;
+}
+
+export interface ProdutoCampoPersonalizado {
+    id?: number;
+    produto_id?: number;
+    nome: string;
+    tipo: 'texto' | 'numero' | 'opcao';
+    opcoes?: string[];
+    valor: string;
+}
+
+export interface Produto {
     id: number;
     nome: string;
     descricao: string;
     preco: string;
     quantidade: number;
+    tags: string | string[];
     disponivel: boolean;
-    tags: string[] | string; // Pode ser array ou string JSON
-    imagem_nome?: string;
-    imagem_mime?: string;
-    imagem?: string;
-    created_at?: string;
-    updated_at?: string;
-}; 
+    imagens: (string | ProdutoImagem)[];
+    campos_personalizados?: ProdutoCampoPersonalizado[];
+} 
