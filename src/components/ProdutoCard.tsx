@@ -10,10 +10,10 @@ type ProdutoCardProps = {
 export function ProdutoCard({ produto, onEdit, onDelete }: ProdutoCardProps) {
   return (
     <div className="bg-white rounded-lg shadow-md overflow-hidden">
-      {produto.imagem && (
+      {produto.imagens?.[0] && (
         <div className="h-48 overflow-hidden">
           <Image
-            src={produto.imagem}
+            src={typeof produto.imagens[0] === 'string' ? produto.imagens[0] : produto.imagens[0].url}
             alt={produto.nome}
             width={300}
             height={200}
@@ -25,18 +25,29 @@ export function ProdutoCard({ produto, onEdit, onDelete }: ProdutoCardProps) {
         <h3 className="text-lg font-semibold mb-2">{produto.nome}</h3>
         <p className="text-gray-600 mb-4 line-clamp-2">{produto.descricao}</p>
         <div className="flex flex-wrap gap-2 mb-4">
-          {Array.isArray(produto.tags) && produto.tags.map((tag, index) => (
-            <span
-              key={index}
-              className="px-2 py-1 bg-indigo-100 text-indigo-800 text-xs rounded-full"
-            >
-              {String(tag)}
-            </span>
-          ))}
+          {Array.isArray(produto.tags) 
+            ? produto.tags.map((tag, index) => (
+                <span
+                  key={index}
+                  className="px-2 py-1 bg-indigo-100 text-indigo-800 text-xs rounded-full"
+                >
+                  {String(tag)}
+                </span>
+              ))
+            : typeof produto.tags === 'string'
+              ? JSON.parse(produto.tags).map((tag: string, index: number) => (
+                  <span
+                    key={index}
+                    className="px-2 py-1 bg-indigo-100 text-indigo-800 text-xs rounded-full"
+                  >
+                    {tag}
+                  </span>
+                ))
+              : null}
         </div>
         <div className="flex justify-between items-center mb-4">
           <span className="text-indigo-600 font-bold">
-            R$ {(Number(produto.preco) / 100).toFixed(2)}
+            R$ {(Number(produto.preco) / 10000).toFixed(2)}
           </span>
           <span className="text-gray-500">
             Quantidade: {produto.quantidade}

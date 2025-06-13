@@ -89,7 +89,7 @@ export default function ProdutoListagem({ produtos }: ProdutoListagemProps) {
 
     const formatarPreco = (preco: string) => {
         const precoNum = Number(preco);
-        return (precoNum / 100).toLocaleString('pt-BR', {
+        return (precoNum / 10000).toLocaleString('pt-BR', {
             style: 'currency',
             currency: 'BRL'
         });

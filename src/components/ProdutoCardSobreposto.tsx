@@ -12,7 +12,7 @@ export default function ProdutoCardSobreposto({ produto, grande, quadrado }: Pro
 
     const formatarPreco = (preco: string) => {
         const precoNum = Number(preco);
-        return (precoNum / 100).toLocaleString('pt-BR', {
+        return (precoNum / 10000).toLocaleString('pt-BR', {
             style: 'currency',
             currency: 'BRL'
         });
@@ -24,9 +24,9 @@ export default function ProdutoCardSobreposto({ produto, grande, quadrado }: Pro
             className="relative group"
         >
             <div className={`relative w-full ${grande ? 'h-[400px]' : quadrado ? 'h-[200px]' : 'h-[300px]'} bg-white rounded-xl shadow-lg overflow-hidden`}>
-                {produto.imagem ? (
+                {produto.imagens?.[0] && (typeof produto.imagens[0] === 'string' ? produto.imagens[0] : produto.imagens[0].url) ? (
                     <Image
-                        src={produto.imagem}
+                        src={typeof produto.imagens[0] === 'string' ? produto.imagens[0] : produto.imagens[0].url}
                         alt={produto.nome}
                         fill
                         className="object-cover transition-transform duration-300 group-hover:scale-110"

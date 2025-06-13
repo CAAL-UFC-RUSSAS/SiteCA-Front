@@ -13,7 +13,7 @@ export default function LojaPage() {
     const [error, setError] = useState('');
     const [editingProduto, setEditingProduto] = useState<Produto | null>(null);
     const [showForm, setShowForm] = useState(false);
-    const [selectedImages, setSelectedImages] = useState<{ id: number; url: string; ordem: number }[]>([]);
+    const [selectedImages, setSelectedImages] = useState<{ id: number; url: string; ordem: number; produto_id: number }[]>([]);
 
     useEffect(() => {
         loadProdutos();
@@ -77,9 +77,10 @@ export default function LojaPage() {
         console.log('Editando produto:', produto);
         setEditingProduto(produto);
         setSelectedImages(produto.imagens?.map((img, index) => ({
-            id: img.id,
-            url: img.url,
-            ordem: img.ordem
+            id: typeof img === 'string' ? Date.now() : img.id,
+            url: typeof img === 'string' ? img : img.url,
+            ordem: typeof img === 'string' ? index : img.ordem,
+            produto_id: produto.id
         })) || []);
     };
 
@@ -120,7 +121,8 @@ export default function LojaPage() {
                     setSelectedImages(prev => [...prev, {
                         id: Date.now(), // ID temporário para o frontend
                         url: compressedBase64,
-                        ordem: prev.length
+                        ordem: prev.length,
+                        produto_id: editingProduto?.id || 0 // Usa 0 como fallback
                     }]);
                 };
             };

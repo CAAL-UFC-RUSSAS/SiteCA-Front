@@ -12,11 +12,13 @@ interface CartItem {
     nome: string;
     preco: string;
     imagem?: string;
+    imagens?: (string | { url: string })[];
     quantidade: number;
     tamanho?: string;
     tipo?: string;
     selected?: boolean;
     quantidadeDisponivel?: number;
+    campos_personalizados?: {[key: string]: string};
 }
 
 export default function CarrinhoPage() {
@@ -27,22 +29,19 @@ export default function CarrinhoPage() {
     const [todosProdutos, setTodosProdutos] = useState<Produto[]>([]);
 
     useEffect(() => {
-        // Carregar itens do carrinho do localStorage
         const loadCartItems = () => {
             try {
                 const storedCart = localStorage.getItem('cart');
                 if (storedCart) {
                     const items = JSON.parse(storedCart);
-                    // Adicionar propriedade selected a cada item (todos selecionados por padrão)
                     setCartItems(items.map((item: CartItem) => ({ 
                         ...item, 
                         selected: true,
-                        // Garantir que quantidadeDisponivel está presente (caso seja de uma versão antiga do carrinho)
-                        quantidadeDisponivel: item.quantidadeDisponivel || 999
+                        quantidadeDisponivel: item.quantidadeDisponivel || 999,
+                        imagens: item.imagens || [item.imagem].filter(Boolean)
                     })));
                 }
                 
-                // Carregar todos os produtos do localStorage
                 const storedProdutos = localStorage.getItem('produtos_loja');
                 if (storedProdutos) {
                     const produtos = JSON.parse(storedProdutos);
@@ -60,7 +59,7 @@ export default function CarrinhoPage() {
 
     const formatarPreco = (preco: string) => {
         const precoNum = Number(preco);
-        return (precoNum / 100).toLocaleString('pt-BR', {
+        return (precoNum).toLocaleString('pt-BR', {
             style: 'currency',
             currency: 'BRL'
         });
@@ -91,14 +90,28 @@ export default function CarrinhoPage() {
             id: item.id, 
             nome: item.nome, 
             preco: item.preco, 
-            imagem: item.imagem, 
+            imagem: item.imagem,
+            imagens: item.imagens,
             quantidade: item.quantidade,
             tamanho: item.tamanho,
-            tipo: item.tipo
+            tipo: item.tipo,
+            quantidadeDisponivel: item.quantidadeDisponivel
         }))));
         
-        // Disparar evento para atualizar o contador na navbar
         window.dispatchEvent(new CustomEvent('cartUpdated'));
+    };
+
+    const getImagemPrincipal = (item: CartItem) => {
+        if (item.imagens && item.imagens.length > 0) {
+            const imagem = item.imagens[0];
+            if (typeof imagem === 'object' && imagem.url) {
+                return imagem.url;
+            }
+            if (typeof imagem === 'string') {
+                return imagem;
+            }
+        }
+        return item.imagem || null;
     };
 
     const removeSelectedItems = () => {
@@ -108,14 +121,15 @@ export default function CarrinhoPage() {
             id: item.id, 
             nome: item.nome, 
             preco: item.preco, 
-            imagem: item.imagem, 
+            imagem: item.imagem,
+            imagens: item.imagens,
             quantidade: item.quantidade,
             tamanho: item.tamanho,
-            tipo: item.tipo
+            tipo: item.tipo,
+            quantidadeDisponivel: item.quantidadeDisponivel
         }))));
         setAllSelected(false);
         
-        // Disparar evento para atualizar o contador na navbar
         window.dispatchEvent(new CustomEvent('cartUpdated'));
     };
     
@@ -126,13 +140,14 @@ export default function CarrinhoPage() {
             id: item.id, 
             nome: item.nome, 
             preco: item.preco, 
-            imagem: item.imagem, 
+            imagem: item.imagem,
+            imagens: item.imagens,
             quantidade: item.quantidade,
             tamanho: item.tamanho,
-            tipo: item.tipo
+            tipo: item.tipo,
+            quantidadeDisponivel: item.quantidadeDisponivel
         }))));
         
-        // Disparar evento para atualizar o contador na navbar
         window.dispatchEvent(new CustomEvent('cartUpdated'));
     };
 
@@ -149,15 +164,11 @@ export default function CarrinhoPage() {
         if (itemIndex >= 0) {
             const item = currentCart[itemIndex];
             
-            // Verificar se a nova quantidade não excede a quantidade disponível
             if (item.quantidadeDisponivel !== undefined && newQuantity > item.quantidadeDisponivel) {
-                // Limitar a quantidade ao máximo disponível
                 newQuantity = item.quantidadeDisponivel;
-                // Alertar o usuário
                 alert(`Limite máximo de ${item.quantidadeDisponivel} unidades disponíveis para este produto.`);
             }
             
-            // Atualizar a quantidade
             currentCart[itemIndex] = {
                 ...item,
                 quantidade: newQuantity
@@ -165,12 +176,12 @@ export default function CarrinhoPage() {
             
             setCartItems(currentCart);
             
-            // Atualizar localStorage
             const storageCart = currentCart.map(item => ({ 
                 id: item.id, 
                 nome: item.nome, 
                 preco: item.preco, 
-                imagem: item.imagem, 
+                imagem: item.imagem,
+                imagens: item.imagens,
                 quantidade: item.quantidade,
                 tamanho: item.tamanho,
                 tipo: item.tipo,
@@ -179,7 +190,6 @@ export default function CarrinhoPage() {
             
             localStorage.setItem('cart', JSON.stringify(storageCart));
             
-            // Disparar evento para atualizar o contador na navbar
             window.dispatchEvent(new CustomEvent('cartUpdated'));
         }
     };
@@ -221,7 +231,7 @@ export default function CarrinhoPage() {
         let mensagem = 'Olá! Gostaria de comprar os seguintes itens:\n\n';
         
         itensParaComprar.forEach((item, index) => {
-            const valorItem = (Number(item.preco) * item.quantidade) / 100;
+            const valorItem = (Number(item.preco) * item.quantidade);
             
             // Adicionar informações do item
             mensagem += `${index + 1}. ${item.nome}`;
@@ -231,6 +241,15 @@ export default function CarrinhoPage() {
             if (item.tamanho) detalhes.push(`Tamanho: ${item.tamanho}`);
             if (item.tipo) detalhes.push(`Tipo: ${item.tipo}`);
             
+            // Adicionar campos personalizados se disponíveis
+            if (item.campos_personalizados) {
+                Object.entries(item.campos_personalizados).forEach(([chave, valor]) => {
+                    if (valor) {
+                        detalhes.push(`${chave}: ${valor}`);
+                    }
+                });
+            }
+            
             if (detalhes.length > 0) {
                 mensagem += ` (${detalhes.join(', ')})`;
             }
@@ -238,7 +257,7 @@ export default function CarrinhoPage() {
             mensagem += ` - ${item.quantidade} unidade(s) - R$ ${valorItem.toFixed(2)}\n`;
         });
         
-        const valorTotal = calcularTotal() / 100;
+        const valorTotal = calcularTotal();
         mensagem += `\nValor Total: R$ ${valorTotal.toFixed(2)}`;
         mensagem += `\n\nOpção de entrega: ${entregaOption === 'retirada' ? 'Retirada no CA de Russas UFC' : 'Envio via Correios'}`;
         
@@ -315,7 +334,7 @@ export default function CarrinhoPage() {
                         <div className="bg-white shadow rounded-lg overflow-hidden md:hidden">
                             {cartItems.map((item, index) => (
                                 <div key={`mobile-${item.id}-${item.tamanho || 'default'}-${item.tipo || 'default'}-${index}`} 
-                                     className={`p-4 border-b ${item.quantidade === 0 ? 'bg-gray-50 opacity-70' : ''}`}>
+                                        className={`p-4 border-b ${item.quantidade === 0 ? 'bg-gray-50 opacity-70' : ''}`}>
                                     <div className="flex items-start gap-3 mb-2">
                                         <input 
                                             type="checkbox" 
@@ -323,14 +342,13 @@ export default function CarrinhoPage() {
                                             onChange={() => toggleSelectItem(item.id, item.tamanho, item.tipo)}
                                             className="w-4 h-4 mt-1"
                                         />
-                                        <div className="w-20 h-20 flex-shrink-0 bg-gray-100 rounded-md overflow-hidden">
-                                            {item.imagem ? (
+                                        <div className="w-20 h-20 flex-shrink-0 bg-gray-100 rounded-md overflow-hidden relative">
+                                            {getImagemPrincipal(item) ? (
                                                 <Image 
-                                                    src={item.imagem} 
+                                                    src={getImagemPrincipal(item)!} 
                                                     alt={item.nome} 
-                                                    width={80} 
-                                                    height={80}
-                                                    className="object-cover w-full h-full" 
+                                                    fill
+                                                    className="object-contain" 
                                                 />
                                             ) : (
                                                 <div className="w-full h-full bg-gray-200 flex items-center justify-center">
@@ -339,7 +357,7 @@ export default function CarrinhoPage() {
                                             )}
                                         </div>
                                         <div className="flex-1">
-                                            <Link href={`/loja/${item.id}`} className="text-gray-800 hover:text-gray-900 font-medium">
+                                            <Link href={`/loja/${item.id}`} className="text-gray-800 hover:text-gray-900 font-medium ">
                                                 {item.nome}
                                             </Link>
                                             <div className="flex flex-wrap gap-1 mt-1">
@@ -353,9 +371,13 @@ export default function CarrinhoPage() {
                                                         {item.tipo.charAt(0).toUpperCase() + item.tipo.slice(1).toLowerCase()}
                                                     </span>
                                                 )}
-                                            </div>
-                                            <div className="mt-2 text-sm font-medium text-[#ee4d2d]">
-                                                {formatarPreco(item.preco)}
+                                                {item.campos_personalizados && Object.entries(item.campos_personalizados).map(([chave, valor]) => (
+                                                    valor && (
+                                                        <span key={chave} className="text-sm text-gray-600 bg-gray-100 px-2 py-0.5 rounded truncate max-w-[120px]">
+                                                            {chave}: {valor}
+                                                        </span>
+                                                    )
+                                                ))}
                                             </div>
                                         </div>
                                     </div>
@@ -435,14 +457,13 @@ export default function CarrinhoPage() {
                                         />
                                     </div>
                                     <div className="col-span-5 md:col-span-5 flex gap-3">
-                                        <div className="w-26 h-26 flex-shrink-0 bg-gray-100 rounded-md overflow-hidden">
-                                            {item.imagem ? (
+                                        <div className="w-26 h-26 flex-shrink-0 bg-gray-100 rounded-md overflow-hidden relative">
+                                            {getImagemPrincipal(item) ? (
                                                 <Image 
-                                                    src={item.imagem} 
+                                                    src={getImagemPrincipal(item)!} 
                                                     alt={item.nome} 
-                                                    width={100} 
-                                                    height={100}
-                                                    className="object-cover w-full h-full" 
+                                                    fill
+                                                    className="object-contain" 
                                                 />
                                             ) : (
                                                 <div className="w-full h-full bg-gray-200 flex items-center justify-center">
@@ -464,6 +485,13 @@ export default function CarrinhoPage() {
                                                             {item.tipo.charAt(0).toUpperCase() + item.tipo.slice(1).toLowerCase()}
                                                         </span>
                                                     )}
+                                                    {item.campos_personalizados && Object.entries(item.campos_personalizados).map(([chave, valor]) => (
+                                                        valor && (
+                                                            <span key={chave} className="text-sm text-gray-600 bg-gray-100 px-2 py-0.5 rounded truncate max-w-[150px]">
+                                                                {chave}: {valor}
+                                                            </span>
+                                                        )
+                                                    ))}
                                                 </div>
                                             </Link>
                                             <div className="md:hidden mt-2 text-sm text-gray-600">

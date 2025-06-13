@@ -26,13 +26,25 @@ export function ProdutoForm({
         Array.isArray(produto?.tags) 
             ? produto.tags.join(', ') 
             : typeof produto?.tags === 'string' 
-                ? produto.tags 
+                ? JSON.parse(produto.tags).join(', ')
                 : ''
     );
     const [disponivel, setDisponivel] = useState(produto?.disponivel ?? true);
     const [camposPersonalizados, setCamposPersonalizados] = useState<ProdutoCampoPersonalizado[]>(
-        produto?.campos_personalizados || []
+        produto?.campos_personalizados?.map(campo => ({
+            ...campo,
+            opcoes: typeof campo.opcoes === 'string' ? JSON.parse(campo.opcoes) : campo.opcoes || []
+        })) || []
     );
+
+    useEffect(() => {
+        console.log('=== DEBUG TAGS ===');
+        console.log('Produto recebido:', produto);
+        console.log('Tipo das tags:', typeof produto?.tags);
+        console.log('Valor das tags:', produto?.tags);
+        console.log('Tags após processamento:', tags);
+        console.log('================');
+    }, [produto, tags]);
 
     useEffect(() => {
         console.log('Produto recebido:', produto);
@@ -69,14 +81,21 @@ export function ProdutoForm({
         const novosCampos = [...camposPersonalizados];
         novosCampos[index] = {
             ...novosCampos[index],
-            [field]: value
+            [field]: field === 'opcoes' 
+                ? (typeof value === 'string' 
+                    ? value.split(',').map((o: string) => o.trim())
+                    : Array.isArray(value) 
+                        ? value 
+                        : [])
+                : value
         };
         setCamposPersonalizados(novosCampos);
     };
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
-        console.log('Enviando formulário com campos personalizados:', camposPersonalizados);
+        console.log('=== DEBUG ENVIO ===');
+        console.log('Tags antes do processamento:', tags);
         
         // Filtrar campos personalizados vazios e garantir que seja um array
         const camposValidos = camposPersonalizados
@@ -95,8 +114,10 @@ export function ProdutoForm({
 
         // Processar tags
         const tagsArray = tags.split(',')
-            .map(tag => tag.trim())
-            .filter(tag => tag !== '');
+            .map((tag: string) => tag.trim())
+            .filter((tag: string) => tag !== '');
+
+        console.log('Tags após processamento:', tagsArray);
 
         const produtoData = {
             nome,
@@ -109,154 +130,163 @@ export function ProdutoForm({
             campos_personalizados: camposValidos
         };
 
-        console.log('Dados do produto a serem enviados:', produtoData);
-    onSubmit(produtoData);
-  };
+        console.log('Dados finais do produto:', produtoData);
+        console.log('==================');
+        onSubmit(produtoData);
+    };
 
   return (
-        <form onSubmit={handleSubmit} className="space-y-4 bg-white/80 backdrop-blur-sm p-6 rounded-lg shadow-lg">
-          <div>
-            <label className="block text-sm font-medium text-gray-700">Nome</label>
-            <input
-              type="text"
-                    value={nome}
-                    onChange={(e) => setNome(e.target.value)}
-                    className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
-              required
-            />
+        <form onSubmit={handleSubmit} className="space-y-4 bg-transparent p-4 md:p-6 rounded-lg shadow-lg max-w-4xl mx-auto">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <label className="block text-sm font-medium text-gray-700">Nome</label>
+              <input
+                type="text"
+                value={nome}
+                onChange={(e) => setNome(e.target.value)}
+                className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
+                required
+              />
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700">Preço (R$)</label>
+              <input
+                type="number"
+                step="0.01"
+                value={preco}
+                onChange={(e) => setPreco(e.target.value)}
+                className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
+                required
+              />
+            </div>
           </div>
 
           <div>
             <label className="block text-sm font-medium text-gray-700">Descrição</label>
             <textarea
-                    value={descricao}
-                    onChange={(e) => setDescricao(e.target.value)}
-                    className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
-                    rows={3}
-              required
-            />
-          </div>
-
-          <div>
-            <label className="block text-sm font-medium text-gray-700">Preço (R$)</label>
-            <input
-              type="number"
-              step="0.01"
-                    value={preco}
-                    onChange={(e) => setPreco(e.target.value)}
-                    className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
-              required
-            />
-          </div>
-
-          <div>
-            <label className="block text-sm font-medium text-gray-700">Quantidade</label>
-            <input
-              type="number"
-                    value={quantidade}
-                    onChange={(e) => setQuantidade(e.target.value)}
-                    className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
-              required
-            />
-          </div>
-
-          <div>
-                <label className="block text-sm font-medium text-gray-700">Tags (separadas por vírgula)</label>
-            <input
-              type="text"
-                    value={tags}
-                    onChange={(e) => setTags(e.target.value)}
+              value={descricao}
+              onChange={(e) => setDescricao(e.target.value)}
               className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
-                    placeholder="Ex: masculino, feminino, P, M, G"
+              rows={3}
+              required
             />
           </div>
 
-          <div>
-                <div className="flex justify-between items-center mb-2">
-                    <label className="block text-sm font-medium text-gray-700">Campos Personalizados</label>
-                    {camposPersonalizados.length < 5 && (
-                        <button
-                            type="button"
-                            onClick={handleAddCampoPersonalizado}
-                            className="text-sm text-indigo-600 hover:text-indigo-500"
-                        >
-                            + Adicionar campo
-                        </button>
-                    )}
-                </div>
-                {camposPersonalizados.map((campo, index) => (
-                    <div key={campo.id} className="mb-4 p-4 border rounded-lg">
-                        <div className="flex justify-between items-start mb-2">
-                            <div className="flex-1 mr-2">
-                                <input
-                                    type="text"
-                                    value={campo.nome}
-                                    onChange={(e) => handleCampoPersonalizadoChange(index, 'nome', e.target.value)}
-                                    placeholder="Nome do campo"
-                                    className="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
-                                />
-                            </div>
-                            <select
-                                value={campo.tipo}
-                                onChange={(e) => handleCampoPersonalizadoChange(index, 'tipo', e.target.value)}
-                                className="block w-40 rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
-                            >
-                                <option value="texto">Texto</option>
-                                <option value="numero">Número</option>
-                                <option value="opcao">Opção</option>
-                            </select>
-                            <button
-                                type="button"
-                                onClick={() => handleRemoveCampoPersonalizado(index)}
-                                className="ml-2 text-red-600 hover:text-red-500"
-                            >
-                                <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                                    <path fillRule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clipRule="evenodd" />
-                                </svg>
-                            </button>
-                        </div>
-                        {campo.tipo === 'opcao' && (
-                            <div className="mt-2">
-                                <input
-                                    type="text"
-                                    value={campo.opcoes?.join(', ') || ''}
-                                    onChange={(e) => handleCampoPersonalizadoChange(index, 'opcoes', e.target.value.split(',').map(o => o.trim()))}
-                                    placeholder="Opções (separadas por vírgula)"
-                                    className="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
-                />
-              </div>
-            )}
-                        <div className="mt-2">
-                            {campo.tipo === 'opcao' ? (
-                                <select
-                                    value={campo.valor}
-                                    onChange={(e) => handleCampoPersonalizadoChange(index, 'valor', e.target.value)}
-                                    className="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
-                                >
-                                    <option value="">Selecione uma opção</option>
-                                    {campo.opcoes?.map((opcao, i) => (
-                                        <option key={i} value={opcao}>{opcao}</option>
-                                    ))}
-                                </select>
-                            ) : campo.tipo === 'numero' ? (
-                                <input
-                                    type="number"
-                                    value={campo.valor}
-                                    onChange={(e) => handleCampoPersonalizadoChange(index, 'valor', e.target.value)}
-                                    className="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
-                                />
-                            ) : (
-                                <input
-                                    type="text"
-                                    value={campo.valor}
-                                    onChange={(e) => handleCampoPersonalizadoChange(index, 'valor', e.target.value)}
-                                    className="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
-                                />
-                            )}
-                        </div>
-                    </div>
-                ))}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <label className="block text-sm font-medium text-gray-700">Quantidade</label>
+              <input
+                type="number"
+                value={quantidade}
+                onChange={(e) => setQuantidade(e.target.value)}
+                className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
+                required
+              />
             </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700">Tags (separadas por vírgula)</label>
+              <input
+                type="text"
+                value={tags}
+                onChange={(e) => setTags(e.target.value)}
+                className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
+                placeholder="Ex: masculino, feminino, P, M, G"
+              />
+            </div>
+          </div>
+
+          <div>
+            <div className="flex justify-between items-center mb-2">
+              <label className="block text-sm font-medium text-gray-700">Campos Personalizados</label>
+              {camposPersonalizados.length < 5 && (
+                <button
+                  type="button"
+                  onClick={handleAddCampoPersonalizado}
+                  className="text-sm text-indigo-600 hover:text-indigo-500"
+                >
+                  + Adicionar campo
+                </button>
+              )}
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {camposPersonalizados.map((campo, index) => (
+                <div key={campo.id} className="p-4 border rounded-lg bg-white/70">
+                  <div className="flex flex-col md:flex-row justify-between items-start gap-2 mb-2">
+                    <div className="w-full md:flex-1 md:mr-1 md:min-w-[120px]">
+                      <input
+                        type="text"
+                        value={campo.nome}
+                        onChange={(e) => handleCampoPersonalizadoChange(index, 'nome', e.target.value)}
+                        placeholder="Nome do campo"
+                        className="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
+                      />
+                    </div>
+                    <div className="flex items-center gap-2 w-full md:w-auto">
+                      <select
+                        value={campo.tipo}
+                        onChange={(e) => handleCampoPersonalizadoChange(index, 'tipo', e.target.value)}
+                        className="block w-full md:w-40 rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 md:max-w-[80px]"
+                      >
+                        <option value="texto">Texto</option>
+                        <option value="numero">Número</option>
+                        <option value="opcao">Opção</option>
+                      </select>
+                      <button
+                        type="button"
+                        onClick={() => handleRemoveCampoPersonalizado(index)}
+                        className="text-red-600 hover:text-red-500"
+                      >
+                        <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                          <path fillRule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clipRule="evenodd" />
+                        </svg>
+                      </button>
+                    </div>
+                  </div>
+                  {campo.tipo === 'opcao' && (
+                    <div className="mt-2">
+                      <input
+                        type="text"
+                        value={Array.isArray(campo.opcoes) ? campo.opcoes.join(', ') : ''}
+                        onChange={(e) => handleCampoPersonalizadoChange(index, 'opcoes', e.target.value)}
+                        placeholder="Opções (separadas por vírgula)"
+                        className="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
+                      />
+                    </div>
+                  )}
+                  <div className="mt-2">
+                    {campo.tipo === 'opcao' ? (
+                      <select
+                        value={campo.valor}
+                        onChange={(e) => handleCampoPersonalizadoChange(index, 'valor', e.target.value)}
+                        className="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
+                      >
+                        <option value="">Selecione uma opção</option>
+                        {Array.isArray(campo.opcoes) && campo.opcoes.map((opcao, i) => (
+                          <option key={i} value={opcao}>{opcao}</option>
+                        ))}
+                      </select>
+                    ) : campo.tipo === 'numero' ? (
+                      <input
+                        type="number"
+                        value={campo.valor}
+                        onChange={(e) => handleCampoPersonalizadoChange(index, 'valor', e.target.value)}
+                        className="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
+                      />
+                    ) : (
+                      <input
+                        type="text"
+                        value={campo.valor}
+                        onChange={(e) => handleCampoPersonalizadoChange(index, 'valor', e.target.value)}
+                        className="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
+                      />
+                    )}
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
 
             <div>
                 <label className="block text-sm font-medium text-gray-700">Imagens (máximo 8)</label>

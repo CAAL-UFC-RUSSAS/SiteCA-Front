@@ -23,6 +23,8 @@ export default function ProdutoPage({ params }: { params: Promise<{ id: string }
     const [quantidade, setQuantidade] = useState(1);
     const [produtosRelacionados, setProdutosRelacionados] = useState<Produto[]>([]);
     const [selectedImageIndex, setSelectedImageIndex] = useState(0);
+    const [isFullscreen, setIsFullscreen] = useState(false);
+    const [camposPersonalizados, setCamposPersonalizados] = useState<{[key: string]: string}>({});
 
     const formatarPreco = (preco: string) => {
         const precoNum = Number(preco);
@@ -72,23 +74,6 @@ export default function ProdutoPage({ params }: { params: Promise<{ id: string }
                 
                 setProduto(produtoData);
                 
-                if (Array.isArray(produtoData.tags)) {
-                    // Verificar se o produto tem tags de tamanho
-                    const sizes = detectSizeTags(produtoData.tags);
-                    setAvailableSizes(sizes);
-                    // Selecionar o primeiro tamanho por padrão se existir
-                    if (sizes.length > 0) {
-                        setSelectedSize(sizes[0]);
-                    }
-                    
-                    // Verificar se o produto tem tags de tipo de vestimenta
-                    const types = detectTypeTags(produtoData.tags);
-                    setAvailableTypes(types);
-                    // Selecionar o primeiro tipo por padrão se existir
-                    if (types.length > 0) {
-                        setSelectedType(types[0]);
-                    }
-                }
                 
                 // Ordenar produtos por relevância (relacionados primeiro)
                 if (todosProdutos.length > 0 && produtoData) {
@@ -129,7 +114,17 @@ export default function ProdutoPage({ params }: { params: Promise<{ id: string }
     useEffect(() => {
         if (produto) {
             try {
-                const cart: Array<{id: number; nome: string; preco: string; imagem?: string; quantidade: number; tamanho?: string; tipo?: string; quantidadeDisponivel?: number}> = JSON.parse(localStorage.getItem('cart') || '[]');
+                const cart: Array<{
+                    id: number;
+                    nome: string;
+                    preco: string;
+                    imagem?: string;
+                    quantidade: number;
+                    tamanho?: string;
+                    tipo?: string;
+                    quantidadeDisponivel?: number;
+                    campos_personalizados?: {[key: string]: string};
+                }> = JSON.parse(localStorage.getItem('cart') || '[]');
                 
                 // Verificar se já existe no carrinho e carregar suas informações
                 const cartItem = cart.find(item => item.id === produto.id);
@@ -146,6 +141,11 @@ export default function ProdutoPage({ params }: { params: Promise<{ id: string }
                     if (cartItem.tipo && availableTypes.includes(cartItem.tipo)) {
                         setSelectedType(cartItem.tipo);
                     }
+
+                    // Carregar campos personalizados
+                    if (cartItem.campos_personalizados) {
+                        setCamposPersonalizados(cartItem.campos_personalizados);
+                    }
                 }
             } catch (error) {
                 console.error('Erro ao carregar informações do carrinho:', error);
@@ -157,28 +157,77 @@ export default function ProdutoPage({ params }: { params: Promise<{ id: string }
     useEffect(() => {
         if (produto) {
             try {
-                const cart: Array<{id: number; nome: string; preco: string; imagem?: string; quantidade: number; tamanho?: string; tipo?: string; quantidadeDisponivel?: number}> = JSON.parse(localStorage.getItem('cart') || '[]');
+                const cart: Array<{
+                    id: number;
+                    nome: string;
+                    preco: string;
+                    imagem?: string;
+                    quantidade: number;
+                    tamanho?: string;
+                    tipo?: string;
+                    quantidadeDisponivel?: number;
+                    campos_personalizados?: {[key: string]: string};
+                }> = JSON.parse(localStorage.getItem('cart') || '[]');
+                
+                console.log('Cart atual:', cart);
+                console.log('Campos personalizados atuais:', camposPersonalizados);
                 
                 // Verificar se o produto está no carrinho com exatamente as mesmas opções
-                const isExactMatch = cart.some((item) => 
-                    item.id === produto.id && 
-                    item.tamanho === selectedSize && 
-                    item.tipo === selectedType
-                );
+                const cartItem = cart.find((item) => {
+                    // Primeiro verifica se é o mesmo produto
+                    if (item.id !== produto.id) return false;
+                    
+                    // Verifica se os campos personalizados são iguais
+                    const camposIguais = JSON.stringify(item.campos_personalizados) === JSON.stringify(camposPersonalizados);
+                    
+                    console.log('Comparando campos:', {
+                        itemCampos: item.campos_personalizados,
+                        camposAtuais: camposPersonalizados,
+                        saoIguais: camposIguais
+                    });
+                    
+                    // Se os campos personalizados são diferentes, não é o mesmo item
+                    if (!camposIguais) return false;
+                    
+                    // Se chegou aqui, é o mesmo produto com os mesmos campos personalizados
+                    return true;
+                });
                 
+                // Se encontrou o item exato, atualizar a quantidade e marcar como adicionado
+                if (cartItem) {
+                    console.log('Item encontrado no carrinho:', cartItem);
+                    // Se a quantidade for diferente, mostrar opção de atualizar
+                    if (cartItem.quantidade !== quantidade) {
+                        setAddedToCart(false);
+                        setProductInCartWithDifferentOptions(true);
+                    } else {
+                        setQuantidade(cartItem.quantidade);
+                        setAddedToCart(true);
+                        setProductInCartWithDifferentOptions(false);
+                    }
+                } else {
                 // Verificar se o produto está no carrinho mas com opções diferentes
                 const isInCartWithDifferentOptions = cart.some((item) => 
                     item.id === produto.id && 
-                    (item.tamanho !== selectedSize || item.tipo !== selectedType)
+                        JSON.stringify(item.campos_personalizados) !== JSON.stringify(camposPersonalizados)
                 );
                 
-                setAddedToCart(isExactMatch);
+                    console.log('Produto não encontrado com opções exatas, mas com opções diferentes:', isInCartWithDifferentOptions);
+                    setAddedToCart(false);
                 setProductInCartWithDifferentOptions(isInCartWithDifferentOptions);
+                }
             } catch (error) {
                 console.error('Erro ao verificar status no carrinho:', error);
             }
         }
-    }, [produto, selectedSize, selectedType]);
+    }, [produto, camposPersonalizados, quantidade]);
+
+    const handleCampoPersonalizadoChange = (nome: string, valor: string) => {
+        setCamposPersonalizados(prev => ({
+            ...prev,
+            [nome]: valor
+        }));
+    };
 
     const addToCart = () => {
         if (!produto) return;
@@ -197,7 +246,18 @@ export default function ProdutoPage({ params }: { params: Promise<{ id: string }
 
         try {
             // Obter carrinho atual
-            const currentCart: Array<{id: number; nome: string; preco: string; imagem?: string; quantidade: number; tamanho?: string; tipo?: string; quantidadeDisponivel?: number}> = JSON.parse(localStorage.getItem('cart') || '[]');
+            const currentCart: Array<{
+                id: number;
+                nome: string;
+                preco: string;
+                imagem?: string;
+                imagens?: (string | { url: string })[];
+                quantidade: number;
+                tamanho?: string;
+                tipo?: string;
+                quantidadeDisponivel?: number;
+                campos_personalizados?: {[key: string]: string};
+            }> = JSON.parse(localStorage.getItem('cart') || '[]');
             
             // Se o produto já está no carrinho mas com opções diferentes
             if (productInCartWithDifferentOptions) {
@@ -207,7 +267,6 @@ export default function ProdutoPage({ params }: { params: Promise<{ id: string }
                 // Se o usuário está modificando um produto que já existe no carrinho
                 if (productItems.length > 0) {
                     // Atualizar o primeiro item encontrado com as novas opções
-                    // (ou podemos remover todos e adicionar um novo)
                     const firstItemIndex = currentCart.findIndex(item => item.id === produto.id);
                     
                     // Usar a quantidade selecionada
@@ -217,12 +276,13 @@ export default function ProdutoPage({ params }: { params: Promise<{ id: string }
                     currentCart[firstItemIndex] = {
                         id: produto.id,
                         nome: produto.nome,
-                        preco: produto.preco,
-                        imagem: produto.imagem,
+                        preco: (Number(produto.preco) / 10000).toString(),
+                        imagem: typeof produto.imagens?.[0] === 'string' ? produto.imagens[0] : produto.imagens?.[0]?.url || undefined,
+                        imagens: produto.imagens,
                         quantidade: totalQuantity,
-                        tamanho: selectedSize || undefined,
                         tipo: selectedType || undefined,
-                        quantidadeDisponivel: produto.quantidade
+                        quantidadeDisponivel: produto.quantidade,
+                        campos_personalizados: camposPersonalizados
                     };
                     
                     // Remover quaisquer outras variações do mesmo produto
@@ -234,27 +294,28 @@ export default function ProdutoPage({ params }: { params: Promise<{ id: string }
                     localStorage.setItem('cart', JSON.stringify(updatedCart));
                 }
             } else {
-                // Verificar se o produto já está no carrinho (com o mesmo tamanho e tipo)
+                // Verificar se o produto já está no carrinho (com os mesmos campos personalizados)
                 const existingItemIndex = currentCart.findIndex((item) => 
                     item.id === produto.id && 
-                    item.tamanho === selectedSize && 
-                    item.tipo === selectedType
+                    JSON.stringify(item.campos_personalizados) === JSON.stringify(camposPersonalizados)
                 );
                 
                 if (existingItemIndex >= 0) {
                     // Atualizar quantidade se já existe
                     currentCart[existingItemIndex].quantidade = quantidade;
+                    currentCart[existingItemIndex].campos_personalizados = camposPersonalizados;
                 } else {
                     // Adicionar novo item
                     currentCart.push({
                         id: produto.id,
                         nome: produto.nome,
-                        preco: produto.preco,
-                        imagem: produto.imagem,
+                        preco: (Number(produto.preco) / 10000).toString(),
+                        imagem: typeof produto.imagens?.[0] === 'string' ? produto.imagens[0] : produto.imagens?.[0]?.url || undefined,
+                        imagens: produto.imagens,
                         quantidade: quantidade,
-                        tamanho: selectedSize || undefined,
                         tipo: selectedType || undefined,
-                        quantidadeDisponivel: produto.quantidade
+                        quantidadeDisponivel: produto.quantidade,
+                        campos_personalizados: camposPersonalizados
                     });
                 }
                 
@@ -282,12 +343,12 @@ export default function ProdutoPage({ params }: { params: Promise<{ id: string }
             return;
         }
 
-        // Adicionar ao carrinho primeiro (opcional)
+        // Adicionar ao carrinho primeiro
         addToCart();
         
         // Preparar mensagem para WhatsApp
         const telefone = '557398462159'; // Substitua pelo número do WhatsApp do CA
-        const valorUnitario = Number(produto.preco) / 100;
+        const valorUnitario = Number(produto.preco) / 10000;
         const valorTotal = valorUnitario * quantidade;
         
         let mensagem = 'Olá! Gostaria de comprar o seguinte produto:\n\n';
@@ -297,8 +358,16 @@ export default function ProdutoPage({ params }: { params: Promise<{ id: string }
         
         // Adicionar tamanho e tipo se selecionados
         const detalhes = [];
-        if (selectedSize) detalhes.push(`Tamanho: ${selectedSize}`);
         if (selectedType) detalhes.push(`Tipo: ${selectedType}`);
+        
+        // Adicionar campos personalizados
+        if (produto.campos_personalizados && produto.campos_personalizados.length > 0) {
+            produto.campos_personalizados.forEach(campo => {
+                if (camposPersonalizados[campo.nome]) {
+                    detalhes.push(`${campo.nome}: ${camposPersonalizados[campo.nome]}`);
+                }
+            });
+        }
         
         if (detalhes.length > 0) {
             mensagem += ` (${detalhes.join(', ')})`;
@@ -366,14 +435,66 @@ export default function ProdutoPage({ params }: { params: Promise<{ id: string }
         }
     };
 
-    const getImagemPrincipal = (produto: Produto) => {
-        if (produto.imagens && produto.imagens.length > 0 && produto.imagens[0]) {
-            return produto.imagens[0];
+    useEffect(() => {
+        const handleEsc = (event: KeyboardEvent) => {
+            if (event.key === 'Escape' && isFullscreen) {
+                setIsFullscreen(false);
+            }
+        };
+
+        window.addEventListener('keydown', handleEsc);
+        return () => window.removeEventListener('keydown', handleEsc);
+    }, [isFullscreen]);
+
+    // Controla o overflow do body quando em tela cheia
+    useEffect(() => {
+        if (isFullscreen) {
+            document.body.style.overflow = 'hidden';
+        } else {
+            document.body.style.overflow = 'auto';
         }
-        if (produto.imagem) {
-            return produto.imagem;
+
+        return () => {
+            document.body.style.overflow = 'auto';
+        };
+    }, [isFullscreen]);
+
+    const nextImage = () => {
+        if (produto?.imagens) {
+            setSelectedImageIndex((prev) => (prev + 1) % produto.imagens.length);
+        }
+    };
+
+    const prevImage = () => {
+        if (produto?.imagens) {
+            setSelectedImageIndex((prev) => (prev - 1 + produto.imagens.length) % produto.imagens.length);
+        }
+    };
+
+    const toggleFullscreen = () => {
+        setIsFullscreen(!isFullscreen);
+    };
+
+    const getImagemPrincipal = (produto: Produto) => {
+        if (produto.imagens && produto.imagens.length > 0) {
+            const imagem = produto.imagens[selectedImageIndex];
+            if (typeof imagem === 'object' && imagem.url) {
+                return imagem.url;
+            }
+            if (typeof imagem === 'string') {
+                return imagem;
+            }
         }
         return null;
+    };
+
+    const handleQuantidadeChange = (value: number) => {
+        setQuantidade(value);
+        // Se o produto já está no carrinho, mostrar opção de atualizar
+        if (addedToCart) {
+            setAddedToCart(false);
+            setProductInCartWithDifferentOptions(true);
+        }
     };
 
     if (loading) {
@@ -433,17 +554,55 @@ export default function ProdutoPage({ params }: { params: Promise<{ id: string }
             <main className="container mx-auto px-4 py-0 pt-2 max-w-7xl">
                 <div className="flex flex-col md:flex-row gap-0 bg-white shadow p-6">
                     <div className="w-full md:w-1/2 flex flex-col gap-4">
-                        <div className="relative aspect-square">
+                        <div className="relative aspect-square mr-5">
                             {getImagemPrincipal(produto) ? (
-                                <Image 
-                                    src={getImagemPrincipal(produto)!} 
-                                    alt={produto.nome} 
-                                    fill
-                                    className="object-contain"
-                                />
+                                <>
+                            <Image 
+                                        src={getImagemPrincipal(produto)!} 
+                                alt={produto.nome} 
+                                        fill
+                                        className="object-contain"
+                                    />
+                                    {/* Controles de navegação */}
+                                    {produto.imagens && produto.imagens.length > 1 && (
+                                        <>
+                                            <button
+                                                onClick={prevImage}
+                                                className="absolute left-2 top-1/2 -translate-y-1/2 bg-black/50 text-white p-2 rounded-full hover:bg-black/70 transition-colors"
+                                            >
+                                                <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+                                                </svg>
+                                            </button>
+                                            <button
+                                                onClick={nextImage}
+                                                className="absolute right-2 top-1/2 -translate-y-1/2 bg-black/50 text-white p-2 rounded-full hover:bg-black/70 transition-colors"
+                                            >
+                                                <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                                                </svg>
+                                            </button>
+                                        </>
+                                    )}
+                                    {/* Botão de tela cheia */}
+                                    <button
+                                        onClick={toggleFullscreen}
+                                        className="absolute top-2 left-2 bg-black/50 text-white p-2 rounded-full hover:bg-black/70 transition-colors"
+                                    >
+                                        {isFullscreen ? (
+                                            <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                                            </svg>
+                                        ) : (
+                                            <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5v-4m0 4h-4m4 0l-5-5" />
+                                            </svg>
+                                        )}
+                                    </button>
+                                </>
                             ) : (
                                 <div className="w-full h-full bg-gray-200 rounded-lg flex items-center justify-center">
-                                    <span className="text-gray-400 text-xl">Sem imagem</span>
+                                <span className="text-gray-400 text-xl">Sem imagem</span>
                                 </div>
                             )}
                         </div>
@@ -462,7 +621,7 @@ export default function ProdutoPage({ params }: { params: Promise<{ id: string }
                                         }`}
                                     >
                                         <Image
-                                            src={imagem}
+                                            src={typeof imagem === 'object' ? imagem.url : imagem}
                                             alt={`${produto.nome} - Imagem ${index + 1}`}
                                             fill
                                             className="object-cover"
@@ -476,6 +635,67 @@ export default function ProdutoPage({ params }: { params: Promise<{ id: string }
                         <h1 className="text-3xl font-bold text-black">{produto.nome}</h1>
                         <span className="text-4xl text-[#ee4d2d] font-bold">{formatarPreco(produto.preco)}</span>
                         <p className="text-gray-700 text-lg">{produto.descricao}</p>
+                        
+                        <div className="flex flex-wrap gap-2">
+                            {Array.isArray(produto.tags) && produto.tags
+                                .filter(tag => !availableSizes.includes(tag) && !availableTypes.includes(tag)) // Filtrar tamanhos e tipos já exibidos acima
+                                .map((tag: string) => (
+                                <span 
+                                    key={tag} 
+                                    className="bg-gray-100 text-gray-800 text-sm px-3 py-1 rounded-full"
+                                >
+                                    {tag}
+                                </span>
+                            ))}
+                        </div>
+
+                        {/* Campos Personalizados */}
+                        {produto.campos_personalizados && produto.campos_personalizados.length > 0 && (
+                            <div className="mt-5">
+                                <div className="grid grid-cols-2 gap-4">
+                                    {produto.campos_personalizados.map((campo) => (
+                                        <div key={campo.id}>
+                                            <label className="block text-sm font-medium text-gray-700 mb-1">
+                                                {campo.nome}
+                                            </label>
+                                            {campo.tipo === 'opcao' ? (
+                                                <select
+                                                    value={camposPersonalizados[campo.nome] || ''}
+                                                    onChange={(e) => handleCampoPersonalizadoChange(campo.nome, e.target.value)}
+                                                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-orange-500"
+                                                >
+                                                    <option value="">Selecione uma opção</option>
+                                                    {typeof campo.opcoes === 'string' 
+                                                        ? JSON.parse(campo.opcoes).map((opcao: string) => (
+                                                            <option key={opcao} value={opcao}>{opcao}</option>
+                                                        ))
+                                                        : campo.opcoes?.map((opcao: string) => (
+                                                            <option key={opcao} value={opcao}>{opcao}</option>
+                                                        ))
+                                                    }
+                                                </select>
+                                            ) : campo.tipo === 'numero' ? (
+                                                <input
+                                                    type="number"
+                                                    value={camposPersonalizados[campo.nome] || ''}
+                                                    onChange={(e) => handleCampoPersonalizadoChange(campo.nome, e.target.value)}
+                                                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-orange-500"
+                                                    placeholder={`Digite ${campo.nome.toLowerCase()}`}
+                                                />
+                                            ) : (
+                                                <input
+                                                    type="text"
+                                                    value={camposPersonalizados[campo.nome] || ''}
+                                                    onChange={(e) => handleCampoPersonalizadoChange(campo.nome, e.target.value)}
+                                                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-orange-500"
+                                                    placeholder={`Digite ${campo.nome.toLowerCase()}`}
+                                                />
+                                            )}
+                                        </div>
+                                    ))}
+                                </div>
+                            </div>
+                        )}
                         
                         {/* Seleção de tipo de vestimenta (se disponível) */}
                         {availableTypes.length > 0 && (
@@ -499,40 +719,7 @@ export default function ProdutoPage({ params }: { params: Promise<{ id: string }
                             </div>
                         )}
                         
-                        {/* Seleção de tamanho (se disponível) */}
-                        {availableSizes.length > 0 && (
-                            <div className="mt-2">
-                                <h3 className="text-gray-700 font-medium mb-2">Tamanho:</h3>
-                                <div className="flex flex-wrap gap-2">
-                                    {availableSizes.map((size) => (
-                                        <button
-                                            key={size}
-                                            className={`px-3 py-1 border transition-colors ${
-                                                selectedSize === size
-                                                    ? 'border-orange-500 bg-orange-50 text-orange-700 font-medium'
-                                                    : 'border-gray-300 hover:border-orange-400 hover:bg-orange-50/50 text-gray-700'
-                                            }`}
-                                            onClick={() => setSelectedSizeAndUpdateCart(size)}
-                                        >
-                                            {size.toUpperCase()}
-                                        </button>
-                                    ))}
-                                </div>
-                            </div>
-                        )}
-                        
-                        <div className="flex flex-wrap gap-2">
-                            {Array.isArray(produto.tags) && produto.tags
-                                .filter(tag => !availableSizes.includes(tag) && !availableTypes.includes(tag)) // Filtrar tamanhos e tipos já exibidos acima
-                                .map((tag: string) => (
-                                <span 
-                                    key={tag} 
-                                    className="bg-gray-100 text-gray-800 text-sm px-3 py-1 rounded-full"
-                                >
-                                    {tag}
-                                </span>
-                            ))}
-                        </div>
+
                         
                         {/* Espaçador flexível que empurra o conteúdo para baixo */}
                         <div className="flex-grow"></div>
@@ -628,6 +815,50 @@ export default function ProdutoPage({ params }: { params: Promise<{ id: string }
                         produtos={produtosRelacionados} 
                         titulo="Mais Produtos" 
                     />
+                </div>
+            )}
+
+            {/* Modal de tela cheia */}
+            {isFullscreen && (
+                <div className="fixed inset-0 z-50 bg-black bg-opacity-90 flex items-center justify-center">
+                    <div className="relative w-full h-full flex items-center justify-center">
+                        <Image 
+                            src={getImagemPrincipal(produto)!} 
+                            alt={produto.nome} 
+                            fill
+                            className="object-contain"
+                        />
+                        {/* Controles de navegação */}
+                        {produto.imagens && produto.imagens.length > 1 && (
+                            <>
+                                <button
+                                    onClick={prevImage}
+                                    className="absolute left-4 top-1/2 -translate-y-1/2 bg-black/50 text-white p-3 rounded-full hover:bg-black/70 transition-colors"
+                                >
+                                    <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+                                    </svg>
+                                </button>
+                                <button
+                                    onClick={nextImage}
+                                    className="absolute right-4 top-1/2 -translate-y-1/2 bg-black/50 text-white p-3 rounded-full hover:bg-black/70 transition-colors"
+                                >
+                                    <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                                    </svg>
+                                </button>
+                            </>
+                        )}
+                        {/* Botão de fechar */}
+                        <button
+                            onClick={toggleFullscreen}
+                            className="absolute top-4 right-4 bg-black/50 text-white p-3 rounded-full hover:bg-black/70 transition-colors"
+                        >
+                            <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                            </svg>
+                        </button>
+                    </div>
                 </div>
             )}
         </>
