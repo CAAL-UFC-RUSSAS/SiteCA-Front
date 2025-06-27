@@ -35,6 +35,8 @@ export function ProdutoTable({ produtos, onEdit, onDelete }: ProdutoTableProps) 
                                                     className="h-10 w-10 rounded object-cover"
                                                     src={typeof produto.imagens[0] === 'string' ? produto.imagens[0] : produto.imagens[0].url}
                                                     alt={produto.nome}
+                                                    width={300}
+                                                    height={200}
                                                 />
                                             )}
                                         </div>
@@ -45,7 +47,7 @@ export function ProdutoTable({ produtos, onEdit, onDelete }: ProdutoTableProps) 
                                     </div>
                                 </td>
                                 <td className="px-6 py-4 whitespace-nowrap">
-                                    <div className="text-sm text-gray-900">R$ {(Number(produto.preco) / 100).toFixed(2)}</div>
+                                    <div className="text-sm text-gray-900">R$ {(Number(produto.preco) / 10000).toFixed(2)}</div>
                                 </td>
                                 <td className="px-6 py-4 whitespace-nowrap">
                                     <div className="text-sm text-gray-900">{produto.quantidade}</div>
@@ -88,6 +90,8 @@ export function ProdutoTable({ produtos, onEdit, onDelete }: ProdutoTableProps) 
                                         className="h-16 w-16 rounded-lg object-cover"
                                         src={typeof produto.imagens[0] === 'string' ? produto.imagens[0] : produto.imagens[0].url}
                                         alt={produto.nome}
+                                        width={300}
+                                        height={200}
                                     />
                                 )}
                             </div>

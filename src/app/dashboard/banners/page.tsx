@@ -125,7 +125,7 @@ export default function BannersPage() {
   return (
     <div className="p-6">
       <div className="flex justify-between items-center mb-6">
-        <h1 className="text-2xl font-bold text-indigo-800">Gerenciar Banners</h1>
+        <h1 className="text-2xl font-bold text-black">Gerenciar Banners</h1>
         <button
           onClick={() => setShowForm(true)}
           className="bg-indigo-600 text-white px-4 py-2 rounded hover:bg-indigo-700 transition-colors"

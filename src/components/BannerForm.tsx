@@ -187,6 +187,8 @@ export function BannerForm({
             <Image
               src={selectedImage || banner?.imagem_url || ''}
               alt="Visualização do banner"
+              width={300}
+              height={200}
               className="mt-2 max-w-full h-auto border rounded-md"
               style={{ maxHeight: '200px' }}
             />

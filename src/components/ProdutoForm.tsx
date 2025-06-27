@@ -302,6 +302,8 @@ export function ProdutoForm({
                                 src={image.url}
                                 alt={`Preview ${index + 1}`}
                                 className="w-full h-full object-cover rounded-lg"
+                                width={300}
+                                height={200}
                             />
                             <button
                                 type="button"

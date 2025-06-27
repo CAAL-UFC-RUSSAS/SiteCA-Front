@@ -25,7 +25,7 @@ export default function FinanceiroPage() {
             >
               Centro Acadêmico
             </button>
-            <button
+            {/* <button
               onClick={() => setActiveTab('descanso')}
               className={`flex-1 py-4 px-6 text-center font-medium ${
                 activeTab === 'descanso'
@@ -34,7 +34,7 @@ export default function FinanceiroPage() {
               }`}
             >
               Sala de Descanso
-            </button>
+            </button> */}
           </div>
           
           <div className="p-6">

@@ -52,6 +52,7 @@ export default function Sidebar() {
         </svg>
       ),
     },
+    /*
     {
       name: 'Financeiro Descanso',
       path: '/dashboard/financeiro/descanso',
@@ -61,6 +62,7 @@ export default function Sidebar() {
         </svg>
       ),
     }
+    */
     // Adicione mais itens do menu aqui no futuro
   ];
 
@@ -107,7 +109,7 @@ export default function Sidebar() {
         w-64
       `}>
       <div className="p-4">
-          <h1 className="text-2xl font-bold text-indigo-600 mb-8">Dashboard</h1>
+          <h1 className="text-2xl font-bold text-dark mb-8">Dashboard</h1>
         <nav>
           <ul className="space-y-2">
             {menuItems.map((item) => (

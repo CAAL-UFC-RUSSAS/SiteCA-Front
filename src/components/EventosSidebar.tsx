@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { CalendarDays, ExternalLink } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
-import { getAvisosAtivos, getCalendarioUFC } from '@/services/api';
+import { getAvisos, getCalendarioUFC } from '@/services/api';
 
 interface EventoFormatado {
   id: number | string;
@@ -19,6 +19,7 @@ interface EventoFormatado {
 export default function EventosSidebar() {
   const [minimizado, setMinimizado] = useState(true);
   const [eventos, setEventos] = useState<EventoFormatado[]>([]);
+  const [eventosCA, setEventosCA] = useState<EventoFormatado[]>([]);
   const [loading, setLoading] = useState(true);
   const [mostrarUFC, setMostrarUFC] = useState(true);
 
@@ -30,14 +31,15 @@ export default function EventosSidebar() {
         const hoje = new Date();
         hoje.setHours(0, 0, 0, 0);
         
+
         // Buscar dados em paralelo para melhor performance
-        const [avisosAtivos, calendarioUFC] = await Promise.all([
-          getAvisosAtivos(),
+        const [avisos, calendarioUFC] = await Promise.all([
+          getAvisos(),
           getCalendarioUFC()
         ]);
         
         // Transformar avisos em eventos formatados
-        const eventosFormatados = avisosAtivos
+        const eventosFormatados = avisos
           .filter(aviso => aviso.titulo && aviso.data_inicio) // Filtrar avisos válidos
           .map(aviso => {
             // Formatar a data para exibição
@@ -48,6 +50,8 @@ export default function EventosSidebar() {
               year: 'numeric'
             });
             
+            const passado = dataObj < hoje;
+            
             return {
               id: aviso.id,
               titulo: aviso.titulo,
@@ -55,21 +59,33 @@ export default function EventosSidebar() {
               dataObj,
               link: aviso.link,
               tipo: 'ca' as const,
-              passado: dataObj < hoje
+              passado
             };
           });
         
+        // Salvar eventos CA separadamente
+        setEventosCA(eventosFormatados);
+        
+        console.log('📊 Total de eventos CA formatados:', eventosFormatados.length);
+        console.log('📊 Eventos CA:', eventosFormatados);
+        
         // Combinar com eventos do calendário UFC
-        const todosCombinados = [...eventosFormatados, ...calendarioUFC.map(evento => ({
+        const todosEventos = [...eventosFormatados, ...calendarioUFC.map(evento => ({
           ...evento,
           passado: evento.dataObj < hoje
-        }))]
-          // Filtra eventos: futuros e até 7 dias atrás
-          .filter(evento => {
-            const seteDiasAtras = new Date();
-            seteDiasAtras.setDate(hoje.getDate() - 3);
-            return evento.dataObj >= seteDiasAtras;
-          })
+        }))];
+        
+        // Separar eventos passados e futuros
+        const eventosPassados = todosEventos.filter(evento => evento.passado);
+        const eventosFuturos = todosEventos.filter(evento => !evento.passado);
+        // Ordenar eventos passados por data (mais recentes primeiro)
+        const eventosPassadosOrdenados = eventosPassados.sort((a, b) => b.dataObj.getTime() - a.dataObj.getTime());
+        
+        // Pegar os 2 últimos eventos passados e todos os futuros
+        const todosCombinados = [
+          ...eventosPassadosOrdenados.slice(0, 2), // 2 eventos passados mais recentes
+          ...eventosFuturos // todos os eventos futuros
+        ]
           // Ordenar por data (mais próximos primeiro)
           .sort((a, b) => a.dataObj.getTime() - b.dataObj.getTime())
           // Limitar a 5 eventos para não sobrecarregar a sidebar
@@ -126,7 +142,9 @@ export default function EventosSidebar() {
 
   const eventosFiltrados = mostrarUFC 
     ? eventos 
-    : eventos.filter(evento => evento.tipo === 'ca');
+    : eventosCA
+        .sort((a, b) => a.dataObj.getTime() - b.dataObj.getTime()) // Ordenar por data
+        .slice(0, 5); // Usar diretamente os eventos CA, limitando a 5
 
   return (
     <div 
@@ -197,8 +215,8 @@ export default function EventosSidebar() {
             <p className="text-gray-500 text-sm">Nenhum evento encontrado.</p>
           ) : (
             <ul className="divide-y divide-gray-200">
-              {eventosFiltrados.map(evento => (
-                <li key={`${evento.tipo}-${evento.id}`} className="py-3 first:pt-0 last:pb-0">
+              {eventosFiltrados.map((evento, index) => (
+                <li key={`${evento.tipo}-${evento.id}-${index}`} className="py-3 first:pt-0 last:pb-0">
                   <Link 
                     href={evento.tipo === 'ca' ? (evento.link || `/eventos/${evento.id}`) : '/eventos'}
                     className={`flex items-start gap-3 hover:bg-gray-50 rounded p-1 -mx-1 ${
@@ -260,4 +278,4 @@ export default function EventosSidebar() {
       </div>
     </div>
   );
-} 
+}

@@ -154,7 +154,7 @@ export default function LojaPage() {
     return (
         <div className="p-4 md:p-6">
             <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 md:gap-0 mb-6">
-                <h1 className="text-xl md:text-2xl font-bold text-indigo-800">Gerenciar Produtos</h1>
+                <h1 className="text-xl md:text-2xl font-bold text-black">Gerenciar Produtos</h1>
                 <button
                     onClick={() => setShowForm(true)}
                     className="w-full md:w-auto bg-indigo-600 text-white px-4 py-2 rounded hover:bg-indigo-700 transition-colors"
@@ -215,6 +215,7 @@ export default function LojaPage() {
                         }}
                         selectedImages={selectedImages}
                         onImageSelect={handleImageSelect}
+                        onRemoveImage={handleRemoveImage}
                     />
                 </Modal>
             )}

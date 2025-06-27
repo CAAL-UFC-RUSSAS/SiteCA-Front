@@ -159,6 +159,7 @@ export default function TransparenciaFinanceiraPage() {
           >
             Centro Acadêmico
           </button>
+          {/*
           <button
             onClick={() => setTipoSelecionado('descanso')}
             className={`px-4 py-2 rounded-md ${
@@ -169,6 +170,7 @@ export default function TransparenciaFinanceiraPage() {
           >
             Sala de Descanso
           </button>
+          */}
         </div>
       </div>
       

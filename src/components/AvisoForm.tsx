@@ -65,10 +65,16 @@ export default function AvisoForm({ id, isEditing = false }: AvisoFormProps) {
     try {
       setLoading(true);
       
+      // Se data_fim não estiver definida, usar a mesma data de início
+      const dadosParaEnviar = {
+        ...formData,
+        data_fim: formData.data_fim || formData.data_inicio
+      };
+      
       if (isEditing && id) {
-        await updateAviso(parseInt(id), formData);
+        await updateAviso(parseInt(id), dadosParaEnviar);
       } else {
-        await createAviso(formData);
+        await createAviso(dadosParaEnviar);
       }
       
       router.push('/dashboard/avisos');
@@ -169,7 +175,7 @@ export default function AvisoForm({ id, isEditing = false }: AvisoFormProps) {
             className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500"
           />
           <p className="text-xs text-gray-500 mt-1">
-            Se não definir uma data de fim, o aviso será exibido indefinidamente.
+            Se não definir uma data de fim, será usada a mesma data de início.
           </p>
         </div>
         

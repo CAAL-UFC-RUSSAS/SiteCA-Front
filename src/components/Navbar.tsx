@@ -109,7 +109,7 @@ function MobileNavItem({ item }: { item: NavItem }) {
     <li>
       {item.submenu ? (
         <details className="group">
-          <summary className="flex items-center justify-between px-2 py-2 text-blue-600 hover:bg-blue-50 rounded cursor-pointer">
+          <summary className="flex items-center justify-between px-2 py-2 text-blue-600 hover:bg-blue-50 cursor-pointer">
             {item.label}
             <svg
               className="h-4 w-4 transition-transform duration-200 group-open:rotate-180"
@@ -131,7 +131,7 @@ function MobileNavItem({ item }: { item: NavItem }) {
           </ul>
         </details>
       ) : (
-        <Link href={item.href!} className="block px-2 py-2 hover:bg-blue-50 rounded">
+        <Link href={item.href!} className="block px-2 py-2 hover:bg-blue-50">
           {item.label}
         </Link>
       )}

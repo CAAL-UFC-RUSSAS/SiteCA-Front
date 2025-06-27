@@ -171,6 +171,8 @@ export function BannerTable({ banners, onEdit, onDelete, onReorder }: BannerTabl
                             <Image
                               src={banner.imagem_url}
                               alt={banner.titulo}
+                              width={300}
+                              height={200}
                               className="h-16 w-24 object-cover rounded"
                             />
                           ) : (
@@ -284,6 +286,8 @@ export function BannerTable({ banners, onEdit, onDelete, onReorder }: BannerTabl
                   <Image
                     src={banner.imagem_url}
                     alt={banner.titulo}
+                    width={300}
+                    height={200}
                     className={`w-full h-40 object-cover rounded-lg transition-all duration-200 ${
                       draggedItem === index ? 'opacity-50 scale-105 shadow-lg' : ''
                     }`}
