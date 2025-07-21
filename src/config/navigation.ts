@@ -3,6 +3,10 @@ import { NavItem } from "@/types/navigation";
 export const navItems: NavItem[] = [
   { label: 'Início', href: '/' },
   {
+    label: 'Serviços',
+    href: '/servicos',
+  },
+  {
     label: 'Sobre',
     submenu: [
       { label: 'O Centro Acadêmico', href: '/sobre' },
@@ -12,16 +16,13 @@ export const navItems: NavItem[] = [
     ],
   },
   {
-    label: 'Serviços',
-    href: '/servicos',
-  },
-  {
     label: 'Eventos',
     submenu: [
       { label: 'Calendário UFC', href: '/eventos' },
       { label: 'Galeria', href: '/eventos/galeria' },
     ],
   },
+  /*
   {
     label: 'Projetos',
     submenu: [
@@ -31,7 +32,6 @@ export const navItems: NavItem[] = [
     ],
   },
   
-  /* Comentado temporariamente
   {
     label: 'Calouros',
     href: '/calouros',
@@ -54,9 +54,5 @@ export const navItems: NavItem[] = [
   {
     label: 'Loja do CA',
     href: '/loja',
-  },
-  {
-    label: 'Login',
-    href: '/login',
   },
 ]; 

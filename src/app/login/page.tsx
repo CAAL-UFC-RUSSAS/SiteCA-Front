@@ -59,9 +59,9 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen p-4 bg-gray-50">
+    <div className="flex flex-col items-center pt-40 min-h-screen p-4 bg-gray-50">
       <main className="flex flex-col items-center bg-white p-8 rounded-xl shadow-lg w-full max-w-md">
-        <h1 className="text-3xl font-bold mb-6 text-indigo-800">Login</h1>
+        <h1 className="text-3xl font-bold mb-6 text-black">Login</h1>
 
         <form onSubmit={handleLogin} className="flex flex-col gap-4 w-full">
           <div>

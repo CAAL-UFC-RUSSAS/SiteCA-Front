@@ -66,7 +66,7 @@ export function HomeBanner() {
   }, []);
 
   return (
-    <div className="flex flex-col lg:flex-row gap-5 h-[200px] lg:h-[300px]">
+    <div className="bg-white flex flex-col lg:flex-row gap-5 h-[200px] lg:h-[300px]">
       {/* Painel Principal (70% em desktop, 100% em mobile) */}
       <div className="w-full lg:w-[70%]">
         <Carousel

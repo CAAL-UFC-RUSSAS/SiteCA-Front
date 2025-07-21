@@ -46,10 +46,7 @@ export default function Footer() {
               <Link href="/calouros/guia" className="hover:underline text-blue-700">Guia do Calouro</Link>
             </li>
             <li>
-              <a href="https://www.instagram.com/" target="_blank" rel="noopener noreferrer" className="hover:underline text-pink-700">Instagram</a>
-            </li>
-            <li>
-              <a href="https://www.facebook.com/" target="_blank" rel="noopener noreferrer" className="hover:underline text-blue-800">Facebook</a>
+              <a href="https://www.instagram.com/caalufc/" target="_blank" rel="noopener noreferrer" className="hover:underline text-pink-700">Instagram</a>
             </li>
           </ul>
         </div>

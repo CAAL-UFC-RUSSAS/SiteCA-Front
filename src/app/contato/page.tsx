@@ -301,7 +301,7 @@ export default function ContatoPage() {
                 <h3 className="text-lg font-semibold mb-4">Siga-nos nas redes sociais</h3>
                 <div className="flex space-x-4">
                   <a 
-                    href="https://instagram.com/caccomputacao" 
+                    href="https://www.instagram.com/caalufc/" 
                     target="_blank" 
                     rel="noopener noreferrer"
                     className="bg-blue-100 p-3 rounded-full hover:bg-blue-200 transition-colors"

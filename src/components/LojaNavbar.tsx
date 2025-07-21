@@ -67,7 +67,7 @@ export default function LojaNavbar() {
                         />
                     </Link>
                     
-                    <Link href="/loja" className="text-2xl font-bold text-black flex items-center">
+                    <Link href="/" className="text-2xl font-bold text-black flex items-center">
                         <Image
                             src="/logoCAAL.svg"
                             alt="Logo"

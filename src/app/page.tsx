@@ -15,15 +15,18 @@ export default function Home() {
       {/* Sidebar fixa de eventos */}
       <EventosSidebar />
       
+      {/* Banner Principal - Faixa branca que cobre toda a largura */}
+      <div className="bg-white w-full">
+        <div className="max-w-7xl mx-auto px-4 p-10">
+          <HomeBanner />
+        </div>
+      </div>
+      
       <main className="container mx-auto px-4 py-8 max-w-7xl">
         {/* Pop-up de Aviso Importante */}
         <div className="space-y-8">
-          {/* Banner Principal */}
-          <HomeBanner />
-          
-
           {/* Boas-vindas e resumo do CA */}
-          <section className="flex flex-col md:flex-row items-center gap-8 bg-white rounded-lg shadow p-6 mt-10">
+          <section className="flex flex-col md:flex-row items-center gap-8 bg-white rounded-lg shadow p-6 mt-10 max-w-7xl">
             <div className="flex-1">
               <h2 className="text-2xl font-bold mb-2">Seja bem-vindo ao nosso Centro Acadêmico!</h2>
               <p className="mb-2 text-gray-700">

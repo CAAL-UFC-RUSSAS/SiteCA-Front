@@ -15,8 +15,12 @@ import {
 } from "@/components/ui/navigation-menu";
 import { cn } from "@/lib/utils";
 import { NavItem } from '@/types/navigation';
+import { FaInstagram } from 'react-icons/fa';
+import { usePathname } from 'next/navigation';
 
 function DesktopNav() {
+  const pathname = usePathname();
+
   return (
     <div className="relative flex items-center">
       <NavigationMenu viewport={false}>
@@ -39,7 +43,7 @@ function DesktopNav() {
                                     <NavigationMenuLink asChild>
                                       <Link
                                         href={subSubItem.href!}
-                                        className="block select-none rounded-md p-2 text-sm leading-none no-underline outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground"
+                                        className=" block select-none rounded-md p-2 text-sm leading-none no-underline outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground"
                                       >
                                         {subSubItem.label}
                                       </Link>
@@ -67,7 +71,7 @@ function DesktopNav() {
                 <NavigationMenuLink asChild>
                   <Link
                     href={item.href!}
-                    className={cn(navigationMenuTriggerStyle())}
+                    className={cn(navigationMenuTriggerStyle(), pathname === item.href && 'bg-white')}
                   >
                     {item.label}
                   </Link>
@@ -85,17 +89,17 @@ function MobileNav({ isOpen, onClose }: { isOpen: boolean; onClose: () => void }
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 bg-white z-40 flex flex-col p-6 overflow-y-auto">
+    <div className="fixed inset-0 bg-blue-50 z-40 flex flex-col p-6 overflow-y-auto">
       <div className="flex justify-between items-center mb-6">
-        <h2 className="text-xl font-bold text-indigo-700">Menu</h2>
+        <h2 className="text-xl font-bold text-black">Menu</h2>
         <button
           onClick={onClose}
-          className="text-gray-600 hover:text-gray-800"
+          className="text-black"
         >
           ✕
         </button>
       </div>
-      <ul className="space-y-4">
+      <ul className="space-y-2">
         {navItems.map((item, index) => (
           <MobileNavItem key={index} item={item} />
         ))}
@@ -109,10 +113,10 @@ function MobileNavItem({ item }: { item: NavItem }) {
     <li>
       {item.submenu ? (
         <details className="group">
-          <summary className="flex items-center justify-between px-2 py-2 text-blue-600 hover:bg-blue-50 cursor-pointer">
+          <summary className="flex items-center justify-between py-3 px-4 text-black hover:bg-blue-100 cursor-pointer text-base font-medium">
             {item.label}
             <svg
-              className="h-4 w-4 transition-transform duration-200 group-open:rotate-180"
+              className="h-5 w-5 transition-transform duration-200 group-open:rotate-180 text-black"
               xmlns="http://www.w3.org/2000/svg"
               viewBox="0 0 20 20"
               fill="currentColor"
@@ -124,14 +128,14 @@ function MobileNavItem({ item }: { item: NavItem }) {
               />
             </svg>
           </summary>
-          <ul className="pl-4 mt-1 space-y-1">
+          <ul className="pl-6 mt-2 space-y-2 border-l border-blue-300 ml-4">
             {item.submenu.map((sub, idx) => (
               <MobileNavItem key={idx} item={sub} />
             ))}
           </ul>
         </details>
       ) : (
-        <Link href={item.href!} className="block px-2 py-2 hover:bg-blue-50">
+        <Link href={item.href!} className="block py-3 px-4 text-black hover:bg-blue-100 text-base font-medium">
           {item.label}
         </Link>
       )}
@@ -143,8 +147,27 @@ export default function Navbar() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   return (
-    <nav className="navbar bg-white shadow-md px-6 py-4 relative z-50">
-      <div className="max-w-7xl mx-auto w-full flex items-center justify-between">
+    <nav className="navbar bg-gradient-to-t from-blue-600 via-blue-600 to-blue-500 shadow-md px-6 pb-4 relative z-50">
+      
+      <div className="w-full bg-transparent text-sm p-0 m-0 flex justify-between items-center lg:px-4 py-1 max-w-7xl mx-auto">
+        {/* Conteúdo da esquerda */}
+        <Link href="https://faladevcaal.vercel.app" className="text-white p-0 m-0" target="_blank" rel="noopener noreferrer">
+          <p>Envie sugestões e reclamações!</p>
+        </Link>
+
+        {/* Conteúdo da direita */}
+        <div className="flex items-center gap-4">
+          <Link href="https://www.instagram.com/caalufc/" target="_blank" rel="noopener noreferrer" className="text-white">
+            <FaInstagram size={20} className="inline-block align-middle" />
+          </Link>
+          <h2 className="text-white">|</h2>
+          <Link href="/login" className="text-white p-0 m-0" rel="noopener noreferrer">
+            Login
+          </Link>
+        </div>
+      </div>
+      
+      <div className="max-w-7xl mx-auto w-full flex items-center justify-between px-6">
         {/* Logo */}
         <Link href="/" className="text-2xl font-bold text-indigo-700">
           <Image

@@ -21,8 +21,8 @@ export default function ClientNavbar() {
 
     // Oculta a navbar para rotas admin, loja e dashboard em mobile
     const showNavbar = !pathname.startsWith('/admin') && 
-                      !pathname.startsWith('/loja') && 
-                      !(isMobile && pathname.startsWith('/dashboard'));
+                        !pathname.startsWith('/loja') && 
+                        !(isMobile && pathname.startsWith('/dashboard'));
 
     return showNavbar ? <Navbar /> : null;
 }
