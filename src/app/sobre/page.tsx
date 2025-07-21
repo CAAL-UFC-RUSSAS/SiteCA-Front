@@ -17,7 +17,7 @@ export default function SobrePage() {
                 Centro Acadêmico de Ciência da Computação
               </h1>
               <p className="text-lg opacity-90">
-                Somos a voz dos estudantes de Computação da UFC, trabalhando para representar, integrar e melhorar a experiência acadêmica.
+                Somos a voz dos estudantes de Computação da UFC Russas, trabalhando para representar, integrar e melhorar a experiência acadêmica.
               </p>
             </div>
             <div className="md:w-1/2 bg-white rounded-lg p-6 shadow-md">
@@ -97,22 +97,6 @@ export default function SobrePage() {
           <h2 className="text-3xl font-bold mb-10 text-center">Como Podemos Ajudar Você?</h2>
           
           <div className="grid md:grid-cols-2 gap-8 mb-12">
-            <div className="bg-white p-6 rounded-lg shadow-sm border border-gray-100">
-              <div className="flex items-start gap-4">
-                <div className="bg-orange-100 p-3 rounded-lg">
-                  <Briefcase className="h-6 w-6 text-orange-600" />
-                </div>
-                <div>
-                  <h3 className="text-xl font-bold mb-2">Oportunidades Profissionais</h3>
-                  <p className="text-gray-700 mb-4">
-                    Divulgamos vagas de estágio, trainee e emprego. Também organizamos feiras de oportunidades e encontros com empresas do setor.
-                  </p>
-                  <Link href="/projetos/oportunidades" className="text-blue-600 hover:text-blue-800 inline-flex items-center">
-                    Ver oportunidades <ChevronRight className="h-4 w-4 ml-1" />
-                  </Link>
-                </div>
-              </div>
-            </div>
 
             <div className="bg-white p-6 rounded-lg shadow-sm border border-gray-100">
               <div className="flex items-start gap-4">
@@ -122,27 +106,10 @@ export default function SobrePage() {
                 <div>
                   <h3 className="text-xl font-bold mb-2">Eventos e Calendário</h3>
                   <p className="text-gray-700 mb-4">
-                    Organizamos e divulgamos eventos acadêmicos, workshops e integramos o calendário da UFC com eventos do Centro Acadêmico.
+                    Organizamos e divulgamos eventos acadêmicos, workshops e integramos o calendário da UFC Russas com eventos do Centro Acadêmico.
                   </p>
                   <Link href="/eventos" className="text-blue-600 hover:text-blue-800 inline-flex items-center">
                     Ver calendário <ChevronRight className="h-4 w-4 ml-1" />
-                  </Link>
-                </div>
-              </div>
-            </div>
-
-            <div className="bg-white p-6 rounded-lg shadow-sm border border-gray-100">
-              <div className="flex items-start gap-4">
-                <div className="bg-purple-100 p-3 rounded-lg">
-                  <Award className="h-6 w-6 text-purple-600" />
-                </div>
-                <div>
-                  <h3 className="text-xl font-bold mb-2">Monitorias e Apoio Acadêmico</h3>
-                  <p className="text-gray-700 mb-4">
-                    Oferecemos monitorias voluntárias, grupos de estudos e compartilhamos materiais didáticos para auxiliar na jornada acadêmica.
-                  </p>
-                  <Link href="/servicos/monitorias" className="text-blue-600 hover:text-blue-800 inline-flex items-center">
-                    Conhecer monitorias <ChevronRight className="h-4 w-4 ml-1" />
                   </Link>
                 </div>
               </div>
@@ -210,7 +177,7 @@ export default function SobrePage() {
                   </div>
                   <div>
                     <p className="font-medium">Localização</p>
-                    <p className="text-gray-600">Bloco 910, Campus do Pici - UFC, Fortaleza/CE</p>
+                    <p className="text-gray-600">R. Felipe Santiago, 411 - Cidade Universitária, Russas - CE</p>
                   </div>
                 </div>
                 
@@ -220,7 +187,7 @@ export default function SobrePage() {
                   </div>
                   <div>
                     <p className="font-medium">Horário de Funcionamento</p>
-                    <p className="text-gray-600">Segunda a Sexta, das 8h às 22h</p>
+                    <p className="text-gray-600">Segunda a Sexta, das 8h às 19h</p>
                   </div>
                 </div>
                 
@@ -230,7 +197,7 @@ export default function SobrePage() {
                   </div>
                   <div>
                     <p className="font-medium">E-mail</p>
-                    <p className="text-gray-600">cacc@ufc.br</p>
+                    <p className="text-gray-600">um.caal2.0@gmail.com</p>
                   </div>
                 </div>
                 
@@ -240,7 +207,7 @@ export default function SobrePage() {
                   </div>
                   <div>
                     <p className="font-medium">Telefone</p>
-                    <p className="text-gray-600">(85) 3366-9999</p>
+                    <p className="text-gray-600">(74) 988757145 / (11) 94516-5101</p>
                   </div>
                 </div>
               </div>

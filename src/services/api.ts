@@ -534,3 +534,314 @@ function getCalendarioUFCFallback(): EventoCalendario[] {
     }
   ];
 }
+
+// Tipos para membros da gestão
+export interface MembroGestao {
+  id: number;
+  nome: string;
+  cargo: string;
+  area: string;
+  descricao: string;
+  contato?: string;
+  foto_base64?: string;
+  foto_mime?: string;
+  foto_url?: string;
+  gestao: string;
+  status: 'atual' | 'antiga';
+  ordem: number;
+  ativo: boolean;
+  created_at?: string;
+  updated_at?: string;
+}
+
+// Funções para membros da gestão
+export const getMembros = async (params?: { gestao?: string; status?: string }): Promise<MembroGestao[]> => {
+  try {
+    const queryParams = new URLSearchParams();
+    if (params?.gestao) queryParams.append('gestao', params.gestao);
+    if (params?.status) queryParams.append('status', params.status);
+    
+    const url = `${API_URL}/membros${queryParams.toString() ? `?${queryParams.toString()}` : ''}`;
+    console.log('Buscando membros:', url);
+    
+    const response = await fetch(url, {
+      headers: getAuthHeaders()
+    });
+    
+    if (!response.ok) {
+      const errorData = await response.json().catch(() => ({ message: 'Erro desconhecido' }));
+      throw new Error(errorData.message || `Erro ao buscar membros: ${response.status} ${response.statusText}`);
+    }
+    
+    const data = await response.json();
+    return Array.isArray(data) ? data : [];
+  } catch (error) {
+    console.error('Erro ao buscar membros:', error);
+    throw error;
+  }
+};
+
+export const getMembro = async (id: number): Promise<MembroGestao> => {
+  try {
+    const response = await fetch(`${API_URL}/membros/${id}`, {
+      headers: getAuthHeaders()
+    });
+    
+    if (!response.ok) {
+      const errorData = await response.json().catch(() => ({ message: 'Erro desconhecido' }));
+      throw new Error(errorData.message || `Erro ao buscar membro: ${response.status} ${response.statusText}`);
+    }
+    
+    return await response.json();
+  } catch (error) {
+    console.error(`Erro ao buscar membro ${id}:`, error);
+    throw error;
+  }
+};
+
+export const createMembro = async (membro: Omit<MembroGestao, 'id'>): Promise<MembroGestao> => {
+  try {
+    const response = await fetch(`${API_URL}/membros`, {
+      method: 'POST',
+      headers: getAuthHeaders(),
+      body: JSON.stringify(membro),
+    });
+    
+    if (!response.ok) {
+      const errorData = await response.json().catch(() => ({ message: 'Erro desconhecido' }));
+      throw new Error(errorData.message || `Erro ao criar membro: ${response.status} ${response.statusText}`);
+    }
+    
+    return await response.json();
+  } catch (error) {
+    console.error('Erro ao criar membro:', error);
+    throw error;
+  }
+};
+
+export const updateMembro = async (id: number, membro: Partial<MembroGestao>): Promise<MembroGestao> => {
+  try {
+    const response = await fetch(`${API_URL}/membros/${id}`, {
+      method: 'PUT',
+      headers: getAuthHeaders(),
+      body: JSON.stringify(membro),
+    });
+    
+    if (!response.ok) {
+      const errorData = await response.json().catch(() => ({ message: 'Erro desconhecido' }));
+      throw new Error(errorData.message || `Erro ao atualizar membro: ${response.status} ${response.statusText}`);
+    }
+    
+    return await response.json();
+  } catch (error) {
+    console.error(`Erro ao atualizar membro ${id}:`, error);
+    throw error;
+  }
+};
+
+export const deleteMembro = async (id: number): Promise<void> => {
+  try {
+    const response = await fetch(`${API_URL}/membros/${id}`, {
+      method: 'DELETE',
+      headers: getAuthHeaders(),
+    });
+    
+    if (!response.ok) {
+      const errorData = await response.json().catch(() => ({ message: 'Erro desconhecido' }));
+      throw new Error(errorData.message || `Erro ao deletar membro: ${response.status} ${response.statusText}`);
+    }
+  } catch (error) {
+    console.error(`Erro ao deletar membro ${id}:`, error);
+    throw error;
+  }
+};
+
+export const reordenarMembros = async (membroIds: number[]): Promise<void> => {
+  try {
+    const response = await fetch(`${API_URL}/membros/reordenar`, {
+      method: 'POST',
+      headers: getAuthHeaders(),
+      body: JSON.stringify({ membroIds }),
+    });
+    
+    if (!response.ok) {
+      const errorData = await response.json().catch(() => ({ message: 'Erro desconhecido' }));
+      throw new Error(errorData.message || `Erro ao reordenar membros: ${response.status} ${response.statusText}`);
+    }
+  } catch (error) {
+    console.error('Erro ao reordenar membros:', error);
+    throw error;
+  }
+};
+
+export const getGestoes = async (): Promise<string[]> => {
+  try {
+    const response = await fetch(`${API_URL}/membros-gestoes`, {
+      headers: getAuthHeaders()
+    });
+    
+    if (!response.ok) {
+      const errorData = await response.json().catch(() => ({ message: 'Erro desconhecido' }));
+      throw new Error(errorData.message || `Erro ao buscar gestões: ${response.status} ${response.statusText}`);
+    }
+    
+    const data = await response.json();
+    return Array.isArray(data) ? data : [];
+  } catch (error) {
+    console.error('Erro ao buscar gestões:', error);
+    throw error;
+  }
+};
+
+// Tipos para projetos de campanha
+export interface ProjetoCampanha {
+  id: number;
+  titulo: string;
+  descricao: string;
+  status: 'planejado' | 'em andamento' | 'concluído';
+  progresso: number;
+  gestao: string;
+  ordem: number;
+  ativo: boolean;
+  created_at?: string;
+  updated_at?: string;
+}
+
+// Funções para projetos de campanha
+export const getProjetos = async (params?: { gestao?: string; status?: string }): Promise<ProjetoCampanha[]> => {
+  try {
+    const queryParams = new URLSearchParams();
+    if (params?.gestao) queryParams.append('gestao', params.gestao);
+    if (params?.status) queryParams.append('status', params.status);
+    
+    const url = `${API_URL}/projetos${queryParams.toString() ? `?${queryParams.toString()}` : ''}`;
+    console.log('Buscando projetos:', url);
+    
+    const response = await fetch(url, {
+      headers: getAuthHeaders()
+    });
+    
+    if (!response.ok) {
+      const errorData = await response.json().catch(() => ({ message: 'Erro desconhecido' }));
+      throw new Error(errorData.message || `Erro ao buscar projetos: ${response.status} ${response.statusText}`);
+    }
+    
+    const data = await response.json();
+    return Array.isArray(data) ? data : [];
+  } catch (error) {
+    console.error('Erro ao buscar projetos:', error);
+    throw error;
+  }
+};
+
+export const getProjeto = async (id: number): Promise<ProjetoCampanha> => {
+  try {
+    const response = await fetch(`${API_URL}/projetos/${id}`, {
+      headers: getAuthHeaders()
+    });
+    
+    if (!response.ok) {
+      const errorData = await response.json().catch(() => ({ message: 'Erro desconhecido' }));
+      throw new Error(errorData.message || `Erro ao buscar projeto: ${response.status} ${response.statusText}`);
+    }
+    
+    return await response.json();
+  } catch (error) {
+    console.error(`Erro ao buscar projeto ${id}:`, error);
+    throw error;
+  }
+};
+
+export const createProjeto = async (projeto: Omit<ProjetoCampanha, 'id'>): Promise<ProjetoCampanha> => {
+  try {
+    const response = await fetch(`${API_URL}/projetos`, {
+      method: 'POST',
+      headers: getAuthHeaders(),
+      body: JSON.stringify(projeto),
+    });
+    
+    if (!response.ok) {
+      const errorData = await response.json().catch(() => ({ message: 'Erro desconhecido' }));
+      throw new Error(errorData.message || `Erro ao criar projeto: ${response.status} ${response.statusText}`);
+    }
+    
+    return await response.json();
+  } catch (error) {
+    console.error('Erro ao criar projeto:', error);
+    throw error;
+  }
+};
+
+export const updateProjeto = async (id: number, projeto: Partial<ProjetoCampanha>): Promise<ProjetoCampanha> => {
+  try {
+    const response = await fetch(`${API_URL}/projetos/${id}`, {
+      method: 'PUT',
+      headers: getAuthHeaders(),
+      body: JSON.stringify(projeto),
+    });
+    
+    if (!response.ok) {
+      const errorData = await response.json().catch(() => ({ message: 'Erro desconhecido' }));
+      throw new Error(errorData.message || `Erro ao atualizar projeto: ${response.status} ${response.statusText}`);
+    }
+    
+    return await response.json();
+  } catch (error) {
+    console.error(`Erro ao atualizar projeto ${id}:`, error);
+    throw error;
+  }
+};
+
+export const deleteProjeto = async (id: number): Promise<void> => {
+  try {
+    const response = await fetch(`${API_URL}/projetos/${id}`, {
+      method: 'DELETE',
+      headers: getAuthHeaders(),
+    });
+    
+    if (!response.ok) {
+      const errorData = await response.json().catch(() => ({ message: 'Erro desconhecido' }));
+      throw new Error(errorData.message || `Erro ao deletar projeto: ${response.status} ${response.statusText}`);
+    }
+  } catch (error) {
+    console.error(`Erro ao deletar projeto ${id}:`, error);
+    throw error;
+  }
+};
+
+export const reordenarProjetos = async (projetoIds: number[]): Promise<void> => {
+  try {
+    const response = await fetch(`${API_URL}/projetos/reordenar`, {
+      method: 'POST',
+      headers: getAuthHeaders(),
+      body: JSON.stringify({ projetos: projetoIds }),
+    });
+    
+    if (!response.ok) {
+      const errorData = await response.json().catch(() => ({ message: 'Erro desconhecido' }));
+      throw new Error(errorData.message || `Erro ao reordenar projetos: ${response.status} ${response.statusText}`);
+    }
+  } catch (error) {
+    console.error('Erro ao reordenar projetos:', error);
+    throw error;
+  }
+};
+
+export const getProjetosGestoes = async (): Promise<string[]> => {
+  try {
+    const response = await fetch(`${API_URL}/projetos-gestoes`, {
+      headers: getAuthHeaders()
+    });
+    
+    if (!response.ok) {
+      const errorData = await response.json().catch(() => ({ message: 'Erro desconhecido' }));
+      throw new Error(errorData.message || `Erro ao buscar gestões de projetos: ${response.status} ${response.statusText}`);
+    }
+    
+    const data = await response.json();
+    return Array.isArray(data) ? data : [];
+  } catch (error) {
+    console.error('Erro ao buscar gestões de projetos:', error);
+    throw error;
+  }
+};

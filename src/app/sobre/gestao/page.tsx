@@ -1,151 +1,93 @@
 'use client';
 
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
-import { Users, CalendarCheck, Trophy, FileText, ChevronLeft } from 'lucide-react';
+import { Users, CalendarCheck, Trophy, FileText, ChevronLeft, Filter } from 'lucide-react';
+import { getMembros, getGestoes, MembroGestao, getProjetos, ProjetoCampanha } from '@/services/api';
 
-interface MembroEquipe {
-  id: number;
-  nome: string;
-  cargo: string;
-  area: string;
-  descricao: string;
-  foto: string;
-  contato?: string;
-}
 
-interface ProjetoCampanha {
-  id: number;
-  titulo: string;
-  descricao: string;
-  status: 'concluído' | 'em andamento' | 'planejado';
-  progresso?: number;
-}
 
 export default function GestaoPage() {
-  // Dados da gestão atual
+  // Estado para membros e filtros
+  const [membrosEquipe, setMembrosEquipe] = useState<MembroGestao[]>([]);
+  const [gestoes, setGestoes] = useState<string[]>([]);
+  const [filtroGestao, setFiltroGestao] = useState('');
+  const [filtroStatus, setFiltroStatus] = useState('atual');
+  const [loading, setLoading] = useState(true);
+  const [showFiltros, setShowFiltros] = useState(false);
+
+  // Estado para projetos de campanha
+  const [projetosCampanha, setProjetosCampanha] = useState<ProjetoCampanha[]>([]);
+  const [loadingProjetos, setLoadingProjetos] = useState(true);
+
+  // Carregar dados ao montar o componente
+  useEffect(() => {
+    loadGestoes();
+    loadProjetos();
+  }, []);
+
+  useEffect(() => {
+    loadMembros();
+  }, [filtroGestao, filtroStatus]);
+
+  useEffect(() => {
+    loadProjetos();
+  }, [filtroGestao]);
+
+  async function loadGestoes() {
+    try {
+      const data = await getGestoes();
+      setGestoes(data);
+      // Definir a gestão mais recente como padrão se não houver filtro
+      if (data.length > 0 && !filtroGestao) {
+        setFiltroGestao(data[0]);
+      }
+    } catch (error) {
+      console.error('Erro ao carregar gestões:', error);
+    }
+  }
+
+  async function loadMembros() {
+    try {
+      setLoading(true);
+      const params: { gestao?: string; status?: string } = {};
+      if (filtroGestao) params.gestao = filtroGestao;
+      if (filtroStatus) params.status = filtroStatus;
+      
+      const data = await getMembros(params);
+      setMembrosEquipe(data);
+    } catch (error) {
+      console.error('Erro ao carregar membros:', error);
+      setMembrosEquipe([]);
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  async function loadProjetos() {
+    try {
+      setLoadingProjetos(true);
+      const params: { gestao?: string } = {};
+      if (filtroGestao) params.gestao = filtroGestao;
+      
+      const data = await getProjetos(params);
+      setProjetosCampanha(data);
+    } catch (error) {
+      console.error('Erro ao carregar projetos:', error);
+      setProjetosCampanha([]);
+    } finally {
+      setLoadingProjetos(false);
+    }
+  }
+
+  // Dados da gestão atual (dinâmico baseado no filtro)
   const gestaoAtual = {
-    nome: "Computação em Ação",
-    periodo: "2023-2024",
-    descricao: "A chapa Computação em Ação foi eleita com o compromisso de aproximar o Centro Acadêmico dos estudantes, promover mais eventos técnicos e culturais, e melhorar a comunicação entre os alunos e a coordenação do curso."
+    nome: filtroGestao || "Centro Acadêmico",
+    periodo: filtroGestao,
+    descricao: "O Centro Acadêmico trabalha para aproximar-se dos estudantes, promover eventos técnicos e culturais, e melhorar a comunicação entre os alunos e a coordenação do curso."
   };
-  
-  // Membros da equipe de gestão
-  const membrosEquipe: MembroEquipe[] = [
-    {
-      id: 1,
-      nome: "Ana Silva",
-      cargo: "Presidente",
-      area: "Coordenação Geral",
-      descricao: "Estudante de Ciência da Computação, 7º semestre. Responsável pela coordenação geral do CA e representação estudantil junto à UFC.",
-      foto: "/imgs/evento-default.jpg",
-      contato: "ana.silva@email.com"
-    },
-    {
-      id: 2,
-      nome: "Pedro Santos",
-      cargo: "Vice-Presidente",
-      area: "Coordenação Geral",
-      descricao: "Estudante de Ciência da Computação, 6º semestre. Apoia a presidência e coordena projetos específicos de extensão.",
-      foto: "/imgs/evento-default.jpg",
-      contato: "pedro.santos@email.com"
-    },
-    {
-      id: 3,
-      nome: "Mariana Costa",
-      cargo: "Secretária Geral",
-      area: "Administração",
-      descricao: "Estudante de Ciência da Computação, 5º semestre. Responsável pela organização de documentos, atas e comunicações oficiais.",
-      foto: "/imgs/evento-default.jpg"
-    },
-    {
-      id: 4,
-      nome: "Lucas Oliveira",
-      cargo: "Tesoureiro",
-      area: "Finanças",
-      descricao: "Estudante de Ciência da Computação, 8º semestre. Gerencia o orçamento, prestação de contas e planejamento financeiro.",
-      foto: "/imgs/evento-default.jpg"
-    },
-    {
-      id: 5,
-      nome: "Juliana Mendes",
-      cargo: "Diretora de Eventos",
-      area: "Eventos e Cultura",
-      descricao: "Estudante de Ciência da Computação, 6º semestre. Organiza eventos acadêmicos, culturais e de integração.",
-      foto: "/imgs/evento-default.jpg"
-    },
-    {
-      id: 6,
-      nome: "Rafael Almeida",
-      cargo: "Diretor de Comunicação",
-      area: "Comunicação e Marketing",
-      descricao: "Estudante de Ciência da Computação, 4º semestre. Responsável pelas redes sociais, site e divulgação.",
-      foto: "/imgs/evento-default.jpg"
-    },
-    {
-      id: 7,
-      nome: "Camila Rodrigues",
-      cargo: "Diretora de Ensino",
-      area: "Assuntos Acadêmicos",
-      descricao: "Estudante de Ciência da Computação, 7º semestre. Coordena monitorias, grupos de estudo e questões acadêmicas.",
-      foto: "/imgs/evento-default.jpg"
-    },
-    {
-      id: 8,
-      nome: "Bruno Ferreira",
-      cargo: "Diretor de Esportes",
-      area: "Esportes e Bem-estar",
-      descricao: "Estudante de Ciência da Computação, 5º semestre. Organiza atividades esportivas e promove o bem-estar estudantil.",
-      foto: "/imgs/evento-default.jpg"
-    }
-  ];
-  
-  // Projetos e promessas da campanha
-  const projetosCampanha: ProjetoCampanha[] = [
-    {
-      id: 1,
-      titulo: "Semana da Computação",
-      descricao: "Organizar uma semana acadêmica com palestras, workshops e hackathon, trazendo profissionais do mercado e da academia.",
-      status: "concluído",
-      progresso: 100
-    },
-    {
-      id: 2,
-      titulo: "Reforma da Sede do CA",
-      descricao: "Melhorar a infraestrutura da sede do Centro Acadêmico, com novos móveis, equipamentos e espaço de convivência.",
-      status: "em andamento",
-      progresso: 60
-    },
-    {
-      id: 3,
-      titulo: "Banco de Questões e Materiais",
-      descricao: "Criar um repositório digital com materiais de estudo, provas antigas e resumos para todas as disciplinas do curso.",
-      status: "em andamento",
-      progresso: 75
-    },
-    {
-      id: 4,
-      titulo: "Parcerias com Empresas",
-      descricao: "Estabelecer convênios com empresas de tecnologia para estágios, visitas técnicas e patrocínios para eventos.",
-      status: "em andamento",
-      progresso: 40
-    },
-    {
-      id: 5,
-      titulo: "Programa de Mentorias",
-      descricao: "Conectar calouros com veteranos para orientação acadêmica e profissional ao longo do curso.",
-      status: "planejado",
-      progresso: 15
-    },
-    {
-      id: 6,
-      titulo: "Jornal da Computação",
-      descricao: "Criar um informativo mensal com notícias do curso, entrevistas, oportunidades e artigos técnicos.",
-      status: "planejado",
-      progresso: 0
-    }
-  ];
+
   
   // Funções para renderizar elementos de UI
   
@@ -206,17 +148,81 @@ export default function GestaoPage() {
       {/* Equipe da gestão */}
       <section className="py-16 bg-white">
         <div className="container mx-auto px-4 max-w-5xl">
-          <div className="flex items-center gap-3 mb-10">
-            <Users className="h-8 w-8 text-blue-600" />
-            <h2 className="text-3xl font-bold">Nossa Equipe</h2>
+          <div className="flex items-center justify-between mb-6">
+            <div className="flex items-center gap-3">
+              <Users className="h-8 w-8 text-blue-600" />
+              <h2 className="text-3xl font-bold">Nossa Equipe</h2>
+            </div>
+            <button
+              onClick={() => setShowFiltros(!showFiltros)}
+              className="flex items-center gap-2 px-4 py-2 bg-blue-100 text-blue-700 rounded-lg hover:bg-blue-200 transition-colors"
+            >
+              <Filter className="h-4 w-4" />
+              Filtros
+            </button>
           </div>
+
+          {/* Filtros */}
+          {showFiltros && (
+            <div className="bg-gray-50 rounded-lg p-4 mb-6">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <label htmlFor="filtroGestao" className="block text-sm font-medium text-gray-700 mb-1">
+                    Gestão
+                  </label>
+                  <select
+                    id="filtroGestao"
+                    value={filtroGestao}
+                    onChange={(e) => setFiltroGestao(e.target.value)}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  >
+                    <option value="">Todas as gestões</option>
+                    {gestoes.map(gestao => (
+                      <option key={gestao} value={gestao}>{gestao}</option>
+                    ))}
+                  </select>
+                </div>
+
+                <div>
+                  <label htmlFor="filtroStatus" className="block text-sm font-medium text-gray-700 mb-1">
+                    Status
+                  </label>
+                  <select
+                    id="filtroStatus"
+                    value={filtroStatus}
+                    onChange={(e) => setFiltroStatus(e.target.value)}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  >
+                    <option value="">Todos os status</option>
+                    <option value="atual">Atual</option>
+                    <option value="antiga">Antiga</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+          )}
           
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-            {membrosEquipe.map(membro => (
+          {loading ? (
+            <div className="flex justify-center py-12">
+              <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
+            </div>
+          ) : membrosEquipe.length === 0 ? (
+            <div className="text-center py-12">
+              <Users className="mx-auto h-12 w-12 text-gray-400" />
+              <h3 className="mt-2 text-sm font-medium text-gray-900">Nenhum membro encontrado</h3>
+              <p className="mt-1 text-sm text-gray-500">
+                {filtroGestao || filtroStatus 
+                  ? 'Tente ajustar os filtros para encontrar membros.' 
+                  : 'Não há membros cadastrados no momento.'}
+              </p>
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+              {membrosEquipe.map(membro => (
               <div key={membro.id} className="bg-white rounded-lg overflow-hidden shadow-md border border-gray-100 transition-transform hover:scale-105">
                 <div className="h-48 relative">
                   <Image
-                    src={membro.foto}
+                    src={membro.foto_url || "/imgs/evento-default.jpg"}
                     alt={`Foto de ${membro.nome}`}
                     fill
                     className="object-cover"
@@ -238,7 +244,8 @@ export default function GestaoPage() {
                 </div>
               </div>
             ))}
-          </div>
+            </div>
+          )}
         </div>
       </section>
       
@@ -250,18 +257,34 @@ export default function GestaoPage() {
             <h2 className="text-3xl font-bold">Projetos e Promessas de Campanha</h2>
           </div>
           
-          <div className="grid md:grid-cols-2 gap-6 mb-12">
-            {projetosCampanha.map(projeto => (
-              <div key={projeto.id} className="bg-white p-6 rounded-lg shadow-sm border border-gray-100">
-                <div className="flex justify-between items-start mb-2">
-                  <h3 className="text-xl font-bold">{projeto.titulo}</h3>
-                  {renderStatus(projeto.status)}
+          {loadingProjetos ? (
+            <div className="flex justify-center py-12 mb-12">
+              <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
+            </div>
+          ) : projetosCampanha.length === 0 ? (
+            <div className="text-center py-12 mb-12">
+              <Trophy className="mx-auto h-12 w-12 text-gray-400" />
+              <h3 className="mt-2 text-sm font-medium text-gray-900">Nenhum projeto encontrado</h3>
+              <p className="mt-1 text-sm text-gray-500">
+                {filtroGestao 
+                  ? `Não há projetos cadastrados para a gestão ${filtroGestao}.` 
+                  : 'Não há projetos de campanha cadastrados no momento.'}
+              </p>
+            </div>
+          ) : (
+            <div className="grid md:grid-cols-2 gap-6 mb-12">
+              {projetosCampanha.map(projeto => (
+                <div key={projeto.id} className="bg-white p-6 rounded-lg shadow-sm border border-gray-100">
+                  <div className="flex justify-between items-start mb-2">
+                    <h3 className="text-xl font-bold">{projeto.titulo}</h3>
+                    {renderStatus(projeto.status)}
+                  </div>
+                  <p className="text-gray-700 mb-4">{projeto.descricao}</p>
+                  {renderBarraProgresso(projeto.status, projeto.progresso)}
                 </div>
-                <p className="text-gray-700 mb-4">{projeto.descricao}</p>
-                {renderBarraProgresso(projeto.status, projeto.progresso)}
-              </div>
-            ))}
-          </div>
+              ))}
+            </div>
+          )}
           
           <div className="bg-blue-50 border border-blue-100 rounded-lg p-6">
             <div className="flex items-start gap-4">

@@ -140,7 +140,7 @@ export default function Home() {
                 </CardHeader>
                 <CardContent>
                   <div className="space-y-2">
-                    <p>Horário de Atendimento: Seg a Sex, 08h às 17h</p>
+                    <p>Horário de Atendimento: Seg a Sex, 08h às 19h</p>
                     <Link href="/sobre/gestao" className="text-blue-600 hover:underline">
                       Conhecer a gestão →
                     </Link>
