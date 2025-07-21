@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { 
   ProjetoCampanha, 
   getProjetos, 
@@ -13,6 +13,16 @@ import ProjetoForm from '@/components/ProjetoForm';
 import ProjetoTable from '@/components/ProjetoTable';
 import { Modal } from '@/components/Modal';
 import { Filter } from 'lucide-react';
+
+// Definir o tipo ProjetoFormData para corresponder ao do componente
+interface ProjetoFormData {
+  titulo: string;
+  descricao: string;
+  status: 'planejado' | 'em andamento' | 'concluído';
+  progresso: number;
+  gestao: string;
+  ordem: number;
+}
 
 export default function ProjetosPage() {
   const [projetos, setProjetos] = useState<ProjetoCampanha[]>([]);
@@ -29,26 +39,8 @@ export default function ProjetosPage() {
   const [filtroStatus, setFiltroStatus] = useState('');
   const [showFiltros, setShowFiltros] = useState(false);
 
-  // Carregar gestões disponíveis
-  useEffect(() => {
-    loadGestoes();
-  }, []);
-
   // Carregar projetos quando filtros mudarem
-  useEffect(() => {
-    loadProjetos();
-  }, [filtroGestao, filtroStatus]);
-
-  async function loadGestoes() {
-    try {
-      const data = await getGestoes();
-      setGestoes(data);
-    } catch (error) {
-      console.error('Erro ao carregar gestões:', error);
-    }
-  }
-
-  async function loadProjetos() {
+  const loadProjetos = useCallback(async () => {
     try {
       setLoading(true);
       const params: { gestao?: string; status?: string } = {};
@@ -65,11 +57,36 @@ export default function ProjetosPage() {
     } finally {
       setLoading(false);
     }
+  }, [filtroGestao, filtroStatus]);
+
+  // Carregar gestões disponíveis
+  useEffect(() => {
+    loadGestoes();
+  }, []);
+
+  // Carregar projetos quando filtros mudarem
+  useEffect(() => {
+    loadProjetos();
+  }, [loadProjetos]);
+
+  async function loadGestoes() {
+    try {
+      const data = await getGestoes();
+      setGestoes(data);
+    } catch (error) {
+      console.error('Erro ao carregar gestões:', error);
+    }
   }
 
-  const handleCreateProjeto = async (projetoData: Omit<ProjetoCampanha, 'id'>) => {
+  const handleCreateProjeto = async (projetoData: ProjetoFormData) => {
     try {
-      const novoProjeto = await createProjeto(projetoData);
+      // Adicionar o campo ativo que está faltando
+      const projetoCompleto = {
+        ...projetoData,
+        ativo: true
+      };
+      
+      const novoProjeto = await createProjeto(projetoCompleto);
       setProjetos(prev => [...prev, novoProjeto]);
       setShowForm(false);
       await loadProjetos(); // Recarregar para garantir ordem correta
@@ -79,11 +96,16 @@ export default function ProjetosPage() {
     }
   };
 
-  const handleUpdateProjeto = async (projetoData: Partial<ProjetoCampanha>) => {
+  const handleUpdateProjeto = async (projetoData: ProjetoFormData) => {
     if (!editingProjeto) return;
     
     try {
-      const projetoAtualizado = await updateProjeto(editingProjeto.id, projetoData);
+      // Manter o campo ativo do projeto original
+      const projetoAtualizado = await updateProjeto(editingProjeto.id, {
+        ...projetoData,
+        ativo: editingProjeto.ativo
+      });
+      
       setProjetos(prev => 
         prev.map(p => p.id === editingProjeto.id ? projetoAtualizado : p)
       );

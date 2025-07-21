@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
+import Image from 'next/image';
 import { MembroGestao } from '@/services/api';
 
 interface MembroFormProps {
@@ -301,11 +302,12 @@ export function MembroForm({ membro, onSubmit, onCancel, selectedImage, onImageS
         {errors.foto && <p className="text-red-500 text-sm mt-1">{errors.foto}</p>}
         
         {selectedImage && (
-          <div className="mt-2">
-            <img
+          <div className="mt-2 relative w-32 h-32">
+            <Image
               src={selectedImage}
               alt="Preview"
-              className="w-32 h-32 object-cover rounded-md border"
+              fill
+              className="object-cover rounded-md border"
             />
           </div>
         )}

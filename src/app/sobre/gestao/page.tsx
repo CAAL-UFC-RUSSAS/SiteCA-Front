@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { Users, CalendarCheck, Trophy, FileText, ChevronLeft, Filter } from 'lucide-react';
@@ -21,21 +21,7 @@ export default function GestaoPage() {
   const [projetosCampanha, setProjetosCampanha] = useState<ProjetoCampanha[]>([]);
   const [loadingProjetos, setLoadingProjetos] = useState(true);
 
-  // Carregar dados ao montar o componente
-  useEffect(() => {
-    loadGestoes();
-    loadProjetos();
-  }, []);
-
-  useEffect(() => {
-    loadMembros();
-  }, [filtroGestao, filtroStatus]);
-
-  useEffect(() => {
-    loadProjetos();
-  }, [filtroGestao]);
-
-  async function loadGestoes() {
+  const loadGestoes = useCallback(async () => {
     try {
       const data = await getGestoes();
       setGestoes(data);
@@ -46,9 +32,9 @@ export default function GestaoPage() {
     } catch (error) {
       console.error('Erro ao carregar gestões:', error);
     }
-  }
+  }, [filtroGestao]);
 
-  async function loadMembros() {
+  const loadMembros = useCallback(async () => {
     try {
       setLoading(true);
       const params: { gestao?: string; status?: string } = {};
@@ -63,9 +49,9 @@ export default function GestaoPage() {
     } finally {
       setLoading(false);
     }
-  }
+  }, [filtroGestao, filtroStatus]);
 
-  async function loadProjetos() {
+  const loadProjetos = useCallback(async () => {
     try {
       setLoadingProjetos(true);
       const params: { gestao?: string } = {};
@@ -79,7 +65,17 @@ export default function GestaoPage() {
     } finally {
       setLoadingProjetos(false);
     }
-  }
+  }, [filtroGestao]);
+
+  // Carregar dados ao montar o componente
+  useEffect(() => {
+    loadGestoes();
+    loadProjetos();
+  }, [loadGestoes, loadProjetos]);
+
+  useEffect(() => {
+    loadMembros();
+  }, [loadMembros]);
 
   // Dados da gestão atual (dinâmico baseado no filtro)
   const gestaoAtual = {

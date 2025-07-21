@@ -3,7 +3,7 @@
 import React from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
-import { BookOpen, Briefcase, Users, Calendar, Award, Phone, Mail, MapPin, Heart, ChevronRight } from 'lucide-react';
+import { BookOpen,  Users, Calendar,  Phone, Mail, MapPin, Heart, ChevronRight } from 'lucide-react';
 
 export default function SobrePage() {
   return (

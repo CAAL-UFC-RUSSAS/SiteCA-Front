@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
+import Image from 'next/image';
 import { MembroGestao } from '@/services/api';
 import { FaUserAlt } from 'react-icons/fa';
 
@@ -8,10 +9,9 @@ interface MembroTableProps {
   membros: MembroGestao[];
   onEdit: (membro: MembroGestao) => void;
   onDelete: (id: number) => void;
-  onReorder?: (membros: MembroGestao[]) => void;
 }
 
-export function MembroTable({ membros, onEdit, onDelete, onReorder }: MembroTableProps) {
+export function MembroTable({ membros, onEdit, onDelete }: MembroTableProps) {
   const [sortField, setSortField] = useState<keyof MembroGestao>('ordem');
   const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('asc');
 
@@ -159,11 +159,14 @@ export function MembroTable({ membros, onEdit, onDelete, onReorder }: MembroTabl
                 <td className="px-6 py-4 whitespace-nowrap">
                   <div className="h-12 w-12 rounded-full overflow-hidden bg-gray-200">
                     {membro.foto_url ? (
-                      <img
-                        src={membro.foto_url}
-                        alt={`Foto de ${membro.nome}`}
-                        className="h-12 w-12 object-cover"
-                      />
+                      <div className="relative h-12 w-12">
+                        <Image
+                          src={membro.foto_url}
+                          alt={`Foto de ${membro.nome}`}
+                          fill
+                          className="object-cover"
+                        />
+                      </div>
                     ) : (
                       <div className="h-12 w-12 flex items-center justify-center">
                         <svg className="h-8 w-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">

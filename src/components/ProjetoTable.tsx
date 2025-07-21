@@ -30,6 +30,10 @@ export default function ProjetoTable({ projetos, onEdit, onDelete, loading = fal
     let aValue = a[sortField];
     let bValue = b[sortField];
 
+    // Tratar valores undefined
+    if (aValue === undefined) aValue = '';
+    if (bValue === undefined) bValue = '';
+
     // Converter para string para comparação consistente
     if (typeof aValue === 'string') aValue = aValue.toLowerCase();
     if (typeof bValue === 'string') bValue = bValue.toLowerCase();

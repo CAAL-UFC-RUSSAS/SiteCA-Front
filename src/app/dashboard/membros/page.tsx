@@ -1,11 +1,10 @@
 'use client';
 
-import { useState, useEffect } from 'react';
-import { getMembros, createMembro, updateMembro, deleteMembro, reordenarMembros, getGestoes, MembroGestao } from '@/services/api';
+import { useState, useEffect, useCallback } from 'react';
+import { getMembros, createMembro, updateMembro, deleteMembro, getGestoes, MembroGestao } from '@/services/api';
 import { MembroTable } from '@/components/MembroTable';
 import { MembroForm } from '@/components/MembroForm';
 import { Modal } from '@/components/Modal';
-import { FaUserAlt } from "react-icons/fa";
 import { Users } from 'lucide-react';
 
 
@@ -20,16 +19,7 @@ export default function MembrosPage() {
   const [filtroStatus, setFiltroStatus] = useState('');
   const [gestoes, setGestoes] = useState<string[]>([]);
 
-  useEffect(() => {
-    loadMembros();
-    loadGestoes();
-  }, []);
-
-  useEffect(() => {
-    loadMembros();
-  }, [filtroGestao, filtroStatus]);
-
-  async function loadMembros() {
+  const loadMembros = useCallback(async () => {
     try {
       setLoading(true);
       const params: { gestao?: string; status?: string } = {};
@@ -46,7 +36,12 @@ export default function MembrosPage() {
     } finally {
       setLoading(false);
     }
-  }
+  }, [filtroGestao, filtroStatus]);
+
+  useEffect(() => {
+    loadMembros();
+    loadGestoes();
+  }, [loadMembros]);
 
   async function loadGestoes() {
     try {
@@ -113,16 +108,6 @@ export default function MembrosPage() {
     }
   };
 
-  const handleReorder = async (membrosReordered: MembroGestao[]) => {
-    try {
-      const membroIds = membrosReordered.map(membro => membro.id);
-      await reordenarMembros(membroIds);
-      setMembros(membrosReordered);
-    } catch (error) {
-      console.error('Erro ao reordenar membros:', error);
-      alert('Erro ao reordenar membros. Por favor, tente novamente.');
-    }
-  };
 
   const handleImageSelect = (image: string) => {
     setSelectedImage(image);
@@ -269,7 +254,6 @@ export default function MembrosPage() {
           membros={membros}
           onEdit={handleEdit}
           onDelete={handleDelete}
-          onReorder={handleReorder}
         />
       </div>
 

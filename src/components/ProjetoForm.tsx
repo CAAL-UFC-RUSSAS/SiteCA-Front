@@ -35,7 +35,7 @@ export default function ProjetoForm({ projeto, onSubmit, onCancel }: ProjetoForm
   });
   
   const [gestoes, setGestoes] = useState<string[]>([]);
-  const [errors, setErrors] = useState<Partial<ProjetoFormData>>({});
+  const [errors, setErrors] = useState<Record<string, string>>({});
   const [loading, setLoading] = useState(false);
   const [loadingGestoes, setLoadingGestoes] = useState(true);
 
@@ -75,16 +75,17 @@ export default function ProjetoForm({ projeto, onSubmit, onCancel }: ProjetoForm
     }));
 
     // Limpar erro do campo
-    if (errors[name as keyof ProjetoFormData]) {
-      setErrors(prev => ({
-        ...prev,
-        [name]: undefined
-      }));
+    if (errors[name]) {
+      setErrors(prev => {
+        const newErrors = { ...prev };
+        delete newErrors[name];
+        return newErrors;
+      });
     }
   };
 
   const validateForm = (): boolean => {
-    const newErrors: Partial<ProjetoFormData> = {};
+    const newErrors: Record<string, string> = {};
 
     if (!formData.titulo.trim()) {
       newErrors.titulo = 'Título é obrigatório';

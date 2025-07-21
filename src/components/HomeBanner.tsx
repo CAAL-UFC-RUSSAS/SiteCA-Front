@@ -13,7 +13,7 @@ import { Banner, getBannersAtivos } from "@/services/api";
 
 // Banner estático para usar como fallback/primeiro item
 const defaultBanner = {
-  src: "/imgs/banner.png",
+  src: "/imgs/BannerAda.png",
   href: "/",
   alt: "Banner Principal"
 };
@@ -21,8 +21,8 @@ const defaultBanner = {
 // Banners laterais padrão
 const defaultSideBanners = [
   {
-    src: "/imgs/banner.png",
-    href: "/",
+    src: "/imgs/Lojinha.png",
+    href: "/loja",
     alt: "Banner Lateral 1"
   },
   {
