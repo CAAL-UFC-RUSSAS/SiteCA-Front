@@ -130,7 +130,7 @@ export default function Home() {
 
           {/* Links Rápidos */}
           <section className="grid grid-cols-2 md:grid-cols-4 gap-4">
-            <Link href="/calouros/guia" className="p-4 bg-blue-50 rounded-lg hover:bg-blue-100 text-center">
+            <Link href="/pdf/Manual do Calouro.pdf" target="_blank" className="p-4 bg-blue-50 rounded-lg hover:bg-blue-100 text-center">
               Guia do Calouro
             </Link>
             <Link href="https://drive.google.com/drive/folders/18aEnTSwyr3-Mm9zQGo7yfaSk9n9zKe4H" target="_blank" rel="noopener noreferrer" className="p-4 bg-green-50 rounded-lg hover:bg-green-100 text-center">

@@ -72,7 +72,7 @@ export default function Footer() {
                 </Link>
               </li>
               <li>
-                <Link href="/calouros/guia" className="flex items-center text-gray-600 hover:text-blue-600 transition-colors">
+                <Link href="/pdf/Manual do Calouro.pdf" target="_blank" className="flex items-center text-gray-600 hover:text-blue-600 transition-colors">
                   <ChevronRight size={16} className="mr-2" />
                   <span>Guia do Calouro</span>
                 </Link>
