@@ -11,6 +11,14 @@ import Autoplay from "embla-carousel-autoplay";
 import { useEffect, useRef, useState } from "react";
 import { Banner, getBannersAtivos } from "@/services/api";
 
+// Banner estático para usar como fallback/primeiro item
+const defaultBanner = {
+  id: 0,
+  src: "/imgs/bannerAda.png",
+  href: "/",
+  alt: "Banner Principal"
+};
+
 // Banners laterais padrão
 const defaultSideBanners = [
   {
@@ -111,15 +119,16 @@ export function HomeBanner() {
       }));
 
   // Preparar todos os banners para o carrossel principal
-  const allMainBanners: BannerDisplay[] = !loading && !error && mainBanners.length > 0
-    ? mainBanners.map(banner => ({
-        id: banner.id,
-        src: banner.imagem_url,
-        href: banner.link || '/',
-        alt: banner.titulo,
-        tipo: 'principal'
-      }))
-    : []; // Se não houver banners, o carrossel ficará vazio
+  const allMainBanners: BannerDisplay[] = [
+    { ...defaultBanner, tipo: 'principal' }, 
+    ...(!loading && !error ? mainBanners.map(banner => ({
+      id: banner.id,
+      src: banner.imagem_url,
+      href: banner.link || '/',
+      alt: banner.titulo,
+      tipo: 'principal'
+    })) : [])
+  ];
 
   // Adicionar os banners laterais para dispositivos móveis
   const allMobileBanners: BannerDisplay[] = [
@@ -130,64 +139,57 @@ export function HomeBanner() {
     }))
   ];
 
-  // Se não houver banners principais, não mostrar o carrossel
-  const hasMainBanners = allMainBanners.length > 0;
-
   return (
     <div className="bg-white flex flex-col lg:flex-row gap-5 h-auto">
       {/* Carrossel para telas grandes */}
-      {hasMainBanners && (
-        <div className="hidden lg:block w-[70%] h-[300px]">
-          <AutoplayCarousel className="w-full h-full" delay={4000}>
-            <CarouselContent>
-              {allMainBanners.map((banner, index) => (
-                <CarouselItem key={`desktop-${banner.id || index}-${banner.tipo}`}>
-                  <Link 
-                    href={banner.href || banner.link || '/'} 
-                    className="block relative w-full h-[300px]"
-                  >
-                    <Image
-                      src={banner.src || banner.imagem_url || '/imgs/placeholder-ca.jpg'}
-                      alt={banner.alt || banner.titulo || 'Banner'}
-                      fill
-                      className="object-cover"
-                      priority={index === 0}
-                    />
-                  </Link>
-                </CarouselItem>
-              ))}
-            </CarouselContent>
-          </AutoplayCarousel>
-        </div>
-      )}
+      <div className="hidden lg:block w-[70%] h-[300px]">
+        <AutoplayCarousel className="w-full h-full" delay={4000}>
+          <CarouselContent>
+            {allMainBanners.map((banner, index) => (
+              <CarouselItem key={`desktop-${banner.id || index}-${banner.tipo}`}>
+                <Link 
+                  href={banner.href || banner.link || '/'} 
+                  className="block relative w-full h-[300px]"
+                >
+                  <Image
+                    src={banner.src || banner.imagem_url || defaultBanner.src}
+                    alt={banner.alt || banner.titulo || 'Banner'}
+                    fill
+                    className="object-cover"
+                    priority={index === 0}
+                  />
+                </Link>
+              </CarouselItem>
+            ))}
+          </CarouselContent>
+        </AutoplayCarousel>
+      </div>
 
       {/* Carrossel para dispositivos móveis */}
-      {allMobileBanners.length > 0 && (
-        <div className={`lg:${hasMainBanners ? 'hidden' : 'block'} w-full h-[200px]`}>
-          <AutoplayCarousel className="w-full h-full" delay={3000}>
-            <CarouselContent>
-              {allMobileBanners.map((banner, index) => (
-                <CarouselItem key={`mobile-${banner.mobileId || banner.id || `unique-${index}`}-${banner.tipo}`}>
-                  <Link 
-                    href={banner.href || banner.link || '/'} 
-                    className="block relative w-full h-[200px]"
-                  >
-                    <Image
-                      src={banner.src || banner.imagem_url || '/imgs/placeholder-ca.jpg'}
-                      alt={banner.alt || banner.titulo || 'Banner'}
-                      fill
-                      className="object-cover"
-                    />
-                  </Link>
-                </CarouselItem>
-              ))}
-            </CarouselContent>
-          </AutoplayCarousel>
-        </div>
-      )}
+      <div className="lg:hidden w-full h-[200px]">
+        <AutoplayCarousel className="w-full h-full" delay={3000}>
+          <CarouselContent>
+            {allMobileBanners.map((banner, index) => (
+              <CarouselItem key={`mobile-${banner.mobileId || banner.id || `unique-${index}`}-${banner.tipo}`}>
+                <Link 
+                  href={banner.href || banner.link || '/'} 
+                  className="block relative w-full h-[200px]"
+                >
+                  <Image
+                    src={banner.src || banner.imagem_url || defaultBanner.src}
+                    alt={banner.alt || banner.titulo || 'Banner'}
+                    fill
+                    className="object-cover"
+                  />
+                </Link>
+              </CarouselItem>
+            ))}
+          </CarouselContent>
+        </AutoplayCarousel>
+      </div>
 
       {/* Painel Lateral (30% em desktop, oculto em mobile pois já está no carrossel) */}
-      <div className={`hidden lg:flex ${hasMainBanners ? 'lg:w-[30%]' : 'lg:w-full'} flex-col gap-5 h-[300px]`}>
+      <div className="hidden lg:flex lg:w-[30%] flex-col gap-5 h-[300px]">
         {sideBannersToShow.slice(0, 2).map((banner, index) => (
           <Link 
             key={`side-${banner.id || index}-${banner.tipo}`} 
@@ -195,7 +197,7 @@ export function HomeBanner() {
             className="relative flex-1 h-[145px]"
           >
             <Image
-              src={banner.imagem_url || banner.src || '/imgs/placeholder-ca.jpg'}
+              src={banner.imagem_url || banner.src || defaultBanner.src}
               alt={banner.titulo || banner.alt || `Banner lateral ${index + 1}`}
               fill
               className="object-cover"
