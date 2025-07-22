@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import Image from 'next/image';
 import { Produto, ProdutoImagem, ProdutoCampoPersonalizado } from '@/types/produto';
 
@@ -38,20 +38,6 @@ export function ProdutoForm({
         })) || []
     );
 
-    useEffect(() => {
-        console.log('=== DEBUG TAGS ===');
-        console.log('Produto recebido:', produto);
-        console.log('Tipo das tags:', typeof produto?.tags);
-        console.log('Valor das tags:', produto?.tags);
-        console.log('Tags após processamento:', tags);
-        console.log('================');
-    }, [produto, tags]);
-
-    useEffect(() => {
-        console.log('Produto recebido:', produto);
-        console.log('Campos personalizados do produto:', produto?.campos_personalizados);
-        console.log('Estado atual dos campos personalizados:', camposPersonalizados);
-    }, [produto, camposPersonalizados]);
 
     const handleAddCampoPersonalizado = () => {
         if (camposPersonalizados.length >= 5) {
@@ -68,12 +54,10 @@ export function ProdutoForm({
             opcoes: []
         };
 
-        console.log('Adicionando novo campo:', novoCampo);
         setCamposPersonalizados([...camposPersonalizados, novoCampo]);
     };
 
     const handleRemoveCampoPersonalizado = (index: number) => {
-        console.log('Removendo campo no índice:', index);
         setCamposPersonalizados(camposPersonalizados.filter((_, i) => i !== index));
     };
 
@@ -82,7 +66,6 @@ export function ProdutoForm({
         field: keyof ProdutoCampoPersonalizado, 
         value: string | string[] | number
     ) => {
-        console.log('Alterando campo:', { index, field, value });
         const novosCampos = [...camposPersonalizados];
         novosCampos[index] = {
             ...novosCampos[index],
@@ -99,14 +82,11 @@ export function ProdutoForm({
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
-        console.log('=== DEBUG ENVIO ===');
-        console.log('Tags antes do processamento:', tags);
         
         // Filtrar campos personalizados vazios e garantir que seja um array
         const camposValidos = camposPersonalizados
             .filter(campo => campo && campo.nome && campo.nome.trim() !== '')
             .map(campo => {
-                console.log('Processando campo:', campo);
                 return {
                     nome: campo.nome.trim(),
                     tipo: campo.tipo,
@@ -115,14 +95,12 @@ export function ProdutoForm({
                 };
             });
 
-        console.log('Campos válidos após processamento:', camposValidos);
 
         // Processar tags
         const tagsArray = tags.split(',')
             .map((tag: string) => tag.trim())
             .filter((tag: string) => tag !== '');
 
-        console.log('Tags após processamento:', tagsArray);
 
         const produtoData = {
             nome,
@@ -135,8 +113,6 @@ export function ProdutoForm({
             campos_personalizados: camposValidos
         };
 
-        console.log('Dados finais do produto:', produtoData);
-        console.log('==================');
     onSubmit(produtoData);
   };
 

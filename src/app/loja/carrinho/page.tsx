@@ -226,7 +226,7 @@ export default function CarrinhoPage() {
             return;
         }
         
-        const telefone = '557398462159'; // Substitua pelo número do WhatsApp do CA
+        const telefone = '557488757145'; // Substitua pelo número do WhatsApp do CA
         
         let mensagem = 'Olá! Gostaria de comprar os seguintes itens:\n\n';
         

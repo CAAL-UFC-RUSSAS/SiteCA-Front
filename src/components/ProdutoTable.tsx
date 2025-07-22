@@ -104,7 +104,7 @@ export function ProdutoTable({ produtos, onEdit, onDelete }: ProdutoTableProps) 
                                             R$ {(Number(produto.preco) / 100).toFixed(2)}
                                         </span>
                                         <span className="text-sm text-gray-500">
-                                            {produto.quantidade} em estoque
+                                            {produto.quantidade/100} em estoque
                                         </span>
                                     </div>
                                     <span className={`px-2 py-1 text-xs font-semibold rounded-full ${

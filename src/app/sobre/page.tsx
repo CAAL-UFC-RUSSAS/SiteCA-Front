@@ -207,7 +207,7 @@ export default function SobrePage() {
                   </div>
                   <div>
                     <p className="font-medium">Telefone</p>
-                    <p className="text-gray-600">(74) 988757145 / (11) 94516-5101</p>
+                    <p className="text-gray-600">(74) 88757145 / (11) 94516-5101</p>
                   </div>
                 </div>
               </div>

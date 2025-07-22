@@ -286,7 +286,7 @@ export default function ContatoPage() {
                     </div>
                     <div>
                       <h3 className="text-lg font-semibold">Telefone</h3>
-                      <p className="text-gray-600">(74) 988757145</p>
+                      <p className="text-gray-600">(74) 88757145</p>
                       <p className="text-gray-600">(11) 94516-5101</p>
                       <p className="text-gray-500 text-sm mt-1">
                         Horário de atendimento: 8h às 19h

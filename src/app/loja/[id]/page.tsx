@@ -528,7 +528,7 @@ export default function ProdutoPage({ params }: { params: Promise<{ id: string }
                     </span>
                 </div>
             </main>
-            <main className="container mx-auto px-4 py-0 pt-2 max-w-7xl">
+            <main className="container mx-auto px-4 py-0 pt-2 max-w-7xl mb-10">
                 <div className="flex flex-col md:flex-row gap-0 bg-white shadow p-6">
                     <div className="w-full md:w-1/2 flex flex-col gap-4">
                         <div className="relative aspect-square mr-5">

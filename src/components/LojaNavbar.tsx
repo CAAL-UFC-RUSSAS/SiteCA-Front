@@ -53,7 +53,7 @@ export default function LojaNavbar() {
     };
 
     return (
-        <nav className="navbar bg-white shadow-md px-4 lg:px-6 py-2 lg:py-4 relative z-50">
+        <nav className="navbar bg-gradient-to-t from-[#f35b5a] via-[#de4a4a] to-[#b43838] shadow-md px-4 lg:px-6 py-2 lg:py-8 relative z-50">
             <div className="max-w-7xl mx-auto w-full flex items-center justify-between">
                 {/* Logo */}
                 <div className="flex items-center">
@@ -79,7 +79,7 @@ export default function LojaNavbar() {
                         <span className="ml-2 text-xl font-semibold">| Carrinho de compras</span>
                     )}
                                         {!isCartPage && (
-                        <span className="ml-2 text2xl font-bold lg:hidden">Lojinha do CA</span>
+                        <span className="ml-2 text2xl font-bold lg:hidden text-white">Lojinha do CA</span>
                     )}
                     </Link>
 
@@ -87,30 +87,30 @@ export default function LojaNavbar() {
 
                 {/* Título e Buscador Desktop */}
                 {!isCartPage && (
-                    <Link href="/loja" className="hidden lg:block">
+                    <Link href="/loja" className="hidden lg:block m-[-60px] mt-[-40px] ml-[-150px] mr-0">
                         <Image
-                            src="/titulo.svg"
+                            src="/lojinhadoCA.svg"
                             alt="Logo"
-                            width={650} 
-                            height={50}
+                            width={350} 
+                            height={40}
                             priority 
                         />
                     </Link>
                 )}
                 
                 {/* Buscador Desktop */}
-                <div className="hidden lg:flex flex-col items-center">
-                    <form onSubmit={handleSearch} className="flex items-center gap-2 mt-2">
+                <div className="hidden lg:flex flex-col items-center mr-[-240px]">
+                    <form onSubmit={handleSearch} className="flex items-center gap-2 mt-2 text-white">
                         <input
                             type="text"
                             placeholder="Buscar produtos..."
                             value={searchTerm}
                             onChange={(e) => setSearchTerm(e.target.value)}
-                            className="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent w-96"
+                            className="px-4 py-2 border border-gray-300  rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent w-96 text-xl text-white"
                         />
                         <button
                             type="submit"
-                            className="p-2 bg-primary text-white rounded-lg hover:bg-primary/90 transition-colors"
+                            className="p-2 bg-white text-black rounded-lg hover:bg-white/90 transition-colors"
                         >
                             <svg
                                 xmlns="http://www.w3.org/2000/svg"
@@ -134,7 +134,7 @@ export default function LojaNavbar() {
                 <div className="flex items-center lg:hidden">
                     {/* Botão de Busca Mobile */}
                     <button
-                        className="p-2 mr-2"
+                        className="p-2 mr-2 text-white"
                         onClick={toggleSearch}
                         aria-label="Buscar"
                     >
@@ -158,7 +158,7 @@ export default function LojaNavbar() {
                     {!isCartPage && (
                         <button 
                             onClick={handleCartClick} 
-                            className="flex items-center relative cursor-pointer"
+                            className="flex items-center relative cursor-pointer text-white"
                             aria-label="Carrinho"
                         >
                             <svg
@@ -189,12 +189,12 @@ export default function LojaNavbar() {
                 {!isCartPage && (
                     <button 
                         onClick={handleCartClick} 
-                        className="hidden lg:flex items-center relative cursor-pointer"
+                        className="hidden lg:flex items-center relative cursor-pointer text-white"
                         aria-label="Carrinho"
                     >
                         <svg
                             xmlns="http://www.w3.org/2000/svg"
-                            className="h-6 w-6"
+                            className="h-8 w-8"
                             fill="none"
                             viewBox="0 0 24 24"
                             stroke="currentColor"
@@ -207,7 +207,7 @@ export default function LojaNavbar() {
                             />
                         </svg>
                         {cartCount > 0 && (
-                            <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs font-bold rounded-full h-5 w-5 flex items-center justify-center">
+                            <span className="absolute -top-4 -right-4 bg-white text-black text-xs font-bold rounded-full h-5 w-5 flex items-center justify-center">
                                 {cartCount}
                             </span>
                         )}
@@ -217,7 +217,7 @@ export default function LojaNavbar() {
 
             {/* Campo de busca expandido (Mobile) */}
             {isSearchExpanded && (
-                <div className="lg:hidden absolute top-0 left-0 h-full w-full bg-white shadow-md py-2 px-4 z-50 flex items-center">
+                <div className="lg:hidden absolute top-0 left-0 h-full w-full  bg-white shadow-md py-2 px-4 z-50 flex items-center">
                     <button
                         onClick={toggleSearch}
                         className="mr-2"

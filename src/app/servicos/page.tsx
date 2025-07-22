@@ -83,7 +83,7 @@ export default function ServicosPage() {
                       Como Solicitar
                     </h4>
                     <ol className="list-decimal list-inside space-y-2 text-gray-700">
-                      <li>Envie o arquivo por whatsapp para: <strong>(74) 988757145</strong></li>
+                      <li>Envie o arquivo por whatsapp para: <strong>(74) 88757145</strong></li>
                       <li>Aguarde a confirmação de recebimento</li>
                       <li>Dirija-se à sede do CA para efetuar o pagamento</li>
                       <li>Retire suas impressões na sede</li>
@@ -165,7 +165,7 @@ export default function ServicosPage() {
               Entre em contato
             </Link>
             <a
-              href="https://wa.me/5574988757145?text=Olá! Gostaria de solicitar um serviço de impressão."
+              href="https://wa.me/557488757145?text=Olá! Gostaria de solicitar um serviço de impressão."
               target="_blank"
               rel="noopener noreferrer"
               className="inline-block px-6 py-3 bg-green-500 text-white font-bold rounded-lg hover:bg-green-400 transition-colors border-2 border-white"

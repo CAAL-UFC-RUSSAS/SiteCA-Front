@@ -26,7 +26,7 @@ export default function Home() {
         {/* Pop-up de Aviso Importante */}
         <div className="space-y-8">
           {/* Boas-vindas e resumo do CA */}
-          <section className="flex flex-col md:flex-row items-center gap-8 bg-white rounded-lg shadow p-6 mt-10 max-w-7xl">
+          <section className="flex flex-col md:flex-row items-center gap-8 bg-white rounded-lg shadow p-6 lg:mt-10 max-w-7xl">
             <div className="flex-1">
               <h2 className="text-2xl font-bold mb-2">Seja bem-vindo ao nosso Centro Acadêmico!</h2>
               <p className="mb-2 text-gray-700">
@@ -81,9 +81,7 @@ export default function Home() {
               </CardHeader>
               <CardContent>
                 <ul className="space-y-2">
-                  <li>Empréstimo de Materiais</li>
-                  <li>Armários</li>
-                  <li>Banco de Provas</li>
+                  <li>Impressão</li>
                 </ul>
                 <Link href="/servicos" className="text-sm text-blue-600 hover:underline block mt-4">
                   Ver todos os serviços →
@@ -94,9 +92,8 @@ export default function Home() {
 
           {/* Seção de Abas */}
           <Tabs defaultValue="documentos" className="w-full">
-            <TabsList className="grid w-full grid-cols-3">
+            <TabsList className="grid w-full grid-cols-2">
               <TabsTrigger value="documentos">Documentos</TabsTrigger>
-              <TabsTrigger value="calendario">Calendário UFC</TabsTrigger>
               <TabsTrigger value="representacao">Representação</TabsTrigger>
             </TabsList>
             <TabsContent value="documentos">
@@ -111,25 +108,6 @@ export default function Home() {
                   <Link href="/documentos/manuais" className="p-4 bg-gray-50 rounded-lg hover:bg-gray-100">
                     Manual do Estudante
                   </Link>
-                </CardContent>
-              </Card>
-            </TabsContent>
-            <TabsContent value="calendario">
-              <Card>
-                <CardHeader>
-                  <CardTitle>Calendário Universitário</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <ul className="space-y-2">
-                    <li className="flex justify-between">
-                      <span>Início do Semestre</span>
-                      <Badge>12/02</Badge>
-                    </li>
-                    <li className="flex justify-between">
-                      <span>Prazo para Trancamento</span>
-                      <Badge>30/03</Badge>
-                    </li>
-                  </ul>
                 </CardContent>
               </Card>
             </TabsContent>

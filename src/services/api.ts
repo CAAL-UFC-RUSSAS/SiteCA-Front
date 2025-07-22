@@ -562,7 +562,6 @@ export const getMembros = async (params?: { gestao?: string; status?: string }):
     if (params?.status) queryParams.append('status', params.status);
     
     const url = `${API_URL}/membros${queryParams.toString() ? `?${queryParams.toString()}` : ''}`;
-    console.log('Buscando membros:', url);
     
     const response = await fetch(url, {
       headers: getAuthHeaders()

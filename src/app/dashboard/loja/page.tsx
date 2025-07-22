@@ -23,12 +23,10 @@ export default function LojaPage() {
         try {
             setLoading(true);
             const data = await getProdutos();
-            console.log('Produtos carregados:', data);
             setProdutos(data);
             setError('');
         } catch (err) {
-            console.error('Erro ao carregar produtos:', err);
-            setError('Erro ao carregar produtos');
+            setError('Erro ao carregar produtos' + err);
         } finally {
             setLoading(false);
         }
@@ -56,7 +54,6 @@ export default function LojaPage() {
                 campos_personalizados: produto.campos_personalizados || []
             };
 
-            console.log('Enviando produto formatado:', produtoFormatado);
 
             if (editingProduto) {
                 await updateProduto(editingProduto.id, produtoFormatado);
@@ -68,13 +65,11 @@ export default function LojaPage() {
             setSelectedImages([]);
             loadProdutos();
         } catch (error) {
-            console.error('Erro ao salvar produto:', error);
-            alert('Erro ao salvar produto. Por favor, tente novamente.');
+            alert('Erro ao salvar produto. Por favor, tente novamente.' + error);
         }
     };
 
     const handleEdit = (produto: Produto) => {
-        console.log('Editando produto:', produto);
         setEditingProduto(produto);
         setSelectedImages(produto.imagens?.map((img, index) => ({
             id: typeof img === 'string' ? Date.now() : img.id,
@@ -91,7 +86,6 @@ export default function LojaPage() {
             await deleteProduto(id);
             await loadProdutos();
         } catch (err) {
-            console.error('Erro ao deletar produto:', err);
             setError(err instanceof Error ? err.message : 'Erro ao deletar produto');
         }
     }
@@ -99,7 +93,6 @@ export default function LojaPage() {
     const handleImageSelect = async (e: React.ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0];
         if (file) {
-            console.log('Arquivo de imagem selecionado:', file.name, `(${(file.size / 1024 / 1024).toFixed(2)}MB)`);
             const reader = new FileReader();
             reader.onloadend = async () => {
                 const base64 = reader.result as string;
@@ -117,7 +110,6 @@ export default function LojaPage() {
                     ctx?.drawImage(img, 0, 0, canvas.width, canvas.height);
                     
                     const compressedBase64 = canvas.toDataURL('image/jpeg', 0.7);
-                    console.log('Imagem comprimida com sucesso');
                     setSelectedImages(prev => [...prev, {
                         id: Date.now(), // ID temporário para o frontend
                         url: compressedBase64,
@@ -131,15 +123,12 @@ export default function LojaPage() {
     };
 
     const handleRemoveImage = (index: number) => {
-        console.log('Removendo imagem no índice:', index);
-        console.log('Imagens antes da remoção:', selectedImages);
         const newImages = [...selectedImages];
         newImages.splice(index, 1);
         // Atualiza a ordem das imagens restantes
         newImages.forEach((img, idx) => {
             img.ordem = idx;
         });
-        console.log('Imagens após remoção:', newImages);
         setSelectedImages(newImages);
     };
 

@@ -147,16 +147,24 @@ export default function Navbar() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   return (
-    <nav className="navbar bg-gradient-to-t from-blue-600 via-blue-600 to-blue-500 shadow-md px-6 pb-4 relative z-50">
+    <nav className="navbar bg-gradient-to-t from-[#000d86] via-[#000d86] to-[#000d86] shadow-md px-6 pb-4 relative z-50">
       
       <div className="w-full bg-transparent text-sm p-0 m-0 flex justify-between items-center lg:px-4 py-1 max-w-7xl mx-auto">
         {/* Conteúdo da esquerda */}
-        <Link href="https://faladevcaal.vercel.app" className="text-white p-0 m-0" target="_blank" rel="noopener noreferrer">
-          <p>Envie sugestões e reclamações!</p>
+        <Link href="https://faladevcaal.vercel.app" className="text-white p-0 m-0 text-xs lg:text-sm" target="_blank" rel="noopener noreferrer">
+          <p className="hidden lg:block">Envie sugestões e reclamações!</p>
+          <p className="lg:hidden">Envie sugestões!</p>
         </Link>
 
         {/* Conteúdo da direita */}
-        <div className="flex items-center gap-4">
+        
+        <div className="flex items-center gap-4 text-xs lg:text-sm">
+          <h2 className="text-white lg:hidden">|</h2>
+          <Link href="/dev" className="text-white p-0 m-0" rel="noopener noreferrer">
+            <span className="hidden lg:inline">Desenvolvido por Antônio Lisboa</span>
+            <span className="lg:hidden">Desenvolvido por</span>
+          </Link>
+          <h2 className="text-white">|</h2>
           <Link href="https://www.instagram.com/caalufc/" target="_blank" rel="noopener noreferrer" className="text-white">
             <FaInstagram size={20} className="inline-block align-middle" />
           </Link>
@@ -211,7 +219,7 @@ export default function Navbar() {
         >
           <svg
             xmlns="http://www.w3.org/2000/svg"
-            className="h-6 w-6"
+            className="h-6 w-6 text-white"
             fill="none"
             viewBox="0 0 24 24"
             stroke="currentColor"
