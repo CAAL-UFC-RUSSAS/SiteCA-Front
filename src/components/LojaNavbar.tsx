@@ -53,7 +53,7 @@ export default function LojaNavbar() {
     };
 
     return (
-        <nav className="navbar bg-gradient-to-t from-[#f35b5a] via-[#de4a4a] to-[#b43838] shadow-md px-4 lg:px-6 py-2 lg:py-8 relative z-50">
+        <nav className="navbar bg-gradient-to-t from-[#000d86] via-[#000d86] to-[#000d86] shadow-md px-4 lg:px-6 py-2 lg:py-[33.5px] relative z-50">
             <div className="max-w-7xl mx-auto w-full flex items-center justify-between">
                 {/* Logo */}
                 <div className="flex items-center">
@@ -176,7 +176,7 @@ export default function LojaNavbar() {
                                 />
                             </svg>
                             {cartCount > 0 && (
-                                <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs font-bold rounded-full h-5 w-5 flex items-center justify-center">
+                                <span className="absolute -top-2 -right-2 bg-red-500 text-black text-xs font-bold rounded-full h-5 w-5 flex items-center justify-center">
                                     {cartCount}
                                 </span>
                             )}
@@ -207,7 +207,7 @@ export default function LojaNavbar() {
                             />
                         </svg>
                         {cartCount > 0 && (
-                            <span className="absolute -top-4 -right-4 bg-white text-black text-xs font-bold rounded-full h-5 w-5 flex items-center justify-center">
+                            <span className="absolute -top-4 -right-4 bg-red-500 text-black text-xs font-bold rounded-full h-5 w-5 flex items-center justify-center">
                                 {cartCount}
                             </span>
                         )}
@@ -217,7 +217,7 @@ export default function LojaNavbar() {
 
             {/* Campo de busca expandido (Mobile) */}
             {isSearchExpanded && (
-                <div className="lg:hidden absolute top-0 left-0 h-full w-full  bg-white shadow-md py-2 px-4 z-50 flex items-center">
+                <div className="lg:hidden absolute top-0 left-0 h-full w-full  bg-[#000d86] shadow-md py-2 px-4 z-50 flex items-center text-white">
                     <button
                         onClick={toggleSearch}
                         className="mr-2"
@@ -233,12 +233,12 @@ export default function LojaNavbar() {
                             placeholder="Buscar produtos..."
                             value={searchTerm}
                             onChange={(e) => setSearchTerm(e.target.value)}
-                            className="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
+                            className="text-base text-white flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary "
                             autoFocus
                         />
                         <button
                             type="submit"
-                            className="p-2 bg-primary text-white rounded-lg hover:bg-primary/90 transition-colors"
+                            className="p-2 bg-white text-black rounded-lg hover:bg-white/90 transition-colors"
                         >
                             <svg
                                 xmlns="http://www.w3.org/2000/svg"
