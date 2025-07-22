@@ -38,7 +38,7 @@ export default function Home() {
               </p>
               <div className="flex gap-4 mt-4">
                 <a href="/pdf/EstatutoCA.pdf" target="_blank" rel="noopener noreferrer" className="px-4 py-2 rounded bg-blue-600 text-white font-semibold shadow hover:bg-blue-700 transition-colors">ESTATUTO CAOC</a>
-                <a href="https://drive.google.com/" target="_blank" rel="noopener noreferrer" className="px-4 py-2 rounded bg-green-600 text-white font-semibold shadow hover:bg-green-700 transition-colors">Drive do CAOC</a>
+                <a href="https://drive.google.com/drive/folders/1tTChUjAH1TMKU1_7lZY4bSL9HJ0wULPq" target="_blank" rel="noopener noreferrer" className="px-4 py-2 rounded bg-green-600 text-white font-semibold shadow hover:bg-green-700 transition-colors">Drive do CAOC</a>
               </div>
             </div>
             <div className="flex-1 flex justify-center">
@@ -102,7 +102,7 @@ export default function Home() {
                   <CardTitle>Documentos Importantes</CardTitle>
                 </CardHeader>
                 <CardContent className="grid grid-cols-2 gap-4">
-                  <Link href="/documentos/requerimentos" className="p-4 bg-gray-50 rounded-lg hover:bg-gray-100">
+                  <Link href="https://drive.google.com/drive/folders/1tTChUjAH1TMKU1_7lZY4bSL9HJ0wULPq" target="_blank" rel="noopener noreferrer" className="p-4 bg-gray-50 rounded-lg hover:bg-gray-100">
                     Requerimentos
                   </Link>
                   <Link href="/documentos/manuais" className="p-4 bg-gray-50 rounded-lg hover:bg-gray-100">
@@ -133,8 +133,8 @@ export default function Home() {
             <Link href="/calouros/guia" className="p-4 bg-blue-50 rounded-lg hover:bg-blue-100 text-center">
               Guia do Calouro
             </Link>
-            <Link href="/projetos/oportunidades" className="p-4 bg-green-50 rounded-lg hover:bg-green-100 text-center">
-              Oportunidades
+            <Link href="https://drive.google.com/drive/folders/18aEnTSwyr3-Mm9zQGo7yfaSk9n9zKe4H" target="_blank" rel="noopener noreferrer" className="p-4 bg-green-50 rounded-lg hover:bg-green-100 text-center">
+              Drive
             </Link>
             <Link href="/financeiro" className="p-4 bg-purple-50 rounded-lg hover:bg-purple-100 text-center">
               Prestação de Contas

@@ -286,8 +286,8 @@ export default function ContatoPage() {
                     </div>
                     <div>
                       <h3 className="text-lg font-semibold">Telefone</h3>
-                      <p className="text-gray-600">(74) 88757145</p>
-                      <p className="text-gray-600">(11) 94516-5101</p>
+                      <p className="text-gray-600">(74) 8875-7145</p>
+                      <p className="text-gray-600">(11) 4516-5101</p>
                       <p className="text-gray-500 text-sm mt-1">
                         Horário de atendimento: 8h às 19h
                       </p>
@@ -341,9 +341,9 @@ export default function ContatoPage() {
                   height={200}
                   className="mx-auto mb-4"
                 />
-                <p className="text-gray-600 mb-2">Mapa do Campus do Pici - UFC</p>
+                <p className="text-gray-600 mb-2">Campus da UFC Russas</p>
                 <p className="text-sm text-gray-500">
-                  O Centro Acadêmico está localizado no Bloco 910, próximo ao Restaurante Universitário.
+                  O Centro Acadêmico está localizado no prédio principal do campus, próximo à Biblioteca.
                 </p>
               </div>
             </div>
@@ -356,22 +356,15 @@ export default function ContatoPage() {
               <div>
                 <h4 className="font-semibold">De ônibus:</h4>
                 <p className="text-gray-700">
-                  Linhas que passam pelo Campus do Pici: 044 - Parangaba/Papicu/Praia de Iracema, 
-                  078 - Antônio Bezerra/Unifor, 099 - Conjunto Ceará/Pici/Unifor.
+                  Existem diversas linhas de ônibus, a prefeitura disponibiliza que passam próximo ao campus. A parada mais próxima fica a 
+                  aproximadamente 200 metros da entrada principal.
                 </p>
               </div>
               
               <div>
                 <h4 className="font-semibold">De carro:</h4>
                 <p className="text-gray-700">
-                  Estacionamento disponível em frente ao Bloco 910. Acesso principal pela Av. Humberto Monte.
-                </p>
-              </div>
-              
-              <div>
-                <h4 className="font-semibold">Pontos de referência:</h4>
-                <p className="text-gray-700">
-                  Próximo ao Restaurante Universitário e à Biblioteca do Centro de Ciências.
+                  Estacionamento disponível dentro do campus. Acesso principal pela Rua Felipe Santiago.
                 </p>
               </div>
             </div>

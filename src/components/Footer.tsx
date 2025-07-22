@@ -89,7 +89,7 @@ export default function Footer() {
                 <div>
                   <p className="text-gray-800 font-medium">Telefones</p>
                   <a href="tel:+557488757145" className="text-gray-600 hover:text-blue-600 transition-colors block">(74) 98875-7145</a>
-                  <a href="tel:+5511945165101" className="text-gray-600 hover:text-blue-600 transition-colors block">(11) 94516-5101</a>
+                  <a href="tel:+551145165101" className="text-gray-600 hover:text-blue-600 transition-colors block">(11) 94516-5101</a>
                 </div>
               </li>
               <li className="flex items-start">

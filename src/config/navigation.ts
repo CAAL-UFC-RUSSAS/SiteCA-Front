@@ -19,7 +19,12 @@ export const navItems: NavItem[] = [
     label: 'Eventos',
     submenu: [
       { label: 'Calendário UFC', href: '/eventos' },
-      { label: 'Galeria', href: '/eventos/galeria' },
+      { 
+        label: 'Galeria', 
+        href: 'https://drive.google.com/drive/folders/18aEnTSwyr3-Mm9zQGo7yfaSk9n9zKe4H',
+        target: '_blank',
+        rel: 'noopener noreferrer'
+      },
     ],
   },
   /*

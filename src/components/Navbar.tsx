@@ -43,7 +43,9 @@ function DesktopNav() {
                                     <NavigationMenuLink asChild>
                                       <Link
                                         href={subSubItem.href!}
-                                        className=" block select-none rounded-md p-2 text-sm leading-none no-underline outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground"
+                                        className="block select-none rounded-md p-2 text-sm leading-none no-underline outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground"
+                                        target={subSubItem.target}
+                                        rel={subSubItem.rel}
                                       >
                                         {subSubItem.label}
                                       </Link>
@@ -57,6 +59,8 @@ function DesktopNav() {
                               <Link
                                 href={subItem.href!}
                                 className="block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground"
+                                target={subItem.target}
+                                rel={subItem.rel}
                               >
                                 <div className="text-sm font-medium leading-none">{subItem.label}</div>
                               </Link>
@@ -72,6 +76,8 @@ function DesktopNav() {
                   <Link
                     href={item.href!}
                     className={cn(navigationMenuTriggerStyle(), pathname === item.href && 'bg-white')}
+                    target={item.target}
+                    rel={item.rel}
                   >
                     {item.label}
                   </Link>
@@ -135,7 +141,12 @@ function MobileNavItem({ item }: { item: NavItem }) {
           </ul>
         </details>
       ) : (
-        <Link href={item.href!} className="block py-3 px-4 text-black hover:bg-blue-100 text-base font-medium">
+        <Link 
+          href={item.href!} 
+          className="block py-3 px-4 text-black hover:bg-blue-100 text-base font-medium"
+          target={item.target}
+          rel={item.rel}
+        >
           {item.label}
         </Link>
       )}
