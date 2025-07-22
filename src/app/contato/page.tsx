@@ -343,7 +343,7 @@ export default function ContatoPage() {
                 />
                 <p className="text-gray-600 mb-2">Campus da UFC Russas</p>
                 <p className="text-sm text-gray-500">
-                  O Centro Acadêmico está localizado no prédio principal do campus, próximo à Biblioteca.
+                  O Centro Acadêmico está localizado no prédio principal do campus, próximo ao auditório 2.
                 </p>
               </div>
             </div>
