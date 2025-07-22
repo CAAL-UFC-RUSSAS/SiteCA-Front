@@ -101,14 +101,14 @@ function MobileNav({ isOpen, onClose }: { isOpen: boolean; onClose: () => void }
       </div>
       <ul className="space-y-2">
         {navItems.map((item, index) => (
-          <MobileNavItem key={index} item={item} />
+          <MobileNavItem key={index} item={item} onClose={onClose} />
         ))}
       </ul>
     </div>
   );
 }
 
-function MobileNavItem({ item }: { item: NavItem }) {
+function MobileNavItem({ item, onClose }: { item: NavItem; onClose: () => void }) {
   return (
     <li>
       {item.submenu ? (
@@ -130,12 +130,12 @@ function MobileNavItem({ item }: { item: NavItem }) {
           </summary>
           <ul className="pl-6 mt-2 space-y-2 border-l border-blue-300 ml-4">
             {item.submenu.map((sub, idx) => (
-              <MobileNavItem key={idx} item={sub} />
+              <MobileNavItem key={idx} item={sub} onClose={onClose} />
             ))}
           </ul>
         </details>
       ) : (
-        <Link href={item.href!} className="block py-3 px-4 text-black hover:bg-blue-100 text-base font-medium">
+        <Link href={item.href!} className="block py-3 px-4 text-black hover:bg-blue-100 text-base font-medium" onClick={onClose}>
           {item.label}
         </Link>
       )}
