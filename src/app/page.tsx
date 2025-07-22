@@ -105,7 +105,7 @@ export default function Home() {
                   <Link href="https://drive.google.com/drive/folders/1tTChUjAH1TMKU1_7lZY4bSL9HJ0wULPq" target="_blank" rel="noopener noreferrer" className="p-4 bg-gray-50 rounded-lg hover:bg-gray-100">
                     Requerimentos
                   </Link>
-                  <Link href="/documentos/manuais" className="p-4 bg-gray-50 rounded-lg hover:bg-gray-100">
+                  <Link href="/pdf/Manual do Calouro.pdf" target="_blank" className="p-4 bg-gray-50 rounded-lg hover:bg-gray-100">
                     Manual do Estudante
                   </Link>
                 </CardContent>

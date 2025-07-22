@@ -11,7 +11,10 @@ export const navItems: NavItem[] = [
     submenu: [
       { label: 'O Centro Acadêmico', href: '/sobre' },
       { label: 'Gestão Atual', href: '/sobre/gestao' },
-      { label: 'Documentos', href: '/sobre/documentos' },
+      { label: 'Documentos', href: 'https://drive.google.com/drive/folders/1tTChUjAH1TMKU1_7lZY4bSL9HJ0wULPq',
+                target: '_blank',
+        rel: 'noopener noreferrer'
+      },
       { label: 'Contato', href: '/contato' },
     ],
   },
