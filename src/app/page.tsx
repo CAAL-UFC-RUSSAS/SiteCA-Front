@@ -37,8 +37,8 @@ export default function Home() {
               <br/><strong> Juntos, fazemos mais do que código: fazemos história.</strong>
               </p>
               <div className="flex gap-4 mt-4">
-                <a href="/pdf/EstatutoCA.pdf" target="_blank" rel="noopener noreferrer" className="px-4 py-2 rounded bg-blue-600 text-white font-semibold shadow hover:bg-blue-700 transition-colors">ESTATUTO CAOC</a>
-                <a href="https://drive.google.com/drive/folders/1tTChUjAH1TMKU1_7lZY4bSL9HJ0wULPq" target="_blank" rel="noopener noreferrer" className="px-4 py-2 rounded bg-green-600 text-white font-semibold shadow hover:bg-green-700 transition-colors">Drive do CAOC</a>
+                <a href="/pdf/EstatutoCA.pdf" target="_blank" rel="noopener noreferrer" className="px-4 py-2 rounded bg-blue-600 text-white font-semibold shadow hover:bg-blue-700 transition-colors">ESTATUTO CACC</a>
+                <a href="https://drive.google.com/drive/folders/1tTChUjAH1TMKU1_7lZY4bSL9HJ0wULPq" target="_blank" rel="noopener noreferrer" className="px-4 py-2 rounded bg-green-600 text-white font-semibold shadow hover:bg-green-700 transition-colors">Drive do CACC</a>
               </div>
             </div>
             <div className="flex-1 flex justify-center">
