@@ -177,13 +177,26 @@ export default function Navbar() {
       
       <div className="max-w-7xl mx-auto w-full flex items-center justify-between px-6">
         {/* Logo */}
-        <Link href="/" className="text-2xl font-bold text-indigo-700">
+        <Link href="/" className="text-2xl font-bold text-indigo-700 hidden lg:block">
           <Image
             src="/logoCAAL.svg"
             alt="Logo"
             width={60}      
             height={70}
           />
+        </Link>
+
+        <Link href="/" className="text-2xl font-bold text-indigo-700 lg:hidden">
+          <Image
+            src="/logoCAAL.svg"
+            alt="Logo"
+            width={40}      
+            height={70}
+          />
+        </Link>
+
+        <Link href="/" className="text-2xl font-bold text-white lg:hidden">
+          C.A.C.C.
         </Link>
 
         {/* Desktop Navigation */}
