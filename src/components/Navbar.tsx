@@ -196,7 +196,7 @@ export default function Navbar() {
         </Link>
 
         <Link href="/" className="text-2xl font-bold text-white lg:hidden">
-          C.A.C.C.
+          C.A.A.L.
         </Link>
 
         {/* Desktop Navigation */}
