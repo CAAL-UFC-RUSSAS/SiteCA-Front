@@ -43,7 +43,7 @@ export default function SobrePage() {
           
           <div className="bg-blue-50 p-8 rounded-xl mb-12">
             <p className="text-lg mb-6">
-              O <strong>Centro Acadêmico de Ciência da Computação (CACC)</strong> é a entidade representativa dos estudantes 
+              O <strong>Centro Acadêmico Ada Lovelace (CAAL)</strong> é a entidade representativa dos estudantes 
               do curso de Ciência da Computação da Universidade Federal do Ceará Campus Russas. Somos uma organização sem fins 
               lucrativos, gerida por estudantes e para estudantes.
             </p>
