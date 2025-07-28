@@ -76,7 +76,7 @@ export default function LojaNavbar() {
                             className="hidden lg:block"
                         />
                         {isCartPage && (
-                        <span className="ml-2 text-xl font-semibold">| Carrinho de compras</span>
+                        <span className="ml-2 text-xl font-semibold text-white">| Carrinho de compras</span>
                     )}
                                         {!isCartPage && (
                         <span className="ml-2 text2xl font-bold lg:hidden text-white">Lojinha do CA</span>
@@ -176,7 +176,7 @@ export default function LojaNavbar() {
                                 />
                             </svg>
                             {cartCount > 0 && (
-                                <span className="absolute -top-2 -right-2 bg-red-500 text-black text-xs font-bold rounded-full h-5 w-5 flex items-center justify-center">
+                                <span className="absolute -top-3 -right-3 bg-white  text-[#ee4d2d] text-xs font-bold rounded-full h-4 w-4 flex items-center justify-center">
                                     {cartCount}
                                 </span>
                             )}
@@ -207,7 +207,7 @@ export default function LojaNavbar() {
                             />
                         </svg>
                         {cartCount > 0 && (
-                            <span className="absolute -top-4 -right-4 bg-red-500 text-black text-xs font-bold rounded-full h-5 w-5 flex items-center justify-center">
+                            <span className="absolute -top-4 -right-4 bg-white text-[#ee4d2d] text-xs font-bold rounded-full h-5 w-5 flex items-center justify-center">
                                 {cartCount}
                             </span>
                         )}

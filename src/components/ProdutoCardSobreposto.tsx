@@ -41,7 +41,7 @@ export default function ProdutoCardSobreposto({ produto, grande, quadrado }: Pro
                     <h3 className="text-lg font-bold mb-1">{produto.nome}</h3>
                     <p className="text-sm mb-2 line-clamp-2">{produto.descricao}</p>
                     <div className="flex justify-between items-center">
-                        <span className="text-yellow-400 font-bold">{formatarPreco(produto.preco)}</span>
+                        <span className="text-[#ee4d2d] font-bold">{formatarPreco(produto.preco)}</span>
                         <span className={`text-sm ${produto.disponivel ? 'text-green-400' : 'text-red-400'}`}>
                             {produto.disponivel ? 'Disponível' : 'Indisponível'}
                         </span>
