@@ -496,22 +496,27 @@ export const deleteAviso = async (id: number): Promise<void> => {
   }
 };
 
-// Função utilitária para criar datas no timezone local
+// Função utilitária para criar datas no horário de Brasília (UTC-3)
 export function criarDataLocal(dataString: string | Date): Date {
   if (typeof dataString === 'string') {
-    // Se for uma string ISO, extrair ano, mês e dia
+    // Se for uma string ISO, converter para horário de Brasília
     const data = new Date(dataString);
-    return new Date(data.getFullYear(), data.getMonth(), data.getDate());
+    // Ajustar para UTC-3 (Brasília)
+    const dataBrasilia = new Date(data.getTime() - (3 * 60 * 60 * 1000));
+    return new Date(dataBrasilia.getFullYear(), dataBrasilia.getMonth(), dataBrasilia.getDate());
   } else {
-    // Se já for um objeto Date, extrair ano, mês e dia
-    return new Date(dataString.getFullYear(), dataString.getMonth(), dataString.getDate());
+    // Se já for um objeto Date, ajustar para horário de Brasília
+    const dataBrasilia = new Date(dataString.getTime() - (3 * 60 * 60 * 1000));
+    return new Date(dataBrasilia.getFullYear(), dataBrasilia.getMonth(), dataBrasilia.getDate());
   }
 }
 
-// Função utilitária para obter a data de hoje no timezone local
+// Função utilitária para obter a data de hoje no horário de Brasília (UTC-3)
 export function obterDataHoje(): Date {
-  const hoje = new Date();
-  return new Date(hoje.getFullYear(), hoje.getMonth(), hoje.getDate());
+  const agora = new Date();
+  // Ajustar para UTC-3 (Brasília)
+  const agoraBrasilia = new Date(agora.getTime() - (3 * 60 * 60 * 1000));
+  return new Date(agoraBrasilia.getFullYear(), agoraBrasilia.getMonth(), agoraBrasilia.getDate());
 }
 
 // Função para buscar o calendário acadêmico da UFC
