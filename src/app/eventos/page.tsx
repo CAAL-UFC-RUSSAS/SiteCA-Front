@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import {  ChevronRight, ExternalLink, Info } from 'lucide-react';
-import {  getAvisos, getCalendarioUFC } from '@/services/api';
+import {  getAvisos, getCalendarioUFC, criarDataLocal, obterDataHoje } from '@/services/api';
 import { Badge } from '@/components/ui/badge';
 import EventosSidebar from '@/components/EventosSidebar';
 
@@ -37,14 +37,13 @@ export default function EventosPage() {
         ]);
         
         // Converter avisos para eventos
-        const hoje = new Date();
-        hoje.setHours(0, 0, 0, 0); // Normaliza para o início do dia
+        const hoje = obterDataHoje();
         
         const eventosFormatados = avisosData
           .filter(aviso => aviso.titulo && aviso.data_inicio)
           .map(aviso => {
-            // Formatar a data para exibição
-            const dataInicio = new Date(aviso.data_inicio);
+            // Formatar a data para exibição usando timezone local
+            const dataInicio = criarDataLocal(aviso.data_inicio);
             const dataFormatada = dataInicio.toLocaleDateString('pt-BR', {
               day: '2-digit',
               month: '2-digit',
@@ -58,7 +57,7 @@ export default function EventosPage() {
             if (dataInicio > hoje) {
               status = 'futuro';
             } else if (aviso.data_fim) {
-              const dataFim = new Date(aviso.data_fim);
+              const dataFim = criarDataLocal(aviso.data_fim);
               status = dataFim >= hoje ? 'ativo' : 'passado';
             } else {
               status = 'ativo';
@@ -96,8 +95,7 @@ export default function EventosPage() {
         console.error('Erro ao buscar eventos:', err);
         // Tenta ainda buscar só o calendário da UFC em caso de erro
         try {
-          const hoje = new Date();
-          hoje.setHours(0, 0, 0, 0);
+          const hoje = obterDataHoje();
           const calendarioUFC = await getCalendarioUFC();
           setEventosCombinados(
             calendarioUFC

@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { CalendarDays, ExternalLink } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
-import { getAvisos, getCalendarioUFC } from '@/services/api';
+import { getAvisos, getCalendarioUFC, criarDataLocal, obterDataHoje } from '@/services/api';
 
 interface EventoFormatado {
   id: number | string;
@@ -28,8 +28,7 @@ export default function EventosSidebar() {
       try {
         setLoading(true);
         
-        const hoje = new Date();
-        hoje.setHours(0, 0, 0, 0);
+        const hoje = obterDataHoje();
         
 
         // Buscar dados em paralelo para melhor performance
@@ -42,8 +41,8 @@ export default function EventosSidebar() {
         const eventosFormatados = avisos
           .filter(aviso => aviso.titulo && aviso.data_inicio) // Filtrar avisos válidos
           .map(aviso => {
-            // Formatar a data para exibição
-            const dataObj = new Date(aviso.data_inicio);
+            // Formatar a data para exibição usando timezone local
+            const dataObj = criarDataLocal(aviso.data_inicio);
             const dataFormatada = dataObj.toLocaleDateString('pt-BR', {
               day: '2-digit',
               month: '2-digit',
@@ -95,7 +94,7 @@ export default function EventosSidebar() {
       } catch (err) {
         console.error('Erro ao buscar eventos:', err);
         // Usar dados de fallback em caso de erro
-        const hoje = new Date();
+        const hoje = obterDataHoje();
         try {
           // Mesmo em caso de erro, tenta buscar o calendário UFC
           const calendarioUFC = await getCalendarioUFC();

@@ -496,6 +496,24 @@ export const deleteAviso = async (id: number): Promise<void> => {
   }
 };
 
+// Função utilitária para criar datas no timezone local
+export function criarDataLocal(dataString: string | Date): Date {
+  if (typeof dataString === 'string') {
+    // Se for uma string ISO, extrair ano, mês e dia
+    const data = new Date(dataString);
+    return new Date(data.getFullYear(), data.getMonth(), data.getDate());
+  } else {
+    // Se já for um objeto Date, extrair ano, mês e dia
+    return new Date(dataString.getFullYear(), dataString.getMonth(), dataString.getDate());
+  }
+}
+
+// Função utilitária para obter a data de hoje no timezone local
+export function obterDataHoje(): Date {
+  const hoje = new Date();
+  return new Date(hoje.getFullYear(), hoje.getMonth(), hoje.getDate());
+}
+
 // Função para buscar o calendário acadêmico da UFC
 export const getCalendarioUFC = async (): Promise<EventoCalendario[]> => {
   try {
@@ -511,10 +529,10 @@ export const getCalendarioUFC = async (): Promise<EventoCalendario[]> => {
     
     const data = await response.json();
     
-    // Converte objetos de data de string para Date
+    // Converte objetos de data de string para Date no timezone local
     return data.map((evento: EventoCalendario) => ({
       ...evento,
-      dataObj: new Date(evento.dataObj)
+      dataObj: criarDataLocal(evento.dataObj)
     }));
   } catch (error) {
     console.error('Erro ao buscar calendário da UFC:', error);
