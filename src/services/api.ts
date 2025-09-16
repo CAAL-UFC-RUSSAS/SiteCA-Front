@@ -503,11 +503,13 @@ export function criarDataLocal(dataString: string | Date): Date {
     const data = new Date(dataString);
     // Ajustar para UTC-3 (Brasília)
     const dataBrasilia = new Date(data.getTime() - (3 * 60 * 60 * 1000));
-    return new Date(dataBrasilia.getFullYear(), dataBrasilia.getMonth(), dataBrasilia.getDate());
+    // Criar data sem horário para comparação
+    return new Date(dataBrasilia.getFullYear(), dataBrasilia.getMonth(), dataBrasilia.getDate(), 0, 0, 0, 0);
   } else {
     // Se já for um objeto Date, ajustar para horário de Brasília
     const dataBrasilia = new Date(dataString.getTime() - (3 * 60 * 60 * 1000));
-    return new Date(dataBrasilia.getFullYear(), dataBrasilia.getMonth(), dataBrasilia.getDate());
+    // Criar data sem horário para comparação
+    return new Date(dataBrasilia.getFullYear(), dataBrasilia.getMonth(), dataBrasilia.getDate(), 0, 0, 0, 0);
   }
 }
 
@@ -516,7 +518,14 @@ export function obterDataHoje(): Date {
   const agora = new Date();
   // Ajustar para UTC-3 (Brasília)
   const agoraBrasilia = new Date(agora.getTime() - (3 * 60 * 60 * 1000));
-  return new Date(agoraBrasilia.getFullYear(), agoraBrasilia.getMonth(), agoraBrasilia.getDate());
+  // Criar data sem horário para comparação
+  return new Date(agoraBrasilia.getFullYear(), agoraBrasilia.getMonth(), agoraBrasilia.getDate(), 0, 0, 0, 0);
+}
+
+// Função utilitária para converter data formatada (DD/MM/YYYY) para Date
+export function converterDataFormatada(dataFormatada: string): Date {
+  const [dia, mes, ano] = dataFormatada.split('/');
+  return new Date(parseInt(ano), parseInt(mes) - 1, parseInt(dia), 0, 0, 0, 0);
 }
 
 // Função para buscar o calendário acadêmico da UFC

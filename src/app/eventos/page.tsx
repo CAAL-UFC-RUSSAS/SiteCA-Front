@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import {  ChevronRight, ExternalLink, Info } from 'lucide-react';
-import {  getAvisos, getCalendarioUFC, criarDataLocal, obterDataHoje } from '@/services/api';
+import {  getAvisos, getCalendarioUFC, criarDataLocal, obterDataHoje, converterDataFormatada } from '@/services/api';
 import { Badge } from '@/components/ui/badge';
 import EventosSidebar from '@/components/EventosSidebar';
 
@@ -84,11 +84,16 @@ export default function EventosPage() {
             titulo: evento.titulo,
             data: evento.data,
             dataObj: evento.dataObj,
-            status: evento.dataObj < hoje ? 'passado' as const : 'futuro' as const,
-            passado: evento.dataObj < hoje,
+            status: converterDataFormatada(evento.data) < hoje ? 'passado' as const : 'futuro' as const,
+            passado: converterDataFormatada(evento.data) < hoje,
             tipo: 'ufc' as const
           }))
-        ].sort((a, b) => a.dataObj.getTime() - b.dataObj.getTime());
+        ].sort((a, b) => {
+          // Converter datas formatadas para comparação
+          const dataA = converterDataFormatada(a.data);
+          const dataB = converterDataFormatada(b.data);
+          return dataA.getTime() - dataB.getTime();
+        });
           
         setEventosCombinados(todosCombinados);
       } catch (err) {
@@ -104,11 +109,16 @@ export default function EventosPage() {
                 titulo: evento.titulo,
                 data: evento.data,
                 dataObj: evento.dataObj,
-                status: evento.dataObj < hoje ? 'passado' as const : 'futuro' as const,
-                passado: evento.dataObj < hoje,
+                status: converterDataFormatada(evento.data) < hoje ? 'passado' as const : 'futuro' as const,
+                passado: converterDataFormatada(evento.data) < hoje,
                 tipo: 'ufc' as const
               }))
-              .sort((a, b) => a.dataObj.getTime() - b.dataObj.getTime())
+              .sort((a, b) => {
+                // Converter datas formatadas para comparação
+                const dataA = converterDataFormatada(a.data);
+                const dataB = converterDataFormatada(b.data);
+                return dataA.getTime() - dataB.getTime();
+              })
           );
         } catch (ufcError) {
           console.error('Erro ao buscar calendário da UFC:', ufcError);
@@ -129,16 +139,17 @@ export default function EventosPage() {
     const passaFiltroTipo = filtroTipo === 'todos' || evento.tipo === filtroTipo;
     
     // Depois aplica filtro de tempo
-    const hoje = new Date();
-    hoje.setHours(0, 0, 0, 0); // Normaliza para o início do dia
-    const passaFiltroTempo = filtroTempo === 'todos' || new Date(evento.dataObj) >= hoje;
+    const hoje = obterDataHoje();
+    const dataEvento = converterDataFormatada(evento.data);
+    const passaFiltroTempo = filtroTempo === 'todos' || dataEvento >= hoje;
     
     return passaFiltroTipo && passaFiltroTempo;
   });
 
   // Agrupar eventos por mês
   const eventosAgrupados = eventosFiltrados.reduce<Record<string, EventoFormatado[]>>((grupos, evento) => {
-    const mes = evento.dataObj.toLocaleDateString('pt-BR', { month: 'long', year: 'numeric' });
+    const dataEvento = converterDataFormatada(evento.data);
+    const mes = dataEvento.toLocaleDateString('pt-BR', { month: 'long', year: 'numeric' });
     if (!grupos[mes]) {
       grupos[mes] = [];
     }
@@ -246,10 +257,10 @@ export default function EventosPage() {
                       <div className="flex items-start gap-4">
                         <div className="min-w-20 text-center">
                           <div className={`font-bold ${evento.passado ? 'text-gray-500' : ''}`}>
-                            {evento.dataObj.getDate().toString().padStart(2, '0')}
+                            {evento.data.split('/')[0]}
                           </div>
                           <div className="text-xs text-gray-500">
-                            {evento.dataObj.toLocaleDateString('pt-BR', { weekday: 'short' })}
+                            {converterDataFormatada(evento.data).toLocaleDateString('pt-BR', { weekday: 'short' })}
                           </div>
                         </div>
                         

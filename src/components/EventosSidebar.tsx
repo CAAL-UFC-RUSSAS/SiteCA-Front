@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { CalendarDays, ExternalLink } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
-import { getAvisos, getCalendarioUFC, criarDataLocal, obterDataHoje } from '@/services/api';
+import { getAvisos, getCalendarioUFC, criarDataLocal, obterDataHoje, converterDataFormatada } from '@/services/api';
 
 interface EventoFormatado {
   id: number | string;
@@ -49,7 +49,7 @@ export default function EventosSidebar() {
               year: 'numeric'
             });
             
-            const passado = dataObj < hoje;
+            const passado = converterDataFormatada(dataFormatada) < hoje;
             
             return {
               id: aviso.id,
@@ -71,14 +71,19 @@ export default function EventosSidebar() {
         // Combinar com eventos do calendário UFC
         const todosEventos = [...eventosFormatados, ...calendarioUFC.map(evento => ({
           ...evento,
-          passado: evento.dataObj < hoje
+          passado: converterDataFormatada(evento.data) < hoje
         }))];
         
         // Separar eventos passados e futuros
         const eventosPassados = todosEventos.filter(evento => evento.passado);
         const eventosFuturos = todosEventos.filter(evento => !evento.passado);
         // Ordenar eventos passados por data (mais recentes primeiro)
-        const eventosPassadosOrdenados = eventosPassados.sort((a, b) => b.dataObj.getTime() - a.dataObj.getTime());
+        const eventosPassadosOrdenados = eventosPassados.sort((a, b) => {
+          // Converter datas formatadas para comparação
+          const dataA = converterDataFormatada(a.data);
+          const dataB = converterDataFormatada(b.data);
+          return dataB.getTime() - dataA.getTime(); // Ordem decrescente para passados
+        });
         
         // Pegar os 2 últimos eventos passados e todos os futuros
         const todosCombinados = [
@@ -86,7 +91,12 @@ export default function EventosSidebar() {
           ...eventosFuturos // todos os eventos futuros
         ]
           // Ordenar por data (mais próximos primeiro)
-          .sort((a, b) => a.dataObj.getTime() - b.dataObj.getTime())
+          .sort((a, b) => {
+            // Converter datas formatadas para comparação
+            const dataA = converterDataFormatada(a.data);
+            const dataB = converterDataFormatada(b.data);
+            return dataA.getTime() - dataB.getTime();
+          })
           // Limitar a 5 eventos para não sobrecarregar a sidebar
           .slice(0, 5);
         
@@ -110,7 +120,7 @@ export default function EventosSidebar() {
             },
             ...calendarioUFC.slice(0, 3).map(evento => ({
               ...evento,
-              passado: evento.dataObj < hoje
+              passado: converterDataFormatada(evento.data) < hoje
             }))
           ]);
         } catch {
@@ -142,7 +152,12 @@ export default function EventosSidebar() {
   const eventosFiltrados = mostrarUFC 
     ? eventos 
     : eventosCA
-        .sort((a, b) => a.dataObj.getTime() - b.dataObj.getTime()) // Ordenar por data
+        .sort((a, b) => {
+          // Converter datas formatadas para comparação
+          const dataA = converterDataFormatada(a.data);
+          const dataB = converterDataFormatada(b.data);
+          return dataA.getTime() - dataB.getTime();
+        }) // Ordenar por data
         .slice(0, 5); // Usar diretamente os eventos CA, limitando a 5
 
   return (
@@ -224,11 +239,11 @@ export default function EventosSidebar() {
                   >
                     <div className="min-w-10 text-center">
                       <div className={`font-bold text-lg ${evento.passado ? 'text-gray-500' : ''}`}>
-                        {evento.dataObj.getDate().toString().padStart(2, '0')}
+                        {evento.data.split('/')[0]}
                       </div>
-                      <div className="text-xs text-gray-500">
-                        {evento.dataObj.toLocaleDateString('pt-BR', { month: 'short' })}
-                      </div>
+                        <div className="text-xs text-gray-500">
+                          {converterDataFormatada(evento.data).toLocaleDateString('pt-BR', { month: 'short' })}
+                        </div>
                     </div>
                     
                     <div className="flex-1">
