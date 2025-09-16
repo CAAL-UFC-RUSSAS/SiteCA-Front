@@ -347,7 +347,7 @@ export default function GestaoPage() {
                 Documento oficial que registra a posse da atual gestão, com detalhes sobre a cerimônia e os compromissos assumidos.
               </p>
               <Link 
-                href="/pdf/ata-posse.pdf" 
+                href="https://drive.google.com/drive/folders/1hcycQOQu9p5WwyzvkB4otTTvdQTDHUGc?usp=drive_link" 
                 target="_blank"
                 className="inline-block px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors"
               >
@@ -361,7 +361,7 @@ export default function GestaoPage() {
                 Documento detalhado com as propostas, metas e cronograma de atividades planejadas para o mandato atual.
               </p>
               <Link 
-                href="/pdf/plano-gestao.pdf" 
+                href="https://drive.google.com/drive/folders/1tTChUjAH1TMKU1_7lZY4bSL9HJ0wULPq" 
                 target="_blank"
                 className="inline-block px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors"
               >

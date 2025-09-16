@@ -5,9 +5,9 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import Link from "next/link";
-import Image from "next/image";
 import { Store, School } from "lucide-react";
 import EventosSidebar from "@/components/EventosSidebar";
+import ResponsiveImage from "@/components/ResponsiveImage";
 
 export default function Home() {
   return (
@@ -26,7 +26,7 @@ export default function Home() {
         {/* Pop-up de Aviso Importante */}
         <div className="space-y-8">
           {/* Boas-vindas e resumo do CA */}
-          <section className="flex flex-col md:flex-row items-center gap-8 bg-white rounded-lg shadow p-6 lg:mt-10 max-w-7xl">
+          <section className="flex flex-col md:flex-row items-center gap-8 bg-white rounded-lg shadow p-6 lg:mt-10 max-w-7xl min-h-[400px]">
             <div className="flex-1">
               <h2 className="text-2xl font-bold mb-2">Seja bem-vindo ao nosso Centro Acadêmico!</h2>
               <p className="mb-2 text-gray-700">
@@ -41,8 +41,15 @@ export default function Home() {
                 <a href="https://drive.google.com/drive/folders/1tTChUjAH1TMKU1_7lZY4bSL9HJ0wULPq" target="_blank" rel="noopener noreferrer" className="px-4 py-2 rounded bg-green-600 text-white font-semibold shadow hover:bg-green-700 transition-colors">Drive do CAAL</a>
               </div>
             </div>
-            <div className="flex-1 flex justify-center">
-              <Image src="/imgs/banner.png" alt="Centro Acadêmico" width={300} height={200} className="rounded-lg max-w-xs shadow" />
+            <div className="flex-1 flex justify-center items-center h-full">
+              <ResponsiveImage 
+                src="/imgs/banner.jpg" 
+                alt="Centro Acadêmico" 
+                width={500} 
+                height={400} 
+                className="rounded-lg shadow w-full h-auto object-cover" 
+                priority
+              />
             </div>
           </section>
 

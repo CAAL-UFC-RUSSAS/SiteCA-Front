@@ -24,7 +24,7 @@ export default function SobrePage() {
               <div className="aspect-video relative bg-gray-200 rounded-md overflow-hidden">
                 {/* Usando imagem de evento como fallback caso a imagem de placeholder não exista */}
                 <Image
-                  src="/imgs/banner.png"
+                  src="/imgs/banner.jpg"
                   alt="Centro Acadêmico de Ciência da Computação"
                   fill
                   className="object-cover"
