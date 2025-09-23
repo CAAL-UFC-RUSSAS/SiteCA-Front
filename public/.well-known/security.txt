@@ -1,0 +1,11 @@
+Contact: mailto:contato@caal-ufc-russas.vercel.app
+Contact: https://caal-ufc-russas.vercel.app/contato
+Expires: 2025-12-31T23:59:59.000Z
+Encryption: https://caal-ufc-russas.vercel.app/pgp-key.txt
+Acknowledgments: https://caal-ufc-russas.vercel.app/security-acknowledgments
+Preferred-Languages: pt-BR, en
+Canonical: https://caal-ufc-russas.vercel.app/.well-known/security.txt
+Policy: https://caal-ufc-russas.vercel.app/security-policy
+
+# Centro Acadêmico de Computação UFC Campus Russas - Ada Lovelace
+# Política de Segurança e Contato para Relatórios de Vulnerabilidade

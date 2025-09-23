@@ -1,0 +1,55 @@
+# Robots.txt para Centro Acadêmico de Computação UFC Campus Russas - Ada Lovelace
+# https://caal-ufc-russas.vercel.app
+
+User-agent: *
+Allow: /
+
+# Permitir acesso a todas as páginas públicas
+Allow: /loja
+Allow: /sobre
+Allow: /eventos
+Allow: /contato
+Allow: /login
+Allow: /dashboard
+
+# Bloquear páginas administrativas e sensíveis
+Disallow: /admin/
+Disallow: /api/
+Disallow: /_next/
+Disallow: /private/
+
+# Bloquear arquivos desnecessários
+Disallow: *.json$
+Disallow: *.xml$
+Disallow: /sitemap.xml
+
+# Permitir acesso a recursos importantes
+Allow: /imgs/
+Allow: /pdf/
+Allow: /docs/
+
+# Sitemap
+Sitemap: https://caal-ufc-russas.vercel.app/sitemap.xml
+
+# Crawl-delay para ser respeitoso com o servidor
+Crawl-delay: 1
+
+# Específico para Google
+User-agent: Googlebot
+Allow: /
+Crawl-delay: 0
+
+# Específico para Bing
+User-agent: Bingbot
+Allow: /
+Crawl-delay: 1
+
+# Bloquear bots maliciosos
+User-agent: AhrefsBot
+Disallow: /
+
+User-agent: MJ12bot
+Disallow: /
+
+User-agent: DotBot
+Disallow: /

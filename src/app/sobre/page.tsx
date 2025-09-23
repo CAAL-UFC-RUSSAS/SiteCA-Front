@@ -228,7 +228,6 @@ export default function SobrePage() {
     </main>
   );
 }
-
 const Clock = ({ className }: { className?: string }) => {
   return (
     <svg
